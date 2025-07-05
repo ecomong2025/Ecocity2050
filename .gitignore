@@ -1,22 +1,47 @@
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Ll]ogs/
-UserSettings/
-MemoryCaptures/
+# Temporary files
+.utmp/
+
+# Unity 폴더들
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# 로그 파일
+*.log
+
+# Blender 관련
+*.blend1
+*.blend1.meta
+
+# 용량 큰 데이터
+ /[Mm]emoryCaptures/
+ /[Rr]ecordings/
+
+# 에셋 스토어 도구 (필요하면 활성화)
+/[Aa]ssets/AssetStoreTools*
+
+# JetBrains Rider 설정 파일
+/[Aa]ssets/Plugins/Editor/JetBrains*
+*.DotSettings.user
+
+# Visual Studio 관련 캐시
+.vs/
+
+# Gradle 캐시
+.gradle/
+
+# 기타 자동 생성된 파일들
+ExportedObj/
+.consulo/
+
+# 솔루션, 프로젝트, 임시 파일
 *.csproj
 *.unityproj
 *.sln
 *.suo
 *.tmp
 *.user
-*.pidb
-*.booproj
-*.svd
-*.pdb
-*.mdb
-*.opendb
-*.VC.db
-.DS_Store
