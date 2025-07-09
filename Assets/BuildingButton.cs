@@ -9,15 +9,17 @@ public class BuildingButton : MonoBehaviour
 
     void Start()
     {
-        // 1. 버튼 이름에서 "Btn" 제거 (접미사 제거)
-        string prefabName = gameObject.name.Replace("Btn", "");
+        // 1. 버튼 이름에서 "Btn" 제거하고 "Prefab" 붙이기 (예: "ParkBtn" → "ParkPrefab")
+        string baseName = gameObject.name.Replace("Btn", "");
+        string prefabName = baseName + "Prefab";
 
-        // 2. 프리팹 자동 로드 (Resources/Buildings/프리팹이름)
-        buildingPrefab = Resources.Load<GameObject>("Buildings/" + prefabName);
+        // 2. 프리팹 자동 로드 (Resources/Buildings/Prefabs/프리팹이름)
+        string resourcePath = "Buildings/Prefabs/" + prefabName;
+        buildingPrefab = Resources.Load<GameObject>(resourcePath);
 
         if (buildingPrefab == null)
         {
-            Debug.LogError($"❌ Resources/Buildings/{prefabName}.prefab 프리팹을 찾을 수 없습니다.");
+            Debug.LogError($"❌ 프리팹을 찾을 수 없습니다: Resources/{resourcePath}.prefab");
             return;
         }
 
@@ -27,6 +29,21 @@ public class BuildingButton : MonoBehaviour
 
     void OnButtonClick()
     {
+        // ✅ BuildingData와 GameManager 가져오기
+        BuildingData data = buildingPrefab.GetComponent<BuildingData>();
+        GameManager gameManager = FindObjectOfType<GameManager>();
+
+        if (data != null && gameManager != null)
+        {
+            // ✅ 예산 부족하면 선택 차단
+            if (gameManager.budget < data.cost)
+            {
+                Debug.Log($"❌ 예산 부족: 현재 예산 {gameManager.budget}, 필요 예산 {data.cost}");
+                return;
+            }
+        }
+
+        // ✅ 예산이 충분하면 건물 선택
         if (TileClickInstaller.Instance != null)
         {
             TileClickInstaller.Instance.SetSelectedBuilding(buildingPrefab);

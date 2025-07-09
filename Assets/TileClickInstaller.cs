@@ -26,7 +26,7 @@ public class TileClickInstaller : MonoBehaviour
                 {
                     GameObject tile = hit.collider.gameObject;
 
-                    // ✅ 이미 건물이 설치된 경우는 무시
+                    // 이미 건물이 설치된 경우 무시
                     if (tile.transform.childCount > 0)
                     {
                         Debug.Log("건물이 이미 설치된 타일입니다.");
@@ -37,6 +37,7 @@ public class TileClickInstaller : MonoBehaviour
                     float tileHeight = hit.collider.bounds.size.y;
                     Vector3 tileSize = GetTileSize(tile);
 
+                    // 건물 생성 및 비활성화 상태
                     GameObject building = Instantiate(selectedBuildingPrefab);
                     building.SetActive(false);
 
@@ -55,7 +56,18 @@ public class TileClickInstaller : MonoBehaviour
                     building.transform.position = spawnPos;
                     building.SetActive(true);
 
-                    // ✅ 한 번 설치되면 선택 해제
+                    // ✅ 설치 후 자원 적용
+                    BuildingData data = building.GetComponent<BuildingData>();
+                    if (data != null)
+                    {
+                        GameManager gameManager = FindObjectOfType<GameManager>();
+                        if (gameManager != null)
+                        {
+                            gameManager.ApplyBuildingCost(data.cost, data.co2Increase);
+                        }
+                    }
+
+                    // 설치 후 선택 해제
                     selectedBuildingPrefab = null;
                 }
             }
