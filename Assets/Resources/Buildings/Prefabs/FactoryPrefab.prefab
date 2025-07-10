@@ -739,8 +739,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cost: 150
-  co2Increase: 300
-  satisfactionChange: 0
+  instantCO2Change: 10
+  co2PerSecond: 5
+  maxCO2Change: 300
 --- !u!1 &3309717425723744805
 GameObject:
   m_ObjectHideFlags: 0

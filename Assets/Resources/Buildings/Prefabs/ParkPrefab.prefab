@@ -78,5 +78,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cost: 100
-  co2Increase: -200
-  satisfactionChange: 0
+  instantCO2Change: -50
+  co2PerSecond: -10
+  maxCO2Change: 0
