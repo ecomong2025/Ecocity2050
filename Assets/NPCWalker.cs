@@ -12,6 +12,7 @@ public class NPCWalker : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+
         if (waypoints.Length > 0)
         {
             agent.SetDestination(waypoints[0].position);
@@ -26,7 +27,6 @@ public class NPCWalker : MonoBehaviour
             agent.SetDestination(waypoints[currentWaypointIndex].position);
         }
 
-        // 애니메이션 상태 제어
         float speed = agent.velocity.magnitude;
         animator.SetFloat("Speed", speed); 
     }
