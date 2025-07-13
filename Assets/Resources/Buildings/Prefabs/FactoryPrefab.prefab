@@ -738,6 +738,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecd912cb32aac4abab6ab47663c4c703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileWidth: 1
+  tileHeight: 2
   cost: 150
   instantCO2Change: 10
   co2PerSecond: 5
