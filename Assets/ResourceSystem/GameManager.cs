@@ -4,7 +4,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-    public int budget = 400;
+    public int budget = 600;
     public int co2 = 0;
 
     public TMP_Text budgetText;
