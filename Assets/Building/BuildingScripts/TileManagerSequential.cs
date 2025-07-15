@@ -13,14 +13,14 @@ public class TileManagerSequential : MonoBehaviour
             if (child.name.StartsWith("Tile_"))
             {
                 tileList.Add(child.gameObject);
-                child.gameObject.SetActive(false); // ÀüºÎ ²¨µÎ±â
+                child.gameObject.SetActive(false);
             }
         }
 
-        // ¼ýÀÚ ÃßÃâÇØ¼­ Á¤·Ä: Tile_5, Tile_7, ...
+        // ì´ë¦„ìˆœ ì •ë ¬: Tile_5, Tile_7, ...
         tileList.Sort((a, b) => ExtractTileNumber(a.name).CompareTo(ExtractTileNumber(b.name)));
 
-        // ¸Ç Ã³À½ Å¸ÀÏ¸¸ ÄÑ±â (Tile_5)
+        // ì²« íƒ€ì¼ í™œì„±í™”
         if (tileList.Count > 0)
         {
             tileList[0].SetActive(true);
@@ -33,8 +33,7 @@ public class TileManagerSequential : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Alpha0 + i))
             {
-                int index = i; // Tile_5´Â index 0 ¡æ i=1 ¡æ tileList[1] (Tile_7)
-
+                int index = i;
                 if (index < tileList.Count)
                 {
                     tileList[index].SetActive(true);
@@ -45,7 +44,6 @@ public class TileManagerSequential : MonoBehaviour
 
     int ExtractTileNumber(string name)
     {
-        // Tile_5 ¡æ 5, Tile_11 ¡æ 11
         Match match = Regex.Match(name, @"Tile_(\d+)");
         if (match.Success)
         {
