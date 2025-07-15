@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: 589efb82e39695d4c8c9d3069a07fb5c
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314881
+  packageName: Low Poly Desert Village
+  packageVersion: 1.0
+  assetPath: Assets/PolyRonin/Desert Village/Meshes/desert-village-1.fbx
+  uploadId: 742953
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -115,10 +122,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 314881
-  packageName: Low Poly Desert Village
-  packageVersion: 1.0
-  assetPath: Assets/PolyRonin/Desert Village/Meshes/desert-village-1.fbx
-  uploadId: 742953
