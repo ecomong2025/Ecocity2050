@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 public class TileManagerSequential : MonoBehaviour
 {
     private List<GameObject> tileList = new List<GameObject>();
+    public CameraScaler cameraScaler; 
 
     void Start()
     {
@@ -17,13 +18,15 @@ public class TileManagerSequential : MonoBehaviour
             }
         }
 
-        // 이름순 정렬: Tile_5, Tile_7, ...
         tileList.Sort((a, b) => ExtractTileNumber(a.name).CompareTo(ExtractTileNumber(b.name)));
 
-        // 첫 타일 활성화
         if (tileList.Count > 0)
         {
             tileList[0].SetActive(true);
+
+            // 최초 카메라 위치 조정
+            int initialMapSize = ExtractTileNumber(tileList[0].name);
+            UpdateCamera(initialMapSize);
         }
     }
 
@@ -37,6 +40,10 @@ public class TileManagerSequential : MonoBehaviour
                 if (index < tileList.Count)
                 {
                     tileList[index].SetActive(true);
+
+                    // 새로운 타일 크기 얻기
+                    int mapSize = ExtractTileNumber(tileList[index].name);
+                    UpdateCamera(mapSize);
                 }
             }
         }
@@ -50,5 +57,18 @@ public class TileManagerSequential : MonoBehaviour
             return int.Parse(match.Groups[1].Value);
         }
         return 0;
+    }
+
+    void UpdateCamera(int mapSize)
+    {
+        if (cameraScaler != null)
+        {
+            cameraScaler.mapSize = mapSize;
+            cameraScaler.AdjustCameraToMap();
+        }
+        else
+        {
+            Debug.LogWarning("[TileManagerSequential] CameraScaler 참조가 설정되지 않았습니다.");
+        }
     }
 }
