@@ -45,3 +45,5 @@ ExportedObj/
 *.suo
 *.tmp
 *.user
+
+Assets\TextMesh Pro\Resources\api_key.json
