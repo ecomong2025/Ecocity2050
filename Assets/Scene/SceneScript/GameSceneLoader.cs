@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class IntroManager : MonoBehaviour
+public class GameSceneLoader : MonoBehaviour
 {
     public GameObject loadingPanel;
     public GameObject mainMenuPanel;
