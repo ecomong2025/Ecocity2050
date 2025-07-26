@@ -5,6 +5,8 @@ public class CameraScaler : MonoBehaviour
     public Camera mainCamera;
     [Range(5, 13)] public int mapSize = 5;
 
+    public GameObject buildingPanel; 
+
     [Header("Zoom Settings")]
     public float zoomSpeed = 10f;
     public float minDistance = 3f;
@@ -28,6 +30,8 @@ public class CameraScaler : MonoBehaviour
 
     void Update()
     {
+        if (buildingPanel != null && buildingPanel.activeSelf) return; // ✅ UI 열려 있으면 입력 무시
+
         HandleZoom();
         HandleMouseDrag();
     }
@@ -81,11 +85,8 @@ public class CameraScaler : MonoBehaviour
         else if (Input.GetMouseButton(1)) 
         {
             Vector3 delta = Input.mousePosition - lastMousePos;
-
-            
             Vector3 move = (-mainCamera.transform.right * delta.x - mainCamera.transform.up * delta.y) * panSpeed * 0.01f;
             mainCamera.transform.Translate(move, Space.World);
-
             lastMousePos = Input.mousePosition;
         }
     }

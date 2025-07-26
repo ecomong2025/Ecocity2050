@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class DisasterManager : MonoBehaviour
 {
-    public float normalDisasterInterval = 30f;  // 나쁨 → 5분 (300초)
-    public float severeDisasterInterval = 30f;  // 매우 나쁨 → 3분 (180초)
+    public float normalDisasterInterval = 300f;  // 나쁨 → 5분 (300초)
+    public float severeDisasterInterval = 180f;  // 매우 나쁨 → 3분 (180초)
 
     private GameManager gameManager;
 
