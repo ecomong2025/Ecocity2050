@@ -51,17 +51,12 @@ public class GameManager : MonoBehaviour
         satisfactionText.text = GetSatisfactionLevel();
     }
 
-    string GetSatisfactionLevel()
+    public string GetSatisfactionLevel()
     {
-        if (co2 < 200)
-            return "매우 좋음";
-        else if (co2 < 400)
-            return "좋음";
-        else if (co2 < 700)
-            return "보통";
-        else if (co2 < 900)
-            return "나쁨";
-        else
-            return "매우 나쁨";
+        if (co2 < 200) return "매우 좋음";
+        else if (co2 < 400) return "좋음";
+        else if (co2 < 700) return "보통";
+        else if (co2 < 900) return "나쁨";
+        else return "매우 나쁨";
     }
 }
