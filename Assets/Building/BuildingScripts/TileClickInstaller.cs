@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class TileClickInstaller : MonoBehaviour
@@ -7,48 +8,46 @@ public class TileClickInstaller : MonoBehaviour
 
     private GameObject selectedBuildingPrefab;
 
+    public GameObject warningPanel;         
+    public Button confirmButton;            
+
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
 
+    void Start()
+    {
+        if (confirmButton != null)
+        {
+            confirmButton.onClick.AddListener(CloseWarningPanel);
+        }
+    }
+
+    public void CloseWarningPanel()
+    {
+        if (warningPanel != null)
+            warningPanel.SetActive(false);
+    }
+
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("클릭됨");
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit debugHit))
-            {
-                Debug.Log("Raycast hit: " + debugHit.collider.name);
-            }
-            else
-            {
-                Debug.Log("Raycast 실패");
-            }
-        }
-        if (selectedBuildingPrefab == null) return;
-
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-
-                if (hit.collider.CompareTag("Tile"))
+                if (hit.collider.CompareTag("Tile") && selectedBuildingPrefab != null)
                 {
                     GameObject baseTile = hit.collider.gameObject;
 
-                    // ✅ 설치 크기: TileData에서 가져옴
                     BuildingData buildingData = selectedBuildingPrefab.GetComponent<BuildingData>();
                     if (buildingData == null) return;
 
                     int width = buildingData.tileWidth;
                     int height = buildingData.tileHeight;
-
 
                     List<GameObject> tilesToUse = FindTilesAround(baseTile, width, height);
                     if (tilesToUse == null || tilesToUse.Count != width * height)
@@ -66,19 +65,10 @@ public class TileClickInstaller : MonoBehaviour
                         }
                     }
 
-                    BuildingData data = selectedBuildingPrefab.GetComponent<BuildingData>();
-                    if (data == null) return;
-
                     GameManager gameManager = FindObjectOfType<GameManager>();
                     if (gameManager == null) return;
 
-                    if (gameManager.budget < data.cost)
-                    {
-                        Debug.Log("예산 부족");
-                        return;
-                    }
-
-                    // ✅ 중심 위치 계산
+                    // 중심 위치 계산
                     Vector3 center = Vector3.zero;
                     foreach (var tile in tilesToUse)
                         center += tile.GetComponent<Renderer>().bounds.center;
@@ -105,11 +95,12 @@ public class TileClickInstaller : MonoBehaviour
                     building.transform.SetParent(baseTile.transform);
                     building.SetActive(true);
 
+                    // 예산 반영
                     gameManager.ApplyBuildingCost(
-                        data.cost,
-                        data.instantCO2Change,
-                        data.co2PerSecond,
-                        data.maxCO2Change
+                        buildingData.cost,
+                        buildingData.instantCO2Change,
+                        buildingData.co2PerSecond,
+                        buildingData.maxCO2Change
                     );
 
                     selectedBuildingPrefab = null;
@@ -146,7 +137,6 @@ public class TileClickInstaller : MonoBehaviour
         building.transform.localScale *= minFactor;
     }
 
-    // ✅ 주변 타일 찾기 (간단한 거리 기반)
     List<GameObject> FindTilesAround(GameObject baseTile, int width, int height)
     {
         List<GameObject> result = new List<GameObject>();
