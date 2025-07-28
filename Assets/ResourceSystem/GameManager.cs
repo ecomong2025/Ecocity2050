@@ -64,4 +64,19 @@ public class GameManager : MonoBehaviour
         else
             return "매우 나쁨";
     }
+
+    // 만족도 숫자로 반환 (0.1 ~ 1.0)
+    public float GetSatisfactionValue()
+    {
+        if (co2 < 200)
+            return 1f;
+        else if (co2 < 400)
+            return 0.8f;
+        else if (co2 < 700)
+            return 0.5f;
+        else if (co2 < 900)
+            return 0.3f;
+        else
+            return 0.1f;
+    }
 }
