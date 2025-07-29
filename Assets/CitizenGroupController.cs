@@ -2,43 +2,21 @@ using UnityEngine;
 
 public class CitizenGroupController : MonoBehaviour
 {
-    public GameObject[] citizens; 
-    private GameManager gameManager;
+    public GameObject[] citizens; // 인스펙터에서 시민 10개 연결
+    private int currentVisibleCount = -1;
 
-    void Start()
+    public void UpdateSatisfaction(float satisfaction)
     {
-        gameManager = FindObjectOfType<GameManager>();
-    }
+        // 만족도(0~1)에 따라 시민 수 결정 (최소 1명 보장)
+        int targetVisibleCount = Mathf.Clamp(Mathf.RoundToInt(satisfaction * (citizens.Length - 1)) + 1, 1, citizens.Length);
 
-    void Update()
-    {
-        float satisfaction = gameManager.GetSatisfactionValue();
-        int targetCount = Mathf.RoundToInt(satisfaction * citizens.Length);
-
-        for (int i = 0; i < citizens.Length; i++)
+        if (targetVisibleCount != currentVisibleCount)
         {
-            bool shouldBeVisible = i < targetCount;
+            currentVisibleCount = targetVisibleCount;
 
-            // SetActive 방식
-            citizens[i].SetActive(shouldBeVisible);
-
-       
-        }
-    }
-
-    void SetCitizenAlpha(GameObject citizen, float alpha)
-    {
-        var renderers = citizen.GetComponentsInChildren<Renderer>();
-        foreach (var renderer in renderers)
-        {
-            foreach (var mat in renderer.materials)
+            for (int i = 0; i < citizens.Length; i++)
             {
-                if (mat.HasProperty("_Color"))
-                {
-                    Color color = mat.color;
-                    color.a = alpha;
-                    mat.color = color;
-                }
+                citizens[i].SetActive(i < currentVisibleCount);
             }
         }
     }
