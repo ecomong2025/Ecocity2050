@@ -9,6 +9,10 @@ public class BuildingData : MonoBehaviour
     [Header("설치 관련 데이터")]
     public int cost;
 
+    //수익원 발생 수익 (예: 공장 등): 50/5분
+    public int maxIncomeAmount = 0;
+    public int incomePer5Minutes = 0;
+
     // 즉시 변화량 (예: 친환경 건물, 나무 등)
     public int instantCO2Change = 0;
 

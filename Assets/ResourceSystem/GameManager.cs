@@ -1,9 +1,12 @@
 using TMPro;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance;
+
     public int budget = 600;
     public int co2 = 0;
 
@@ -11,24 +14,39 @@ public class GameManager : MonoBehaviour
     public TMP_Text co2Text;
     public TMP_Text satisfactionText;
 
+    public GameObject coinUIPrefab;
+    public Canvas uiCanvas;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
         UpdateUI();
     }
 
-    public void ApplyBuildingCost(int cost, int instantCo2Change, int co2PerSecond = 0, int maxCO2Change = 0)
+    public void ApplyBuildingCost(
+    int cost,
+    int instantCo2Change,
+    int co2PerSecond = 0,
+    int maxCO2Change = 0,
+    int incomePer5Min = 0,
+    Transform buildingTransform = null,
+    int maxIncomeAmount = 0)
     {
-        budget -= cost;
-        co2 += instantCo2Change;
-        co2 = Mathf.Max(0, co2); // CO2는 음수 불가
+    budget -= cost;
+    co2 += instantCo2Change;
+    co2 = Mathf.Max(0, co2);
 
-        // 점진적 CO₂ 증가 코루틴 시작
-        if (co2PerSecond > 0 && maxCO2Change > 0)
-        {
-            StartCoroutine(IncreaseCO2OverTime(co2PerSecond, maxCO2Change));
-        }
+    if (co2PerSecond > 0 && maxCO2Change > 0)
+        StartCoroutine(IncreaseCO2OverTime(co2PerSecond, maxCO2Change));
 
-        UpdateUI();
+    if (incomePer5Min > 0 && buildingTransform != null)
+        StartCoroutine(GenerateIncomePeriodically(incomePer5Min, maxIncomeAmount, buildingTransform));
+
+    UpdateUI();
     }
 
     IEnumerator IncreaseCO2OverTime(int perSecond, int maxAmount)
@@ -36,12 +54,53 @@ public class GameManager : MonoBehaviour
         int accumulated = 0;
         while (accumulated < maxAmount)
         {
-            yield return new WaitForSeconds(5f); // 5초마다
+            yield return new WaitForSeconds(5f);
             int delta = Mathf.Min(perSecond, maxAmount - accumulated);
             co2 += delta;
             accumulated += delta;
             UpdateUI();
         }
+    }
+
+    IEnumerator GenerateIncomePeriodically(int amount, int maxIncome, Transform buildingTransform)
+    {
+    int accumulated = 0;
+
+    while (accumulated < maxIncome)
+    {
+        yield return new WaitForSeconds(300f); // 테스트용
+
+        int remaining = maxIncome - accumulated;
+        int income = Mathf.Min(amount, remaining);
+        accumulated += income;
+
+        GameObject coin = Instantiate(coinUIPrefab);
+        coin.GetComponent<CoinUIController>().incomeAmount = income;
+
+        Renderer rend = buildingTransform.GetComponentInChildren<Renderer>();
+        float height = rend.bounds.size.y;
+        Vector3 spawnPos = rend.bounds.center + new Vector3(0, height / 2f + 2.8f, 0);
+
+        Vector3 cameraDir = (spawnPos - Camera.main.transform.position).normalized;
+        spawnPos += cameraDir * 0.3f;
+
+        coin.GetComponent<CoinUIController>().SetWorldPosition(spawnPos);
+    }
+    }
+
+    float GetBuildingHeight(Transform buildingTransform)
+    {
+        Renderer rend = buildingTransform.GetComponentInChildren<Renderer>();
+        if (rend != null)
+            return rend.bounds.size.y + 0.5f;
+
+        return 3f;
+    }
+
+    public void AddBudget(int amount)
+    {
+        budget += amount;
+        UpdateUI();
     }
 
     void UpdateUI()
