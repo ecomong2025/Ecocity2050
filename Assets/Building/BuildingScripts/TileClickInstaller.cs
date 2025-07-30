@@ -105,7 +105,15 @@ public class TileClickInstaller : MonoBehaviour
                     Renderer rend = modelInstance.GetComponentInChildren<Renderer>();
                     Vector3 offset = previewInstance.transform.position - rend.bounds.center;
                     Vector3 spawnPos = center + offset;
+
+                    // 기본 Y 위치 계산
                     spawnPos.y += tileSize.y / 2f + rend.bounds.size.y / 2f;
+
+                    // 도로라면 Y 위치 추가 조정
+                    if (selectedBuildingPrefab.name.ToLower().Contains("road"))
+                    {
+                        spawnPos.y += 0.01f; // 또는 0.1f, 겹침 방지용
+                    }
 
                     previewInstance.transform.position = spawnPos;
                     modelInstance.SetActive(true);
