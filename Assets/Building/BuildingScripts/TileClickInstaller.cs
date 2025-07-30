@@ -6,10 +6,21 @@ public class TileClickInstaller : MonoBehaviour
 {
     public static TileClickInstaller Instance;
 
-    private GameObject selectedBuildingPrefab;
+    [Header("UI Elements")]
+    public GameObject warningPanel;
+    public Button confirmButton;
 
-    public GameObject warningPanel;         
-    public Button confirmButton;            
+    [Header("Building Install Panel")]
+    public GameObject buildingInstallPanel;
+    public Button confirmInstallButton;
+    public Button cancelInstallButton;
+    public Button rotateButton;
+
+    private GameObject selectedBuildingPrefab;
+    private GameObject previewInstance;       // 회전 중심이 될 빈 오브젝트
+    private GameObject modelInstance;         // 실제 건물 모델
+    private float previewRotation = 0f;
+    private List<GameObject> currentTiles;
 
     void Awake()
     {
@@ -20,29 +31,31 @@ public class TileClickInstaller : MonoBehaviour
     void Start()
     {
         if (confirmButton != null)
-        {
             confirmButton.onClick.AddListener(CloseWarningPanel);
-        }
-    }
 
-    public void CloseWarningPanel()
-    {
-        if (warningPanel != null)
-            warningPanel.SetActive(false);
+        if (confirmInstallButton != null)
+            confirmInstallButton.onClick.AddListener(ConfirmInstall);
+
+        if (cancelInstallButton != null)
+            cancelInstallButton.onClick.AddListener(CancelInstall);
+
+        if (rotateButton != null)
+            rotateButton.onClick.AddListener(RotatePreview);
+
+        buildingInstallPanel.SetActive(false);
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && selectedBuildingPrefab != null && previewInstance == null)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                if (hit.collider.CompareTag("Tile") && selectedBuildingPrefab != null)
+                if (hit.collider.CompareTag("Tile"))
                 {
                     GameObject baseTile = hit.collider.gameObject;
-
                     BuildingData buildingData = selectedBuildingPrefab.GetComponent<BuildingData>();
                     if (buildingData == null) return;
 
@@ -65,10 +78,8 @@ public class TileClickInstaller : MonoBehaviour
                         }
                     }
 
-                    GameManager gameManager = FindObjectOfType<GameManager>();
-                    if (gameManager == null) return;
+                    currentTiles = tilesToUse;
 
-                    // 중심 위치 계산
                     Vector3 center = Vector3.zero;
                     foreach (var tile in tilesToUse)
                         center += tile.GetComponent<Renderer>().bounds.center;
@@ -81,35 +92,140 @@ public class TileClickInstaller : MonoBehaviour
                         tileSize.z * height
                     );
 
-                    GameObject building = Instantiate(selectedBuildingPrefab);
-                    building.SetActive(false);
+                    // 빈 부모 오브젝트 생성
+                    previewInstance = new GameObject("BuildingPreviewParent");
 
-                    ResizeToFit(building, totalSize);
+                    // 실제 건물 모델을 자식으로 생성
+                    modelInstance = Instantiate(selectedBuildingPrefab, previewInstance.transform);
+                    modelInstance.name = "BuildingModel";
+                    modelInstance.SetActive(false);
 
-                    Renderer rend = building.GetComponentInChildren<Renderer>();
-                    Vector3 offset = building.transform.position - rend.bounds.center;
+                    ResizeToFit(modelInstance, totalSize);
+
+                    Renderer rend = modelInstance.GetComponentInChildren<Renderer>();
+                    Vector3 offset = previewInstance.transform.position - rend.bounds.center;
                     Vector3 spawnPos = center + offset;
                     spawnPos.y += tileSize.y / 2f + rend.bounds.size.y / 2f;
 
-                    building.transform.position = spawnPos;
-                    building.transform.SetParent(baseTile.transform);
-                    building.SetActive(true);
+                    previewInstance.transform.position = spawnPos;
+                    modelInstance.SetActive(true);
+                    previewRotation = 0f;
 
-                    // 예산 반영
-                    gameManager.ApplyBuildingCost(
-                    buildingData.cost,
-                    buildingData.instantCO2Change,
-                    buildingData.co2PerSecond,
-                    buildingData.maxCO2Change,
-                    buildingData.incomePer5Minutes,   
-                    building.transform,
-                    buildingData.maxIncomeAmount               
-                    );
-
-                    selectedBuildingPrefab = null;
+                    buildingInstallPanel.SetActive(true);
                 }
             }
         }
+    }
+
+    public void CloseWarningPanel()
+    {
+        if (warningPanel != null)
+            warningPanel.SetActive(false);
+    }
+
+    public void SetSelectedBuilding(GameObject prefab)
+    {
+        selectedBuildingPrefab = prefab;
+    }
+
+    void RotatePreview()
+    {
+        if (previewInstance == null || modelInstance == null || currentTiles == null) return;
+
+        // 회전 각도 미리 계산
+        float newRotation = (previewRotation + 90f) % 360f;
+
+        // 현재 중심 타일 기준으로 다시 타일 탐색
+        GameObject baseTile = currentTiles[0];
+        BuildingData buildingData = modelInstance.GetComponent<BuildingData>();
+
+        // 건물이 차지할 영역을 회전 상태에 따라 계산
+        Vector2Int size = GetRotatedSize(buildingData.tileWidth, buildingData.tileHeight, newRotation);
+
+        List<GameObject> newTiles = FindTilesAround(baseTile, size.x, size.y);
+        if (newTiles == null || newTiles.Count != size.x * size.y)
+        {
+            Debug.Log("회전 후 설치 가능한 타일이 부족합니다.");
+            return;
+        }
+
+        foreach (GameObject tile in newTiles)
+        {
+            if (tile.transform.childCount > 0)
+            {
+                Debug.Log("회전 후 설치 위치 중 일부에 건물이 있습니다.");
+                return;
+            }
+        }
+
+        // 회전 허용 → 적용
+        previewRotation = newRotation;
+        previewInstance.transform.rotation = Quaternion.Euler(0f, previewRotation, 0f);
+        currentTiles = newTiles;
+
+        // 위치 재계산
+        Vector3 center = Vector3.zero;
+        foreach (var tile in newTiles)
+            center += tile.GetComponent<Renderer>().bounds.center;
+        center /= newTiles.Count;
+
+        Renderer rend = modelInstance.GetComponentInChildren<Renderer>();
+        Vector3 offset = previewInstance.transform.position - rend.bounds.center;
+        Vector3 spawnPos = center + offset;
+        spawnPos.y += GetTileSize(baseTile).y / 2f + rend.bounds.size.y / 2f;
+
+        previewInstance.transform.position = spawnPos;
+    }
+
+
+    void ConfirmInstall()
+    {
+        if (previewInstance == null || currentTiles == null) return;
+
+        GameManager gameManager = FindObjectOfType<GameManager>();
+        if (gameManager == null) return;
+
+        BuildingData buildingData = modelInstance.GetComponent<BuildingData>();
+
+        foreach (GameObject tile in currentTiles)
+            previewInstance.transform.SetParent(tile.transform);
+
+        gameManager.ApplyBuildingCost(
+            buildingData.cost,
+            buildingData.instantCO2Change,
+            buildingData.co2PerSecond,
+            buildingData.maxCO2Change,
+            buildingData.incomePer5Minutes,
+            previewInstance.transform,
+            buildingData.maxIncomeAmount
+        );
+
+        ClearPreviewAndPanel();
+    }
+
+    void CancelInstall()
+    {
+        if (previewInstance != null)
+            Destroy(previewInstance);
+
+        ClearPreviewAndPanel();
+    }
+
+    void ClearPreviewAndPanel()
+    {
+        previewInstance = null;
+        modelInstance = null;
+        selectedBuildingPrefab = null;
+        currentTiles = null;
+        buildingInstallPanel.SetActive(false);
+    }
+
+    Vector2Int GetRotatedSize(int width, int height, float rotation)
+    {
+        if ((Mathf.RoundToInt(rotation) % 180) != 0)
+            return new Vector2Int(height, width); // 90도나 270도
+        else
+            return new Vector2Int(width, height); // 0도나 180도
     }
 
     Vector3 GetTileSize(GameObject tile)
@@ -173,10 +289,5 @@ public class TileClickInstaller : MonoBehaviour
         }
 
         return result;
-    }
-
-    public void SetSelectedBuilding(GameObject prefab)
-    {
-        selectedBuildingPrefab = prefab;
     }
 }
