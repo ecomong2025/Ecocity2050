@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class DisasterManager : MonoBehaviour
 {
-    public float normalDisasterInterval = 300f;  // 나쁨 → 5분 (300초)
-    public float severeDisasterInterval = 180f;  // 매우 나쁨 → 3분 (180초)
+    public float normalDisasterInterval = 300f;  // 나쁨 → 5분
+    public float severeDisasterInterval = 180f;  // 매우 나쁨 → 3분
 
     private GameManager gameManager;
 
@@ -39,7 +39,6 @@ public class DisasterManager : MonoBehaviour
             }
             else
             {
-                // 만족도가 괜찮으면 30초 간격으로 다시 검사
                 yield return new WaitForSeconds(30f);
             }
         }
@@ -71,10 +70,36 @@ public class DisasterManager : MonoBehaviour
             return;
         }
 
+        string[] disasterTypes = { "가뭄", "화재", "폭우", "태풍" };
+        string selectedDisaster = disasterTypes[Random.Range(0, disasterTypes.Length)];
+
         int index = Random.Range(0, tilesWithBuildings.Count);
         GameObject buildingToDestroy = tilesWithBuildings[index];
 
-        Destroy(buildingToDestroy);
-        Debug.Log("🚨 재난 발생! 건물이 파괴됨 → " + buildingToDestroy.name);
+        Debug.Log($"🚨 {selectedDisaster} 발생! {buildingToDestroy.name} 건물이 파괴됩니다...");
+        
+        StartCoroutine(BlinkAndDestroy(buildingToDestroy, 2f, 6));
+    }
+
+    IEnumerator BlinkAndDestroy(GameObject building, float duration, int blinkCount)
+    {
+        Renderer[] renderers = building.GetComponentsInChildren<Renderer>();
+
+        for (int i = 0; i < blinkCount; i++)
+        {
+            // 껐다가
+            foreach (Renderer r in renderers)
+                r.enabled = false;
+
+            yield return new WaitForSeconds(duration / (blinkCount * 2));
+
+            // 켰다가
+            foreach (Renderer r in renderers)
+                r.enabled = true;
+
+            yield return new WaitForSeconds(duration / (blinkCount * 2));
+        }
+
+        Destroy(building);
     }
 }
