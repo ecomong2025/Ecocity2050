@@ -97,10 +97,13 @@ public class TileClickInstaller : MonoBehaviour
 
                     // 예산 반영
                     gameManager.ApplyBuildingCost(
-                        buildingData.cost,
-                        buildingData.instantCO2Change,
-                        buildingData.co2PerSecond,
-                        buildingData.maxCO2Change
+                    buildingData.cost,
+                    buildingData.instantCO2Change,
+                    buildingData.co2PerSecond,
+                    buildingData.maxCO2Change,
+                    buildingData.incomePer5Minutes,   
+                    building.transform,
+                    buildingData.maxIncomeAmount               
                     );
 
                     selectedBuildingPrefab = null;

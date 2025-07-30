@@ -741,6 +741,8 @@ MonoBehaviour:
   tileWidth: 1
   tileHeight: 2
   cost: 150
+  maxIncomeAmount: 300
+  incomePer5Minutes: 30
   instantCO2Change: 10
   co2PerSecond: 5
   maxCO2Change: 300
