@@ -30,6 +30,7 @@ public class TileClickInstaller : MonoBehaviour
 
     void Start()
     {
+
         if (confirmButton != null)
             confirmButton.onClick.AddListener(CloseWarningPanel);
 
