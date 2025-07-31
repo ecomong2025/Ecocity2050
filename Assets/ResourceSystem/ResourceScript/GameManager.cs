@@ -13,9 +13,9 @@ public class GameManager : MonoBehaviour
     public TMP_Text budgetText;
     public TMP_Text co2Text;
     public TMP_Text satisfactionText;
-
     public GameObject coinUIPrefab;
     public Canvas uiCanvas;
+    public EmojiController emojiController;
 
     private void Awake()
     {
@@ -107,7 +107,13 @@ public class GameManager : MonoBehaviour
     {
         budgetText.text = $"{budget}";
         co2Text.text = $"{co2}";
-        satisfactionText.text = GetSatisfactionLevel();
+        string satisfaction = GetSatisfactionLevel();
+        satisfactionText.text = satisfaction;
+
+        if (emojiController != null)
+        {
+            emojiController.ShowEmoji(satisfaction);
+        }
     }
 
     public string GetSatisfactionLevel()
