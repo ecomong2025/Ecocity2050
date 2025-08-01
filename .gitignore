@@ -45,3 +45,7 @@ ExportedObj/
 *.suo
 *.tmp
 *.user
+
+.env
+.env/
+*.env
