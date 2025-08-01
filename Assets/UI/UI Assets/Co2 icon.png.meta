@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 836a382593ade4ca1ae7640857e49975
+<<<<<<<< HEAD:Assets/UI/UI Assets/OpenQuestBtnUI.png.meta
+guid: 8ebf867d3c6e0b341958d643f8374c92
+========
+guid: 28c710f5b6c584442a316ad3b212d23b
+>>>>>>>> develop:Assets/UI/UI Assets/Co2 icon.png.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -72,7 +76,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
