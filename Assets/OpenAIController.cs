@@ -12,10 +12,11 @@ public class OpenAIController : MonoBehaviour
     public TMP_InputField inputField;
     public Button okBtn;
 
-    private string apiKey = " "; //추후 수정
+    private string apiKey;
 
     void Start()
     {
+        apiKey = LoadAPIKeyFromResources();  // 🔑 키 로드
         okBtn.onClick.AddListener(OnSubmit);
     }
 
@@ -32,7 +33,6 @@ public class OpenAIController : MonoBehaviour
     {
         string apiUrl = "https://api.openai.com/v1/chat/completions";
 
-        // JSON 문자열 수동 생성
         string jsonBody = @"{
             ""model"": ""gpt-3.5-turbo"",
             ""messages"": [
@@ -55,7 +55,6 @@ public class OpenAIController : MonoBehaviour
             if (request.result == UnityWebRequest.Result.Success)
             {
                 string result = request.downloadHandler.text;
-
                 OpenAIResponse parsed = JsonUtility.FromJson<OpenAIResponse>(FixJson(result));
                 textField.text = parsed.choices[0].message.content.Trim();
             }
@@ -66,7 +65,19 @@ public class OpenAIController : MonoBehaviour
         }
     }
 
-    //  JSON 문자열 escape 함수
+    private string LoadAPIKeyFromResources()
+    {
+        TextAsset jsonFile = Resources.Load<TextAsset>("api_key");
+        if (jsonFile != null)
+        {
+            APIKeyWrapper wrapper = JsonUtility.FromJson<APIKeyWrapper>(jsonFile.text);
+            return wrapper.apiKey;
+        }
+
+        Debug.LogWarning("Resources 폴더 내 api_key.json 파일을 찾을 수 없습니다.");
+        return "";
+    }
+
     private string EscapeJson(string s)
     {
         return s.Replace("\\", "\\\\")
@@ -75,7 +86,6 @@ public class OpenAIController : MonoBehaviour
                 .Replace("\r", "\\r");
     }
 
-    //  GPT 응답을 위한 JSON 파싱 클래스
     [Serializable]
     public class OpenAIResponse
     {
@@ -95,12 +105,16 @@ public class OpenAIController : MonoBehaviour
         }
     }
 
-    //  Unity의 JsonUtility가 배열을 잘 못 읽는 문제 대응
+    [Serializable]
+    public class APIKeyWrapper
+    {
+        public string apiKey;
+    }
+
     private string FixJson(string json)
     {
         int idx = json.IndexOf("\"choices\":");
         if (idx < 0) return json;
-
         string fixedJson = "{\"choices\":" + json.Substring(idx + 10);
         return fixedJson;
     }
