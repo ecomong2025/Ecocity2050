@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2a0bb6f37310dd34098a3b962e5d3240, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2a0bb6f37310dd34098a3b962e5d3240, type: 3}
       propertyPath: m_LocalPosition.z
@@ -77,7 +77,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecd912cb32aac4abab6ab47663c4c703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileWidth: 1
+  tileHeight: 1
   cost: 20
+  maxIncomeAmount: 0
+  incomePer5Minutes: 0
   instantCO2Change: 0
   co2PerSecond: 10
   maxCO2Change: 30

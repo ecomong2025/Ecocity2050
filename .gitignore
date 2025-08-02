@@ -45,3 +45,10 @@ ExportedObj/
 *.suo
 *.tmp
 *.user
+
+# 환경파일 및 민감정보 무시
+.env
+*.env
+*.env.*
+Assets/Resources/api_key.json
+*.json
