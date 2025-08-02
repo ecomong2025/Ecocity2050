@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
 
     while (accumulated < maxIncome)
     {
-        yield return new WaitForSeconds(10f); // 테스트용
+        yield return new WaitForSeconds(300f); // 5분마다 수입 생성
 
         int remaining = maxIncome - accumulated;
         int income = Mathf.Min(amount, remaining);
