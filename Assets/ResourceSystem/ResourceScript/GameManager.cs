@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public GameObject coinUIPrefab;
     public Canvas uiCanvas;
     public EmojiController emojiController;
+    public CitizenGroupController citizenGroupController;
 
     // 건물별 수입 코루틴 관리용 딕셔너리 추가
     private Dictionary<Transform, Coroutine> incomeCoroutines = new Dictionary<Transform, Coroutine>();
@@ -31,39 +32,39 @@ public class GameManager : MonoBehaviour
     }
 
     public void ApplyBuildingCost(
-    int cost,
-    int instantCo2Change,
-    int co2PerSecond = 0,
-    int maxCO2Change = 0,
-    int incomePer5Min = 0,
-    Transform buildingTransform = null,
-    int maxIncomeAmount = 0)
+        int cost,
+        int instantCo2Change,
+        int co2PerSecond = 0,
+        int maxCO2Change = 0,
+        int incomePer5Min = 0,
+        Transform buildingTransform = null,
+        int maxIncomeAmount = 0)
     {
-    budget -= cost;
-    co2 += instantCo2Change;
-    co2 = Mathf.Max(0, co2);
+        budget -= cost;
+        co2 += instantCo2Change;
+        co2 = Mathf.Max(0, co2);
 
-    if (co2PerSecond > 0 && maxCO2Change > 0)
-        StartCoroutine(IncreaseCO2OverTime(co2PerSecond, maxCO2Change));
+        if (co2PerSecond > 0 && maxCO2Change > 0)
+            StartCoroutine(IncreaseCO2OverTime(co2PerSecond, maxCO2Change));
 
-    // 수입 코루틴을 관리
-    if (incomePer5Min > 0 && buildingTransform != null)
-    {
-        Coroutine c = StartCoroutine(GenerateIncomePeriodically(incomePer5Min, maxIncomeAmount, buildingTransform));
-        incomeCoroutines[buildingTransform] = c;
-    }
+        // 수입 코루틴을 관리
+        if (incomePer5Min > 0 && buildingTransform != null)
+        {
+            Coroutine c = StartCoroutine(GenerateIncomePeriodically(incomePer5Min, maxIncomeAmount, buildingTransform));
+            incomeCoroutines[buildingTransform] = c;
+        }
 
-    UpdateUI();
+        UpdateUI();
     }
 
     // 건물 파괴 시 수입 코루틴 중지 메서드 추가
     public void StopIncomeForBuilding(Transform buildingTransform)
     {
-    if (incomeCoroutines.ContainsKey(buildingTransform))
-    {
-        StopCoroutine(incomeCoroutines[buildingTransform]);
-        incomeCoroutines.Remove(buildingTransform);
-    }
+        if (incomeCoroutines.ContainsKey(buildingTransform))
+        {
+            StopCoroutine(incomeCoroutines[buildingTransform]);
+            incomeCoroutines.Remove(buildingTransform);
+        }
     }
 
     IEnumerator IncreaseCO2OverTime(int perSecond, int maxAmount)
@@ -71,7 +72,7 @@ public class GameManager : MonoBehaviour
         int accumulated = 0;
         while (accumulated < maxAmount)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(300f);
             int delta = Mathf.Min(perSecond, maxAmount - accumulated);
             co2 += delta;
             accumulated += delta;
@@ -81,38 +82,38 @@ public class GameManager : MonoBehaviour
 
     IEnumerator GenerateIncomePeriodically(int amount, int maxIncome, Transform buildingTransform)
     {
-    int accumulated = 0;
+        int accumulated = 0;
 
-    while (accumulated < maxIncome)
-    {
-        // 건물이 파괴되었으면 코루틴 종료
-        if (buildingTransform == null)
-            yield break;
+        while (accumulated < maxIncome)
+        {
+            // 건물이 파괴되었으면 코루틴 종료
+            if (buildingTransform == null)
+                yield break;
 
-        yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(5f);
 
-        // 건물이 파괴되었거나 렌더러가 없으면 코루틴 종료
-        if (buildingTransform == null)
-            yield break;
+            // 건물이 파괴되었거나 렌더러가 없으면 코루틴 종료
+            if (buildingTransform == null)
+                yield break;
 
-        Renderer rend = buildingTransform.GetComponentInChildren<Renderer>();
-        if (rend == null) yield break; // 건물 렌더러가 없으면 종료
+            Renderer rend = buildingTransform.GetComponentInChildren<Renderer>();
+            if (rend == null) yield break; // 건물 렌더러가 없으면 종료
 
-        int remaining = maxIncome - accumulated;
-        int income = Mathf.Min(amount, remaining);
-        accumulated += income;
+            int remaining = maxIncome - accumulated;
+            int income = Mathf.Min(amount, remaining);
+            accumulated += income;
 
-        GameObject coin = Instantiate(coinUIPrefab);
-        coin.GetComponent<CoinUIController>().incomeAmount = income;
+            GameObject coin = Instantiate(coinUIPrefab);
+            coin.GetComponent<CoinUIController>().incomeAmount = income;
 
-        float height = rend.bounds.size.y;
-        Vector3 spawnPos = rend.bounds.center + new Vector3(0, height / 2f + 3f, 0);
+            float height = rend.bounds.size.y;
+            Vector3 spawnPos = rend.bounds.center + new Vector3(0, height / 2f + 3f, 0);
 
-        Vector3 cameraDir = (spawnPos - Camera.main.transform.position).normalized;
-        spawnPos += cameraDir * 0.3f;
+            Vector3 cameraDir = (spawnPos - Camera.main.transform.position).normalized;
+            spawnPos += cameraDir * 0.3f;
 
-        coin.GetComponent<CoinUIController>().SetWorldPosition(spawnPos);
-    }
+            coin.GetComponent<CoinUIController>().SetWorldPosition(spawnPos);
+        }
     }
 
     float GetBuildingHeight(Transform buildingTransform)
@@ -141,6 +142,12 @@ public class GameManager : MonoBehaviour
         {
             emojiController.ShowEmoji(satisfaction);
         }
+
+        // CitizenGroupController에 만족도 전달
+        if (citizenGroupController != null)
+        {
+            citizenGroupController.UpdateSatisfaction(GetSatisfactionValue());
+        }
     }
 
     public string GetSatisfactionLevel()
@@ -150,5 +157,15 @@ public class GameManager : MonoBehaviour
         else if (co2 < 700) return "보통";
         else if (co2 < 900) return "나쁨";
         else return "매우 나쁨";
+    }
+
+    // 0.1 ~ 1.0 사이 만족도 반환
+    public float GetSatisfactionValue()
+    {
+        if (co2 < 200) return 1f;
+        else if (co2 < 400) return 0.8f;
+        else if (co2 < 700) return 0.5f;
+        else if (co2 < 900) return 0.3f;
+        else return 0.1f;
     }
 }
