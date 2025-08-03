@@ -12824,7 +12824,7 @@ MonoBehaviour:
   budgetText: {fileID: 305414313}
   co2Text: {fileID: 273048955}
   satisfactionText: {fileID: 134240652}
-  coinUIPrefab: {fileID: 4708221110989907437, guid: 7cb96573f3e5d40398ecf2263b058174, type: 3}
+  coinUIPrefab: {fileID: 7388861841148158984, guid: 4d15a72cf704b4e65aca72124f8e1db0, type: 3}
   uiCanvas: {fileID: 700348016}
   emojiController: {fileID: 2059831101}
 --- !u!4 &1132717832

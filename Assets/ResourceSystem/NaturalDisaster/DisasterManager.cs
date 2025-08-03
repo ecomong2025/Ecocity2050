@@ -71,7 +71,10 @@ public class DisasterManager : MonoBehaviour
         GameObject buildingToDestroy = tilesWithBuildings[index];
 
         Debug.Log($"🚨 {selectedDisaster} 발생! {buildingToDestroy.name} 건물이 파괴됩니다...");
-        
+
+        // 재난 발생 시 수입 코루틴 중지
+        GameManager.Instance.StopIncomeForBuilding(buildingToDestroy.transform);
+
         StartCoroutine(BlinkAndDestroy(buildingToDestroy, 2f, 6));
     }
 
@@ -81,13 +84,11 @@ public class DisasterManager : MonoBehaviour
 
         for (int i = 0; i < blinkCount; i++)
         {
-            // 껐다가
             foreach (Renderer r in renderers)
                 r.enabled = false;
 
             yield return new WaitForSeconds(duration / (blinkCount * 2));
 
-            // 켰다가
             foreach (Renderer r in renderers)
                 r.enabled = true;
 
