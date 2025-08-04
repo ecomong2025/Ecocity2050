@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/ResourceSystem/News.meta
 guid: 6ca8c72e13bfb4f6d95e020642ed4e32
-========
-guid: 09c328ca814f0dc418fdf451aaae7887
->>>>>>>> main:Assets/Scene.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
