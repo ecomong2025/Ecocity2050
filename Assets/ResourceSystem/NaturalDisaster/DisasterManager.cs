@@ -75,6 +75,9 @@ public class DisasterManager : MonoBehaviour
         // 재난 발생 시 수입 코루틴 중지
         GameManager.Instance.StopIncomeForBuilding(buildingToDestroy.transform);
 
+        // 뉴스 패널에 재난 뉴스 출력
+        GPTNewsGenerator.Instance.ShowDisasterNews(selectedDisaster, buildingToDestroy.name);
+
         StartCoroutine(BlinkAndDestroy(buildingToDestroy, 2f, 6));
     }
 
