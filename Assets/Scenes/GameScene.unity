@@ -12827,6 +12827,7 @@ MonoBehaviour:
   coinUIPrefab: {fileID: 7388861841148158984, guid: 4d15a72cf704b4e65aca72124f8e1db0, type: 3}
   uiCanvas: {fileID: 700348016}
   emojiController: {fileID: 2059831101}
+  citizenGroupController: {fileID: 0}
 --- !u!4 &1132717832
 Transform:
   m_ObjectHideFlags: 0
