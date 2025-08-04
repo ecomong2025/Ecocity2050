@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     public EmojiController emojiController;
     public CitizenGroupController citizenGroupController;
 
+    // 건물별 수입 코루틴 관리용 딕셔너리
+    private Dictionary<Transform, Coroutine> incomeCoroutines = new Dictionary<Transform, Coroutine>();
+
     private void Awake()
     {
         Instance = this;
@@ -46,10 +49,24 @@ public class GameManager : MonoBehaviour
         if (co2PerSecond > 0 && maxCO2Change > 0)
             StartCoroutine(IncreaseCO2OverTime(co2PerSecond, maxCO2Change));
 
+        // 수입 코루틴을 관리
         if (incomePer5Min > 0 && buildingTransform != null)
-            StartCoroutine(GenerateIncomePeriodically(incomePer5Min, maxIncomeAmount, buildingTransform));
+        {
+            Coroutine c = StartCoroutine(GenerateIncomePeriodically(incomePer5Min, maxIncomeAmount, buildingTransform));
+            incomeCoroutines[buildingTransform] = c;
+        }
 
         UpdateUI();
+    }
+
+    // 건물 파괴 시 수입 코루틴 중지
+    public void StopIncomeForBuilding(Transform buildingTransform)
+    {
+        if (incomeCoroutines.ContainsKey(buildingTransform))
+        {
+            StopCoroutine(incomeCoroutines[buildingTransform]);
+            incomeCoroutines.Remove(buildingTransform);
+        }
     }
 
     IEnumerator IncreaseCO2OverTime(int perSecond, int maxAmount)
@@ -57,7 +74,7 @@ public class GameManager : MonoBehaviour
         int accumulated = 0;
         while (accumulated < maxAmount)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(300f);
             int delta = Mathf.Min(perSecond, maxAmount - accumulated);
             co2 += delta;
             accumulated += delta;
@@ -71,7 +88,16 @@ public class GameManager : MonoBehaviour
 
         while (accumulated < maxIncome)
         {
+            if (buildingTransform == null)
+                yield break;
+
             yield return new WaitForSeconds(300f); // 5분 간격
+
+            if (buildingTransform == null)
+                yield break;
+
+            Renderer rend = buildingTransform.GetComponentInChildren<Renderer>();
+            if (rend == null) yield break;
 
             int remaining = maxIncome - accumulated;
             int income = Mathf.Min(amount, remaining);
@@ -80,7 +106,6 @@ public class GameManager : MonoBehaviour
             GameObject coin = Instantiate(coinUIPrefab);
             coin.GetComponent<CoinUIController>().incomeAmount = income;
 
-            Renderer rend = buildingTransform.GetComponentInChildren<Renderer>();
             float height = rend.bounds.size.y;
             Vector3 spawnPos = rend.bounds.center + new Vector3(0, height / 2f + 2.8f, 0);
 
@@ -125,7 +150,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 만족도 문자열 반환
     public string GetSatisfactionLevel()
     {
         if (co2 < 200) return "매우 좋음";
@@ -135,7 +159,6 @@ public class GameManager : MonoBehaviour
         else return "매우 나쁨";
     }
 
-    // 0.1 ~ 1.0 사이 만족도 반환
     public float GetSatisfactionValue()
     {
         if (co2 < 200) return 1f;
