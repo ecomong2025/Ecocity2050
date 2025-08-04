@@ -13,12 +13,14 @@ public class GameManager : MonoBehaviour
     public TMP_Text budgetText;
     public TMP_Text co2Text;
     public TMP_Text satisfactionText;
+
     public GameObject coinUIPrefab;
     public Canvas uiCanvas;
+
     public EmojiController emojiController;
     public CitizenGroupController citizenGroupController;
 
-    // 건물별 수입 코루틴 관리용 딕셔너리 추가
+    // 건물별 수입 코루틴 관리용 딕셔너리
     private Dictionary<Transform, Coroutine> incomeCoroutines = new Dictionary<Transform, Coroutine>();
 
     private void Awake()
@@ -57,7 +59,7 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
-    // 건물 파괴 시 수입 코루틴 중지 메서드 추가
+    // 건물 파괴 시 수입 코루틴 중지
     public void StopIncomeForBuilding(Transform buildingTransform)
     {
         if (incomeCoroutines.ContainsKey(buildingTransform))
@@ -86,18 +88,16 @@ public class GameManager : MonoBehaviour
 
         while (accumulated < maxIncome)
         {
-            // 건물이 파괴되었으면 코루틴 종료
             if (buildingTransform == null)
                 yield break;
 
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(300f); // 5분 간격
 
-            // 건물이 파괴되었거나 렌더러가 없으면 코루틴 종료
             if (buildingTransform == null)
                 yield break;
 
             Renderer rend = buildingTransform.GetComponentInChildren<Renderer>();
-            if (rend == null) yield break; // 건물 렌더러가 없으면 종료
+            if (rend == null) yield break;
 
             int remaining = maxIncome - accumulated;
             int income = Mathf.Min(amount, remaining);
@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
             coin.GetComponent<CoinUIController>().incomeAmount = income;
 
             float height = rend.bounds.size.y;
-            Vector3 spawnPos = rend.bounds.center + new Vector3(0, height / 2f + 3f, 0);
+            Vector3 spawnPos = rend.bounds.center + new Vector3(0, height / 2f + 2.8f, 0);
 
             Vector3 cameraDir = (spawnPos - Camera.main.transform.position).normalized;
             spawnPos += cameraDir * 0.3f;
@@ -135,6 +135,7 @@ public class GameManager : MonoBehaviour
     {
         budgetText.text = $"{budget}";
         co2Text.text = $"{co2}";
+
         string satisfaction = GetSatisfactionLevel();
         satisfactionText.text = satisfaction;
 
@@ -143,7 +144,6 @@ public class GameManager : MonoBehaviour
             emojiController.ShowEmoji(satisfaction);
         }
 
-        // CitizenGroupController에 만족도 전달
         if (citizenGroupController != null)
         {
             citizenGroupController.UpdateSatisfaction(GetSatisfactionValue());
@@ -159,7 +159,6 @@ public class GameManager : MonoBehaviour
         else return "매우 나쁨";
     }
 
-    // 0.1 ~ 1.0 사이 만족도 반환
     public float GetSatisfactionValue()
     {
         if (co2 < 200) return 1f;
