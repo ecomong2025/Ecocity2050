@@ -9,7 +9,7 @@ public class CitizenWanderer : MonoBehaviour
     public float zMax = 1.8f;
     public float startOffsetRange = 2f;
 
-    private Rigidbody rb;  
+    private Rigidbody rb;
     private Animator animator;
     private float timer;
     private bool isWalking = false;

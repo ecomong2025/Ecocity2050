@@ -8,7 +8,7 @@ public class CitizenGroupController : MonoBehaviour
     void Start()
     {
         // Ã³À½ ½Ã¹Î 
-        currentVisibleCount = 5;
+        currentVisibleCount = 4;
 
         for (int i = 0; i < citizens.Length; i++)
         {
