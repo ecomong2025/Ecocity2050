@@ -51,4 +51,3 @@ ExportedObj/
 *.env
 *.env.*
 Assets/Resources/api_key.json
-*.json
