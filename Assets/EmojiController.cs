@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class EmojiController : MonoBehaviour
 {
@@ -10,31 +10,31 @@ public class EmojiController : MonoBehaviour
 
     public void ShowEmoji(string satisfaction)
     {
-        // ¸ğµç ÀÌ¸ğÁö ºñÈ°¼ºÈ­
+        // ëª¨ë“  ì´ëª¨ì§€ ë¹„í™œì„±í™”
         VeryLoveIcon.SetActive(false);
         VeryGoodIcon.SetActive(false);
         GoodIcon.SetActive(false);
         BadIcon.SetActive(false);
         VeryBadIcon.SetActive(false);
 
-        // Á¶°Ç¿¡ µû¶ó ÇÏ³ª¸¸ È°¼ºÈ­
-        if (satisfaction == "¸Å¿ì ÁÁÀ½")
+        // ì¡°ê±´ì— ë”°ë¼ í•˜ë‚˜ë§Œ í™œì„±í™”
+        if (satisfaction == "ë§¤ìš° ì¢‹ìŒ")
         {
             VeryLoveIcon.SetActive(true);
         }
-        else if (satisfaction == "ÁÁÀ½")
+        else if (satisfaction == "ì¢‹ìŒ")
         {
             VeryGoodIcon.SetActive(true);
         }
-        else if (satisfaction == "º¸Åë")
+        else if (satisfaction == "ë³´í†µ")
         {
             GoodIcon.SetActive(true);
         }
-        else if (satisfaction == "³ª»İ")
+        else if (satisfaction == "ë‚˜ì¨")
         {
             BadIcon.SetActive(true);
         }
-        else if (satisfaction == "¸Å¿ì ³ª»İ")
+        else if (satisfaction == "ë§¤ìš° ë‚˜ì¨")
         {
             VeryBadIcon.SetActive(true);
         }
