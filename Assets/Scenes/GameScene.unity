@@ -543,7 +543,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a56921a7eaab77d47b5a6dd92efa7129, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  apiKey: 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
   apiUrl: https://api.openai.com/v1/chat/completions
   model: gpt-3.5-turbo
   temperature: 0.7
@@ -23054,7 +23053,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.0000076293945}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1615920844
@@ -25903,7 +25902,7 @@ RectTransform:
   m_GameObject: {fileID: 1793797644}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1657709013}
@@ -25913,7 +25912,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 43, y: -53}
   m_SizeDelta: {x: 600, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1793797646
