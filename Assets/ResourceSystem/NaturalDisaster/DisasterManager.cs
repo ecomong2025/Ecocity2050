@@ -51,16 +51,10 @@ public class DisasterManager : MonoBehaviour
 
         foreach (GameObject tile in tiles)
         {
-            if (tile.transform.childCount > 0)
+            BuildingData buildingData = FindBuildingDataInChildren(tile.transform);
+            if (buildingData != null)
             {
-                foreach (Transform child in tile.transform)
-                {
-                    if (child.GetComponent<BuildingData>() != null)
-                    {
-                        tilesWithBuildings.Add(child.gameObject);
-                        break;
-                    }
-                }
+                tilesWithBuildings.Add(buildingData.gameObject);
             }
         }
 
@@ -77,7 +71,17 @@ public class DisasterManager : MonoBehaviour
         GameObject buildingToDestroy = tilesWithBuildings[index];
 
         Debug.Log($"🚨 {selectedDisaster} 발생! {buildingToDestroy.name} 건물이 파괴됩니다...");
+<<<<<<< HEAD
         
+=======
+
+        // 재난 발생 시 수입 코루틴 중지
+        GameManager.Instance.StopIncomeForBuilding(buildingToDestroy.transform);
+
+        // 뉴스 패널에 재난 뉴스 출력
+        GPTNewsGenerator.Instance.ShowDisasterNews(selectedDisaster, buildingToDestroy.name);
+
+>>>>>>> dev/merge
         StartCoroutine(BlinkAndDestroy(buildingToDestroy, 2f, 6));
     }
 
@@ -87,13 +91,19 @@ public class DisasterManager : MonoBehaviour
 
         for (int i = 0; i < blinkCount; i++)
         {
+<<<<<<< HEAD
             // 껐다가
+=======
+>>>>>>> dev/merge
             foreach (Renderer r in renderers)
                 r.enabled = false;
 
             yield return new WaitForSeconds(duration / (blinkCount * 2));
 
+<<<<<<< HEAD
             // 켰다가
+=======
+>>>>>>> dev/merge
             foreach (Renderer r in renderers)
                 r.enabled = true;
 
@@ -101,5 +111,25 @@ public class DisasterManager : MonoBehaviour
         }
 
         Destroy(building);
+<<<<<<< HEAD
+=======
+    }
+
+    // 아래 메서드를 DisasterManager 클래스 내에 추가
+    BuildingData FindBuildingDataInChildren(Transform parent)
+    {
+        foreach (Transform child in parent)
+        {
+            BuildingData data = child.GetComponent<BuildingData>();
+            if (data != null)
+                return data;
+
+            // 자식의 자식도 검사
+            BuildingData nested = FindBuildingDataInChildren(child);
+            if (nested != null)
+                return nested;
+        }
+        return null;
+>>>>>>> dev/merge
     }
 }
