@@ -1,11 +1,11 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class BuildingHoverManager : MonoBehaviour
 {
-    public Transform contentRoot; // ScrollView¿« Content
+    public Transform contentRoot; // ScrollViewÏùò Content
     private readonly Dictionary<GameObject, GameObject> infoPanels = new();
 
     void Start()
@@ -14,17 +14,17 @@ public class BuildingHoverManager : MonoBehaviour
         {
             GameObject buttonObj = child.gameObject;
 
-            // BuildingInfoPanel √£±‚
+            // BuildingInfoPanel Ï∞æÍ∏∞
             Transform infoPanelTransform = buttonObj.transform.Find("BuildingInfoPanel");
             if (infoPanelTransform == null)
                 continue;
 
             GameObject infoPanel = infoPanelTransform.gameObject;
-            infoPanel.SetActive(false); // √ ±‚ø°¥¬ ≤®µŒ±‚
+            infoPanel.SetActive(false); // Ï¥àÍ∏∞ÏóêÎäî Í∫ºÎëêÍ∏∞
 
             infoPanels[buttonObj] = infoPanel;
 
-            // EventTrigger √ﬂ∞°
+            // EventTrigger Ï∂îÍ∞Ä
             EventTrigger trigger = buttonObj.GetComponent<EventTrigger>();
             if (trigger == null)
                 trigger = buttonObj.AddComponent<EventTrigger>();
