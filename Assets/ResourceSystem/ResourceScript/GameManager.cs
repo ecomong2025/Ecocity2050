@@ -86,10 +86,16 @@ public class GameManager : MonoBehaviour
     {
         int accumulated = 0;
 
+<<<<<<< HEAD
+    while (accumulated < maxIncome)
+    {
+        yield return new WaitForSeconds(300f); // 예산 발생 시간
+=======
         while (accumulated < maxIncome)
         {
             if (buildingTransform == null)
                 yield break;
+>>>>>>> dev/merge
 
             yield return new WaitForSeconds(300f); // 5분 간격
 
