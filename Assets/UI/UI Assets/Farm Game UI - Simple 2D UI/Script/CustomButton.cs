@@ -68,6 +68,6 @@ namespace FGUIStarter
                 ApplyNormalVisual();
             }
         }
+    }
 
     }
-}
