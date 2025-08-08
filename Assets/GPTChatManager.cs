@@ -2,6 +2,13 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using System;
+using System.IO;
+
+[System.Serializable]
+public class APIConfig
+{
+    public string openai_api_key;
+}
 
 [System.Serializable]
 public class GPTMessage
@@ -34,7 +41,7 @@ public class GPTChoice
 public class GPTChatManager : MonoBehaviour
 {
     [Header("GPT Settings")]
-    [SerializeField] private string apiKey = "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";
+    private string apiKey;
     [SerializeField] private string apiUrl = "https://api.openai.com/v1/chat/completions";
     [SerializeField] private string model = "gpt-3.5-turbo";
     [SerializeField] private float temperature = 0.7f;
@@ -45,8 +52,33 @@ public class GPTChatManager : MonoBehaviour
 
     void Start()
     {
-        // 시스템 메시지로 역할 설정
+        LoadAPIKey();
         SetupSystemMessage();
+    }
+
+    private void LoadAPIKey()
+    {
+        TextAsset configFile = Resources.Load<TextAsset>("api_key");
+
+        if (configFile != null)
+        {
+            try
+            {
+                APIConfig config = JsonUtility.FromJson<APIConfig>(configFile.text);
+                apiKey = config.openai_api_key;
+                Debug.Log("[시스템] API 키가 성공적으로 로드되었습니다.");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"API 설정 파일 로드 실패: {e.Message}");
+                apiKey = "";
+            }
+        }
+        else
+        {
+            Debug.LogError("API 설정 파일을 찾을 수 없습니다: Resources/api_key.json");
+            apiKey = "";
+        }
     }
 
     private void SetupSystemMessage()
@@ -87,6 +119,13 @@ public class GPTChatManager : MonoBehaviour
 
     public void SendMessageToGPT(string userMessage, System.Action<string> onResponse)
     {
+        if (string.IsNullOrEmpty(apiKey))
+        {
+            Debug.LogError("API 키가 설정되지 않았습니다.");
+            onResponse?.Invoke("API 키가 설정되지 않아 조언을 제공할 수 없습니다.");
+            return;
+        }
+
         // 콘솔에 사용자 메시지 출력
         Debug.Log($"[사용자 메시지] {userMessage}");
 
@@ -128,7 +167,7 @@ public class GPTChatManager : MonoBehaviour
             webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
             webRequest.downloadHandler = new DownloadHandlerBuffer();
 
-            webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("Content-Type", "application/json; charset=utf-8");
             webRequest.SetRequestHeader("Authorization", $"Bearer {apiKey}");
 
             yield return webRequest.SendWebRequest();
