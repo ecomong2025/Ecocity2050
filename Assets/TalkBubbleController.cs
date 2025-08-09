@@ -10,7 +10,7 @@ public class TalkBubbleController : MonoBehaviour
     private GameObject currentBubble;
     private bool isShowingBubble = false;
 
-    // CO2 ∑π∫ß∫∞ ≥Î√‚ ªÛ≈¬
+    // CO2 Î†àÎ≤®Î≥Ñ ÎÖ∏Ï∂ú ÏÉÅÌÉú
     private bool shown900 = false;
     private bool shown800 = false;
     private bool shown700 = false;
@@ -24,7 +24,7 @@ public class TalkBubbleController : MonoBehaviour
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
-        lastCo2Level = gameManager.co2; // √ ±‚∞™ ºº∆√
+        lastCo2Level = gameManager.co2; // Ï¥àÍ∏∞Í∞í ÏÑ∏ÌåÖ
     }
 
     void Update()
@@ -36,31 +36,31 @@ public class TalkBubbleController : MonoBehaviour
             if (co2 >= 900 && lastCo2Level < 900 && !shown900)
             {
                 shown900 = true;
-                ShowBubble("¿Ã¥Î∑Œ∏È º˚ Ω¨±‚µµ »˚µÈ∞⁄æÓø‰..\næ∆¿ÃµÈ ∞«∞≠¿Ã ∞∆¡§µ≈ø‰.");
+                ShowBubble("Ïù¥ÎåÄÎ°úÎ©¥ Ïà® Ïâ¨Í∏∞ÎèÑ ÌûòÎì§Í≤†Ïñ¥Ïöî..\nÏïÑÏù¥Îì§ Í±¥Í∞ïÏù¥ Í±±Ï†ïÎèºÏöî.");
             }
             else if (co2 >= 800 && lastCo2Level < 800 && !shown800)
             {
                 shown800 = true;
-                ShowBubble("∞¯±‚∞° ¡°¡° ≈π«ÿ¡ˆ¥¬ ∞Õ ∞∞æ∆ø‰.\n»Ø∞Ê¿Ã ≥™∫¸¡ˆ∞Ì ¿÷æÓø‰");
+                ShowBubble("Í≥µÍ∏∞Í∞Ä Ï†êÏ†ê ÌÉÅÌï¥ÏßÄÎäî Í≤É Í∞ôÏïÑÏöî.\nÌôòÍ≤ΩÏù¥ ÎÇòÎπ†ÏßÄÍ≥† ÏûàÏñ¥Ïöî");
             }
             else if (co2 >= 700 && lastCo2Level < 700 && !shown700)
             {
                 shown700 = true;
-                ShowBubble("ø‰¡Ú ∏”∏Æ∞° æ∆∆ƒø‰..\n∞¯±‚ ∂ßπÆ¿œ±Óø‰?");
+                ShowBubble("ÏöîÏ¶ò Î®∏Î¶¨Í∞Ä ÏïÑÌååÏöî..\nÍ≥µÍ∏∞ ÎïåÎ¨∏ÏùºÍπåÏöî?");
             }
             else if (co2 >= 200 && lastCo2Level < 500 && !shown500)
             {
                 shown500 = true;
-                ShowBubble("¿Ã¥Î∑Œ ±¶¬˙¿∫ ∞…±Óø‰?\n¥Î√•¿Ã « ø‰«ÿø‰.");
+                ShowBubble("Ïù¥ÎåÄÎ°ú Í¥úÏ∞ÆÏùÄ Í±∏ÍπåÏöî?\nÎåÄÏ±ÖÏù¥ ÌïÑÏöîÌï¥Ïöî.");
             }
             else if (co2 >= 10 && lastCo2Level < 200 && !shown200)
             {
                 shown200 = true;
-                ShowBubble("ø‰¡Ú ∞¯±‚∞° ≥ π´ ¡¡æ∆ø‰!\n¿Ã µµΩ√∞° ¿⁄∂˚Ω∫∑Øøˆø‰.");
+                ShowBubble("ÏöîÏ¶ò Í≥µÍ∏∞Í∞Ä ÎÑàÎ¨¥ Ï¢ãÏïÑÏöî!\nÏù¥ ÎèÑÏãúÍ∞Ä ÏûêÎûëÏä§Îü¨ÏõåÏöî.");
             }
         }
 
-        // «œ∞≠ Ω√ ±∏∞£ ∏Æº¬
+        // ÌïòÍ∞ï Ïãú Íµ¨Í∞Ñ Î¶¨ÏÖã
         if (co2 < 900 && shown900) shown900 = false;
         if (co2 < 800 && shown800) shown800 = false;
         if (co2 < 700 && shown700) shown700 = false;

@@ -66,17 +66,17 @@ public class GPTChatManager : MonoBehaviour
             {
                 APIConfig config = JsonUtility.FromJson<APIConfig>(configFile.text);
                 apiKey = config.openai_api_key;
-                Debug.Log("[½Ã½ºÅÛ] API Å°°¡ ¼º°øÀûÀ¸·Î ·ÎµåµÇ¾ú½À´Ï´Ù.");
+                Debug.Log("[ì‹œìŠ¤í…œ] API í‚¤ê°€ ì„±ê³µì ìœ¼ë¡œ ë¡œë“œë˜ì—ˆìŠµë‹ˆë‹¤.");
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"API ¼³Á¤ ÆÄÀÏ ·Îµå ½ÇÆĞ: {e.Message}");
+                Debug.LogError($"API ì„¤ì • íŒŒì¼ ë¡œë“œ ì‹¤íŒ¨: {e.Message}");
                 apiKey = "";
             }
         }
         else
         {
-            Debug.LogError("API ¼³Á¤ ÆÄÀÏÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù: Resources/api_key.json");
+            Debug.LogError("API ì„¤ì • íŒŒì¼ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: Resources/api_key.json");
             apiKey = "";
         }
     }
@@ -85,21 +85,21 @@ public class GPTChatManager : MonoBehaviour
     {
         string gameState = GetCurrentGameState();
         string systemMessage = $@"
-´ç½ÅÀº µµ½Ã °Ç¼³ °ÔÀÓÀÇ Á¶¾ğÀÚÀÔ´Ï´Ù. ÇÃ·¹ÀÌ¾î¿¡°Ô °ÔÀÓ ³» »óÈ²¿¡ ¸Â´Â ±¸Ã¼ÀûÀÌ°í ½Ç¿ëÀûÀÎ Á¶¾ğÀ» Á¦°øÇØÁÖ¼¼¿ä.
+ë‹¹ì‹ ì€ ë„ì‹œ ê±´ì„¤ ê²Œì„ì˜ ì¡°ì–¸ìì…ë‹ˆë‹¤. í”Œë ˆì´ì–´ì—ê²Œ ê²Œì„ ë‚´ ìƒí™©ì— ë§ëŠ” êµ¬ì²´ì ì´ê³  ì‹¤ìš©ì ì¸ ì¡°ì–¸ì„ ì œê³µí•´ì£¼ì„¸ìš”.
 
-ÇöÀç °ÔÀÓ »óÈ²:
-- ¿¹»ê: {GameManager.Instance.budget}¿ø
-- CO2 ¹èÃâ·®: {GameManager.Instance.co2}
-- ½Ã¹Î ¸¸Á·µµ: {GameManager.Instance.GetSatisfactionLevel()}
+í˜„ì¬ ê²Œì„ ìƒí™©:
+- ì˜ˆì‚°: {GameManager.Instance.budget}ì›
+- CO2 ë°°ì¶œëŸ‰: {GameManager.Instance.co2}
+- ì‹œë¯¼ ë§Œì¡±ë„: {GameManager.Instance.GetSatisfactionLevel()}
 
-¿ªÇÒ:
-1. ÇÃ·¹ÀÌ¾îÀÇ Áú¹®¿¡ ´ëÇØ ÇöÀç °ÔÀÓ »óÈ²À» °í·ÁÇÑ ±¸Ã¼ÀûÀÎ Á¶¾ğ Á¦°ø
-2. CO2 ¹èÃâ·®ÀÌ ³ôÀ» ¶§´Â È¯°æ °³¼± ¹æ¾È Á¦½Ã (°ø¿ø, Ä£È¯°æ °Ç¹° µî)
-3. ¿¹»êÀÌ ºÎÁ·ÇÒ ¶§´Â ¼öÀÍ Ã¢Ãâ ¹æ¾È Á¦½Ã
-4. ½Ã¹Î ¸¸Á·µµ°¡ ³·À» ¶§´Â °³¼± ¹æ¾È Á¦½Ã
-5. °£°áÇÏ°í ÀÌÇØÇÏ±â ½¬¿î ´äº¯ Á¦°ø (200ÀÚ ³»¿Ü)
+ì—­í• :
+1. í”Œë ˆì´ì–´ì˜ ì§ˆë¬¸ì— ëŒ€í•´ í˜„ì¬ ê²Œì„ ìƒí™©ì„ ê³ ë ¤í•œ êµ¬ì²´ì ì¸ ì¡°ì–¸ ì œê³µ
+2. CO2 ë°°ì¶œëŸ‰ì´ ë†’ì„ ë•ŒëŠ” í™˜ê²½ ê°œì„  ë°©ì•ˆ ì œì‹œ (ê³µì›, ì¹œí™˜ê²½ ê±´ë¬¼ ë“±)
+3. ì˜ˆì‚°ì´ ë¶€ì¡±í•  ë•ŒëŠ” ìˆ˜ìµ ì°½ì¶œ ë°©ì•ˆ ì œì‹œ
+4. ì‹œë¯¼ ë§Œì¡±ë„ê°€ ë‚®ì„ ë•ŒëŠ” ê°œì„  ë°©ì•ˆ ì œì‹œ
+5. ê°„ê²°í•˜ê³  ì´í•´í•˜ê¸° ì‰¬ìš´ ë‹µë³€ ì œê³µ (200ì ë‚´ì™¸)
 
-´äº¯ ½ºÅ¸ÀÏ: Ä£±ÙÇÏ°í µµ¿òÀÌ µÇ´Â Á¶¾ğÀÚÃ³·³ ¸»ÇØÁÖ¼¼¿ä.
+ë‹µë³€ ìŠ¤íƒ€ì¼: ì¹œê·¼í•˜ê³  ë„ì›€ì´ ë˜ëŠ” ì¡°ì–¸ìì²˜ëŸ¼ ë§í•´ì£¼ì„¸ìš”.
 ";
 
         GPTMessage systemMsg = new GPTMessage
@@ -112,25 +112,25 @@ public class GPTChatManager : MonoBehaviour
 
     private string GetCurrentGameState()
     {
-        if (GameManager.Instance == null) return "°ÔÀÓ µ¥ÀÌÅÍ¸¦ ºÒ·¯¿Ã ¼ö ¾ø½À´Ï´Ù.";
+        if (GameManager.Instance == null) return "ê²Œì„ ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜¬ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.";
 
-        return $"¿¹»ê: {GameManager.Instance.budget}¿ø, CO2: {GameManager.Instance.co2}, ¸¸Á·µµ: {GameManager.Instance.GetSatisfactionLevel()}";
+        return $"ì˜ˆì‚°: {GameManager.Instance.budget}ì›, CO2: {GameManager.Instance.co2}, ë§Œì¡±ë„: {GameManager.Instance.GetSatisfactionLevel()}";
     }
 
     public void SendMessageToGPT(string userMessage, System.Action<string> onResponse)
     {
         if (string.IsNullOrEmpty(apiKey))
         {
-            Debug.LogError("API Å°°¡ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
-            onResponse?.Invoke("API Å°°¡ ¼³Á¤µÇÁö ¾Ê¾Æ Á¶¾ğÀ» Á¦°øÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError("API í‚¤ê°€ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+            onResponse?.Invoke("API í‚¤ê°€ ì„¤ì •ë˜ì§€ ì•Šì•„ ì¡°ì–¸ì„ ì œê³µí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // ÄÜ¼Ö¿¡ »ç¿ëÀÚ ¸Ş½ÃÁö Ãâ·Â
-        Debug.Log($"[»ç¿ëÀÚ ¸Ş½ÃÁö] {userMessage}");
+        // ì½˜ì†”ì— ì‚¬ìš©ì ë©”ì‹œì§€ ì¶œë ¥
+        Debug.Log($"[ì‚¬ìš©ì ë©”ì‹œì§€] {userMessage}");
 
-        // ÇöÀç °ÔÀÓ »óÅÂ¸¦ Æ÷ÇÔÇÑ ¸Ş½ÃÁö »ı¼º
-        string contextMessage = $"[ÇöÀç »óÈ²] {GetCurrentGameState()}\n\n[Áú¹®] {userMessage}";
+        // í˜„ì¬ ê²Œì„ ìƒíƒœë¥¼ í¬í•¨í•œ ë©”ì‹œì§€ ìƒì„±
+        string contextMessage = $"[í˜„ì¬ ìƒí™©] {GetCurrentGameState()}\n\n[ì§ˆë¬¸] {userMessage}";
 
         GPTMessage userMsg = new GPTMessage
         {
@@ -140,10 +140,10 @@ public class GPTChatManager : MonoBehaviour
 
         conversationHistory.Add(userMsg);
 
-        // ÃÖ±Ù 10°³ ¸Ş½ÃÁö¸¸ À¯Áö (API ºñ¿ë Àı¾à)
+        // ìµœê·¼ 10ê°œ ë©”ì‹œì§€ë§Œ ìœ ì§€ (API ë¹„ìš© ì ˆì•½)
         if (conversationHistory.Count > 10)
         {
-            conversationHistory.RemoveRange(1, conversationHistory.Count - 10); // ½Ã½ºÅÛ ¸Ş½ÃÁö´Â À¯Áö
+            conversationHistory.RemoveRange(1, conversationHistory.Count - 10); // ì‹œìŠ¤í…œ ë©”ì‹œì§€ëŠ” ìœ ì§€
         }
 
         StartCoroutine(CallGPTAPI(onResponse));
@@ -174,9 +174,9 @@ public class GPTChatManager : MonoBehaviour
 
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
-                string errorMessage = "ÁË¼ÛÇÕ´Ï´Ù. ÇöÀç Á¶¾ğÀ» Á¦°øÇÒ ¼ö ¾ø½À´Ï´Ù. Àá½Ã ÈÄ ´Ù½Ã ½ÃµµÇØÁÖ¼¼¿ä.";
+                string errorMessage = "ì£„ì†¡í•©ë‹ˆë‹¤. í˜„ì¬ ì¡°ì–¸ì„ ì œê³µí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤. ì ì‹œ í›„ ë‹¤ì‹œ ì‹œë„í•´ì£¼ì„¸ìš”.";
                 Debug.LogError($"GPT API Error: {webRequest.error}");
-                Debug.Log($"[GPT ÀÀ´ä] {errorMessage}");
+                Debug.Log($"[GPT ì‘ë‹µ] {errorMessage}");
                 onResponse?.Invoke(errorMessage);
             }
             else
@@ -186,10 +186,10 @@ public class GPTChatManager : MonoBehaviour
                     GPTResponse response = JsonUtility.FromJson<GPTResponse>(webRequest.downloadHandler.text);
                     string botMessage = response.choices[0].message.content.Trim();
 
-                    // ÄÜ¼Ö¿¡ GPT ÀÀ´ä Ãâ·Â
-                    Debug.Log($"[GPT ÀÀ´ä] {botMessage}");
+                    // ì½˜ì†”ì— GPT ì‘ë‹µ ì¶œë ¥
+                    Debug.Log($"[GPT ì‘ë‹µ] {botMessage}");
 
-                    // ÀÀ´äÀ» ´ëÈ­ ±â·Ï¿¡ Ãß°¡
+                    // ì‘ë‹µì„ ëŒ€í™” ê¸°ë¡ì— ì¶”ê°€
                     GPTMessage botMsg = new GPTMessage
                     {
                         role = "assistant",
@@ -201,9 +201,9 @@ public class GPTChatManager : MonoBehaviour
                 }
                 catch (System.Exception e)
                 {
-                    string parseErrorMessage = "ÀÀ´äÀ» Ã³¸®ÇÏ´Â Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù.";
+                    string parseErrorMessage = "ì‘ë‹µì„ ì²˜ë¦¬í•˜ëŠ” ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.";
                     Debug.LogError($"JSON Parse Error: {e.Message}");
-                    Debug.Log($"[GPT ÀÀ´ä] {parseErrorMessage}");
+                    Debug.Log($"[GPT ì‘ë‹µ] {parseErrorMessage}");
                     onResponse?.Invoke(parseErrorMessage);
                 }
             }
@@ -214,6 +214,6 @@ public class GPTChatManager : MonoBehaviour
     {
         conversationHistory.Clear();
         SetupSystemMessage();
-        Debug.Log("[½Ã½ºÅÛ] ´ëÈ­ ±â·ÏÀÌ ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù.");
+        Debug.Log("[ì‹œìŠ¤í…œ] ëŒ€í™” ê¸°ë¡ì´ ì´ˆê¸°í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
     }
 }

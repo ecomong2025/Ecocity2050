@@ -35,7 +35,7 @@ public class QuizTimer : MonoBehaviour
         {
             timerTxt.text = "0";
             isRunning = false;
-            OnTimeout?.Invoke(); // Ÿ�Ӿƿ� ó��
+            OnTimeout?.Invoke(); // 타임아웃 처리
         }
     }
 }
