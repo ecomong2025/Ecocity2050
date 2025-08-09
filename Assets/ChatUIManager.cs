@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
@@ -22,15 +22,15 @@ public class ChatUIManager : MonoBehaviour
     private GPTChatManager gptManager;
     void Start()
     {
-        // GPT ¸Å´ÏÀú ÂüÁ¶
+        // GPT ë§¤ë‹ˆì € ì°¸ì¡°
         gptManager = GetComponent<GPTChatManager>();
-        // ÃÊ±â ¼³Á¤
+        // ì´ˆê¸° ì„¤ì •
         chatPanel.SetActive(false);
-        // ÀÌº¥Æ® ¿¬°á
+        // ì´ë²¤íŠ¸ ì—°ê²°
         chatButton.onClick.AddListener(OpenChat);
         closeButton.onClick.AddListener(CloseChat);
         sendButton.onClick.AddListener(SendMessage);
-        // ¿£ÅÍÅ°·Î Àü¼Û
+        // ì—”í„°í‚¤ë¡œ ì „ì†¡
         inputField.onSubmit.AddListener(delegate { SendMessage(); });
     }
     public void OpenChat()
@@ -47,13 +47,13 @@ public class ChatUIManager : MonoBehaviour
     {
         string message = inputField.text.Trim();
         if (string.IsNullOrEmpty(message)) return;
-        // »ç¿ëÀÚ ¸Ş½ÃÁö Ãß°¡
+        // ì‚¬ìš©ì ë©”ì‹œì§€ ì¶”ê°€
         AddMessage(message, true);
-        // ÀÔ·ÂÃ¢ Å¬¸®¾î
+        // ì…ë ¥ì°½ í´ë¦¬ì–´
         inputField.text = "";
         inputField.Select();
         inputField.ActivateInputField();
-        // GPT API È£Ãâ
+        // GPT API í˜¸ì¶œ
         if (gptManager != null)
         {
             gptManager.SendMessageToGPT(message, OnGPTResponse);
@@ -63,14 +63,14 @@ public class ChatUIManager : MonoBehaviour
     {
         GameObject prefab = isUser ? userMessagePrefab : botMessagePrefab;
         GameObject messageObj = Instantiate(prefab, contentParent);
-        // ¸Ş½ÃÁö ÅØ½ºÆ® ¼³Á¤
+        // ë©”ì‹œì§€ í…ìŠ¤íŠ¸ ì„¤ì •
         TMP_Text messageText = messageObj.GetComponentInChildren<TMP_Text>();
         if (messageText != null)
         {
             messageText.text = message;
         }
         messages.Add(messageObj);
-        // ½ºÅ©·ÑÀ» ¸Ç ¾Æ·¡·Î
+        // ìŠ¤í¬ë¡¤ì„ ë§¨ ì•„ë˜ë¡œ
         StartCoroutine(ScrollToBottom());
     }
     private void OnGPTResponse(string response)
