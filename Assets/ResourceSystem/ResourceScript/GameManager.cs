@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
         int accumulated = 0;
         while (accumulated < maxAmount)
         {
-            yield return new WaitForSeconds(300f);
+            yield return new WaitForSeconds(5f);
             int delta = Mathf.Min(perSecond, maxAmount - accumulated);
             co2 += delta;
             accumulated += delta;
@@ -152,7 +152,7 @@ public class GameManager : MonoBehaviour
 
     public string GetSatisfactionLevel()
     {
-        if (co2 < 200) return "매우 좋음";
+        if (co2 < 200) return "나쁨"; //매우 좋음
         else if (co2 < 400) return "좋음";
         else if (co2 < 700) return "보통";
         else if (co2 < 900) return "나쁨";

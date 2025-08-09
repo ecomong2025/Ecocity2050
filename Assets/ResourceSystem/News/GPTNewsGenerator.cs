@@ -4,6 +4,7 @@ using TMPro;
 using System.Collections;
 using System.Text;
 using System;
+using System.IO;
 
 public class GPTNewsGenerator : MonoBehaviour
 {
@@ -24,21 +25,32 @@ public class GPTNewsGenerator : MonoBehaviour
 
     void Start()
     {
-        apiKey = LoadAPIKeyFromResources();
-        newsPanel.SetActive(false);
+        LoadAPIKey();
         StartCoroutine(CheckSatisfactionRoutine());
     }
 
-    private string LoadAPIKeyFromResources()
+    private void LoadAPIKey()
     {
-        TextAsset jsonFile = Resources.Load<TextAsset>("api_key");
-        if (jsonFile != null)
+        TextAsset configFile = Resources.Load<TextAsset>("api_key");
+        if (configFile != null)
         {
-            APIKeyWrapper wrapper = JsonUtility.FromJson<APIKeyWrapper>(jsonFile.text);
-            return wrapper.apiKey;
+            try
+            {
+                APIConfig config = JsonUtility.FromJson<APIConfig>(configFile.text);
+                apiKey = config.openai_api_key;
+                Debug.Log("[뉴스] API 키가 성공적으로 로드되었습니다.");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"API 설정 파일 로드 실패: {e.Message}");
+                apiKey = "";
+            }
         }
-        Debug.LogWarning("Resources 폴더 내 api_key.json 파일을 찾을 수 없습니다.");
-        return "";
+        else
+        {
+            Debug.LogError("API 설정 파일을 찾을 수 없습니다: Resources/api_key.json");
+            apiKey = "";
+        }
     }
 
     IEnumerator CheckSatisfactionRoutine()
@@ -55,7 +67,6 @@ public class GPTNewsGenerator : MonoBehaviour
             else if (currentSatisfaction != "나쁨" && currentSatisfaction != "매우 나쁨")
             {
                 lastSatisfaction = currentSatisfaction;
-                newsPanel.SetActive(false);
             }
             yield return new WaitForSeconds(1f);
         }
@@ -68,7 +79,6 @@ public class GPTNewsGenerator : MonoBehaviour
 
     IEnumerator RequestDisasterNews(string disasterType, string buildingName)
     {
-        // 프롬프트: 어떤 재난이 발생했고, 어떤 건물이 붕괴되었는지 명확하게 요청
         string prompt = $"재난 종류는 '{disasterType}'이고, 붕괴된 건물 이름은 '{buildingName}'입니다. 이 상황을 알리는 뉴스 제목(18자 이내)과 내용(30자 이내)을 각각 줄바꿈으로 구분해서 출력해줘.";
         string apiUrl = "https://api.openai.com/v1/chat/completions";
 
@@ -117,8 +127,7 @@ public class GPTNewsGenerator : MonoBehaviour
 
     IEnumerator RequestNews(string satisfaction)
     {
-        // 시민 만족도가 나빠진 원인(탄소 배출 증가)과 시민 이탈 상황을 강조하는 프롬프트로 수정
-        string prompt = $"탄소 배출량 증가로 시민 만족도가 '{satisfaction}'로 하락했습니다. 시민들이 도시를 떠나고 있습니다. 이 상황에 맞는 뉴스 제목(18자 이내)과 내용(30자 이내)을 생성해줘. 제목과 내용을 각각 줄바꿈으로 구분해서 출력해줘.";
+        string prompt = $"탄소 배출량 증가로 시민 만족도가 '{satisfaction}'로 하락했습니다. 이 상황에 맞는 뉴스 제목(18자 이내)과 내용(30자 이내)을 생성해줘. 제목과 내용을 각각 줄바꿈으로 구분해서 출력해줘.";
         string apiUrl = "https://api.openai.com/v1/chat/completions";
 
         string jsonBody = @"{
@@ -189,12 +198,6 @@ public class GPTNewsGenerator : MonoBehaviour
         }
     }
 
-    [Serializable]
-    public class APIKeyWrapper
-    {
-        public string apiKey;
-    }
-
     private string FixJson(string json)
     {
         int idx = json.IndexOf("\"choices\":");
@@ -208,7 +211,7 @@ public class GPTNewsGenerator : MonoBehaviour
     {
         RectTransform rect = newsPanel.GetComponent<RectTransform>();
         Vector2 hiddenPos = new Vector2(rect.anchoredPosition.x, 120);   // 화면 위쪽(숫자 조정)
-        Vector2 visiblePos = new Vector2(rect.anchoredPosition.x, -166); // 화면 내 위치
+        Vector2 visiblePos = new Vector2(rect.anchoredPosition.x, -120); // 화면 내 위치
 
         // 시작 위치: 숨김
         rect.anchoredPosition = hiddenPos;
