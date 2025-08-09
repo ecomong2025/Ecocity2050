@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class TileManager : MonoBehaviour
 {
-    public GameObject tilePrefab;  // ¿¡µğÅÍ¿¡¼­ ÇÒ´ç
-    public int maxSize = 10;       // ÃÖ´ë Å¸ÀÏ Å©±â
-    private int currentSize = 5;   // ÃÊ±â Å¸ÀÏ Å©±â
-    private GameObject[,] tiles;   // Å¸ÀÏ ÀúÀå ¹è¿­
+    public GameObject tilePrefab;  // ì—ë””í„°ì—ì„œ í• ë‹¹
+    public int maxSize = 10;       // ìµœëŒ€ íƒ€ì¼ í¬ê¸°
+    private int currentSize = 5;   // ì´ˆê¸° íƒ€ì¼ í¬ê¸°
+    private GameObject[,] tiles;   // íƒ€ì¼ ì €ì¥ ë°°ì—´
 
     void Start()
     {
@@ -38,7 +38,7 @@ public class TileManager : MonoBehaviour
                 tiles[x, y].SetActive(visible);
             }
         }
-        Debug.Log($"ÇöÀç º¸ÀÌ´Â Å¸ÀÏ Å©±â: {currentSize}x{currentSize}");
+        Debug.Log($"í˜„ì¬ ë³´ì´ëŠ” íƒ€ì¼ í¬ê¸°: {currentSize}x{currentSize}");
     }
 
     void Update()
@@ -55,7 +55,7 @@ public class TileManager : MonoBehaviour
         {
             currentSize++;
             UpdateTileVisibility();
-            Debug.Log($"Å¸ÀÏ Å©±â Áõ°¡: {currentSize}x{currentSize}");
+            Debug.Log($"íƒ€ì¼ í¬ê¸° ì¦ê°€: {currentSize}x{currentSize}");
         }
     }
 }

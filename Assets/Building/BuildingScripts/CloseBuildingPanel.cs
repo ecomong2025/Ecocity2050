@@ -12,7 +12,7 @@ public class CloseBuildingPanel : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("targetPanelÀÌ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù!");
+            Debug.LogWarning("targetPanelì´ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤!");
         }
     }
 }

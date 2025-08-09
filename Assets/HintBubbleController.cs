@@ -3,18 +3,18 @@ using TMPro;
 
 public class HintBubbleController : MonoBehaviour
 {
-    public GameObject bubbleObject;      // ¸»Ç³¼± ÀüÃ¼ ¿ÀºêÁ§Æ® (Panel µî)
-    public TMP_Text hintText;            // ¸»Ç³¼± ¾ÈÀÇ ÅØ½ºÆ®
-    public string hintMessage = "¿¡³ÊÁö¸¦ Àı¾àÇÏ¸é ½Ã¹Î ¸¸Á·µµ°¡ ¿Ã¶ó°¡¿ä!";
+    public GameObject bubbleObject;      // ë§í’ì„  ì „ì²´ ì˜¤ë¸Œì íŠ¸ (Panel ë“±)
+    public TMP_Text hintText;            // ë§í’ì„  ì•ˆì˜ í…ìŠ¤íŠ¸
+    public string hintMessage = "ì—ë„ˆì§€ë¥¼ ì ˆì•½í•˜ë©´ ì‹œë¯¼ ë§Œì¡±ë„ê°€ ì˜¬ë¼ê°€ìš”!";
 
     public void ToggleHint()
     {
         bool isActive = bubbleObject.activeSelf;
 
-        // »óÅÂ¸¦ ¹İ´ë·Î ÀüÈ¯
+        // ìƒíƒœë¥¼ ë°˜ëŒ€ë¡œ ì „í™˜
         bubbleObject.SetActive(!isActive);
 
-        // »õ·Î ÄÑÁú ¶§¸¸ ÅØ½ºÆ® °»½Å
+        // ìƒˆë¡œ ì¼œì§ˆ ë•Œë§Œ í…ìŠ¤íŠ¸ ê°±ì‹ 
         if (!isActive)
         {
             hintText.text = hintMessage;
