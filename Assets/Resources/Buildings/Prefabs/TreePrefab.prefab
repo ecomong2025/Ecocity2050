@@ -397,7 +397,7 @@ MonoBehaviour:
   cost: 10
   maxIncomeAmount: 0
   incomePer5Minutes: 0
-  instantCO2Change: 0
+  instantCO2Change: -20
   co2PerSecond: 0
   maxCO2Change: 0
 --- !u!1 &3736358747589992922

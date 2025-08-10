@@ -897,12 +897,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileWidth: 2
   tileHeight: 2
-  cost: 0
+  cost: 80
   maxIncomeAmount: 0
   incomePer5Minutes: 0
   instantCO2Change: 0
-  co2PerSecond: 0
-  maxCO2Change: 0
+  co2PerSecond: 1
+  maxCO2Change: 5
 --- !u!1 &6437793080000903937
 GameObject:
   m_ObjectHideFlags: 0
