@@ -894,7 +894,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileWidth: 1
-  tileHeight: 1
+  tileHeight: 2
   cost: 120
   maxIncomeAmount: 120
   incomePer5Minutes: 20
