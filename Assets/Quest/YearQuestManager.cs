@@ -15,7 +15,7 @@ public class YearQuestManager : MonoBehaviour
     [Header("Year Settings")]
     [SerializeField] private int currentYear = 2025;
     [SerializeField] private int minYear = 2025;
-    [SerializeField] private int maxYear = 2030; // 2045로 수정
+    [SerializeField] private int maxYear = 2030;
     [SerializeField] private int step = 5;
 
     [Header("Predefined Sets (인스펙터에서 2025~2030 세트 등록)")]
@@ -30,6 +30,10 @@ public class YearQuestManager : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else { Destroy(gameObject); return; }
+
+        if (questUI == null)
+            questUI = FindFirstObjectByType<QuestUITemplate>(); // Unity 2022+ 권장
+        // (구버전이면 FindObjectOfType<QuestUITemplate>())
     }
 
     void Start()
@@ -65,6 +69,7 @@ public class YearQuestManager : MonoBehaviour
         if (index < 0 || index > 3) return;
         if (completed[index]) return;
 
+        // 퀘스트 완료 조건 필요
         completed[index] = true; //퀘스트 완료면 true로 변경
         questUI?.UpdateCheck(index, true);
 
