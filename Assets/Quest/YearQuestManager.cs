@@ -20,6 +20,54 @@ public class YearGaugePiece
 
 public class YearQuestManager : MonoBehaviour
 {
+    // YearQuestManager 클래스 내부에 추가
+    [Header("Auto-complete Rules")]
+    [Tooltip("공장 설치 퀘스트가 위치한 인덱스 (0~3)")]
+    [SerializeField][Range(0, 3)] private int factoryQuestIndex = 0;
+
+    [Tooltip("무(無)배출 건물 설치 퀘스트 인덱스 (0~3)")]
+    [SerializeField][Range(0, 3)] private int zeroEmissionQuestIndex = 1;
+
+    /// <summary>
+    /// TileClickInstaller에서 설치 확정되면 호출
+    /// </summary>
+    public void OnBuildingInstalled(GameObject prefab, BuildingData data)
+    {
+        if (prefab == null || data == null) return;
+
+        bool isFactory = IsFactory(prefab, data);
+        bool isZero = IsZeroEmission(data);
+
+        // 디버그 로그로 흐름 확인
+        Debug.Log($"[YearQuestManager] Installed: {prefab.name}, isFactory={isFactory}, zero={isZero}");
+
+        if (isFactory) CompleteQuest(factoryQuestIndex);
+        if (isZero) CompleteQuest(zeroEmissionQuestIndex);
+    }
+
+    // === 판정 유틸 ===
+    // 가장 좋은 건 BuildingData에 명시 필드가 있는 것(예: data.isFactory)
+    private bool IsFactory(GameObject prefab, BuildingData data)
+    {
+        // BuildingData에 bool isFactory가 있다면 아래 주석을 사용하고 나머지는 삭제
+        // return data.isFactory;
+
+        // 없을 땐 Tag/이름으로 판정 (권장: 프리팹 Tag = "Factory")
+        if (prefab.CompareTag("Factory")) return true;
+
+        string n = prefab.name.ToLower();
+        return n.Contains("factory") || n.Contains("plant"); // 필요시 키워드 추가
+    }
+
+    private bool IsZeroEmission(BuildingData data)
+    {
+        // co2PerSecond, instantCO2Change, maxCO2Change 값이
+        // 0 또는 음수(-)면 무배출로 판정
+        return data.co2PerSecond <= 0f
+            && data.instantCO2Change <= 0f
+            && data.maxCO2Change <= 0f;
+    }
+
     public static YearQuestManager Instance;
 
     [Header("Year Settings")]

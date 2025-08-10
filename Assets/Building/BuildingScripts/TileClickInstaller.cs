@@ -231,7 +231,11 @@ public class TileClickInstaller : MonoBehaviour
             buildingData.maxIncomeAmount
         );
 
+        // ✅ 퀘스트 자동 체크 알림
+        YearQuestManager.Instance?.OnBuildingInstalled(selectedBuildingPrefab, buildingData);
+
         ClearPreviewAndPanel();
+
     }
 
     void CancelInstall()
