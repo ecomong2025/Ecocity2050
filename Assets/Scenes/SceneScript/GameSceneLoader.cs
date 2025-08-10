@@ -4,9 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class GameSceneLoader : MonoBehaviour
 {
-    public GameObject loadingPanel;
-    public GameObject mainMenuPanel;
-    public Slider loadingBar;
+    public Slider loadingBar;      // 로딩바
+    public GameObject startButton; // Start 버튼 오브젝트
     public float fakeLoadTime = 3f;
 
     private float timer = 0f;
@@ -14,8 +13,8 @@ public class GameSceneLoader : MonoBehaviour
 
     void Start()
     {
-        loadingPanel.SetActive(true);
-        mainMenuPanel.SetActive(false);
+        startButton.SetActive(false); // 처음엔 버튼 숨김
+        loadingBar.value = 0f;        // 로딩바 초기화
     }
 
     void Update()
@@ -28,16 +27,17 @@ public class GameSceneLoader : MonoBehaviour
             if (timer >= fakeLoadTime)
             {
                 isLoading = false;
-                loadingPanel.SetActive(false);
-                mainMenuPanel.SetActive(true);
+                loadingBar.value = 1f;      // 꽉 채우기
+                loadingBar.gameObject.SetActive(false); // 로딩바 숨김
+                startButton.SetActive(true); // 버튼 보이기
             }
         }
     }
 
-    // 버튼 이벤트용
+    // Start 버튼 클릭 시 실행
     public void OnStartGame()
     {
-        SceneManager.LoadScene("GameScene"); // 게임 씬 이름에 맞게 수정
+        SceneManager.LoadScene("GameScene"); // 씬 이름 맞춰 수정
     }
 
     public void OnExit()
