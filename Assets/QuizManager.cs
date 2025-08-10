@@ -59,11 +59,14 @@ public class QuizManager : MonoBehaviour
 
     void Start()
     {
+        gamePanel.SetActive(false);
+        quizMainPanel.SetActive(true);
+
         startPanel.SetActive(true);
         quizPanel.SetActive(false);
         quizResultPanel.SetActive(false);
 
-        LoadQuizData();
+    LoadQuizData();
         FilterQuizByYear(2025);
 
         hintBubble.SetActive(false);
@@ -78,11 +81,26 @@ public class QuizManager : MonoBehaviour
         quizTimer.OnTimeout = HandleTimeout;
     }
 
+    public void ResetQuizUI()
+    {
+        startPanel.SetActive(true);
+        quizPanel.SetActive(false);
+        quizResultPanel.SetActive(false);
+        correctPanel.SetActive(false);
+        incorrectPanel.SetActive(false);
+        hintBubble.SetActive(false);
+        isAnswered = false;
+        isHintVisible = false;
+    }
+
+
     public void OnGameStart()
     {
         startPanel.SetActive(false);
         quizPanel.SetActive(true);
         quizResultPanel.SetActive(false);
+        correctPanel.SetActive(false);
+        incorrectPanel.SetActive(false);
 
         currentQuizIndex = Random.Range(0, filteredQuizzes.Count);
         DisplayQuiz(currentQuizIndex);

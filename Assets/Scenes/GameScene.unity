@@ -19462,7 +19462,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 21300000, guid: adc49dbae5c812c46b38695f5410f740, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 61b3907e18250e64eb84087412c4c51a, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -25723,6 +25723,7 @@ MonoBehaviour:
   uiCanvas: {fileID: 700348016}
   emojiController: {fileID: 2059831101}
   citizenGroupController: {fileID: 0}
+  quizManager: {fileID: 1250567772}
 --- !u!4 &1132717832
 Transform:
   m_ObjectHideFlags: 0
@@ -28385,7 +28386,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 21300000, guid: adc49dbae5c812c46b38695f5410f740, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 61b3907e18250e64eb84087412c4c51a, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -29760,7 +29761,7 @@ RectTransform:
   - {fileID: 516313111}
   - {fileID: 1503801109}
   - {fileID: 2013222307}
-  m_Father: {fileID: 1757627802}
+  m_Father: {fileID: 1891359381}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -30669,7 +30670,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 21300000, guid: adc49dbae5c812c46b38695f5410f740, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 61b3907e18250e64eb84087412c4c51a, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -31150,7 +31151,7 @@ Transform:
   m_LocalScale: {x: 1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1825212081}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1332208106
 GameObject:
@@ -42194,8 +42195,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1250567771}
+  m_Children: []
   m_Father: {fileID: 1891359381}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1760325107
@@ -43569,7 +43569,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 21300000, guid: adc49dbae5c812c46b38695f5410f740, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 61b3907e18250e64eb84087412c4c51a, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -44486,7 +44486,6 @@ Transform:
   - {fileID: 2096422114}
   - {fileID: 410087041}
   - {fileID: 832575519}
-  - {fileID: 1330993325}
   - {fileID: 248433912}
   - {fileID: 1991517516}
   - {fileID: 1332208108}
@@ -45173,7 +45172,7 @@ GameObject:
   - component: {fileID: 1860195659}
   - component: {fileID: 1860195658}
   m_Layer: 5
-  m_Name: GameStart
+  m_Name: GameStartbtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45842,6 +45841,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1757627802}
+  - {fileID: 1250567771}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1895851516
@@ -52676,6 +52676,7 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1330993325}
   - {fileID: 1132717832}
   - {fileID: 1825212081}
   - {fileID: 1891359381}

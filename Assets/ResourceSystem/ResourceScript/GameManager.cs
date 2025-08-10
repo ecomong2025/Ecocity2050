@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     public EmojiController emojiController;
     public CitizenGroupController citizenGroupController;
 
+    public QuizManager quizManager;
+
     // 건물별 수입 코루틴 관리용 딕셔너리
     private Dictionary<Transform, Coroutine> incomeCoroutines = new Dictionary<Transform, Coroutine>();
 
@@ -175,6 +177,7 @@ public class GameManager : MonoBehaviour
     public void OpenQuiz()
     {
         gamePanel.SetActive(false);
+        quizManager.ResetQuizUI();
         quizMainPanel.SetActive(true);
     }
 
