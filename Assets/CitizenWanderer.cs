@@ -1,99 +1,336 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CitizenWanderer : MonoBehaviour
 {
-    public float moveSpeed = 1.5f;
-    public float walkDuration = 2f;
-    public float idleDuration = 1.5f;
+    [Header("Movement Settings")]
+    public float walkSpeed = 0.5f;
+    public float runSpeed = 1.0f;
+    public float walkDuration = 8f;
+    public float idleDuration = 4f;
+    public float rotationSpeed = 45f;
+
+    [Header("Area Bounds")]
     public float zMin = -1.8f;
     public float zMax = 1.8f;
-    public float startOffsetRange = 2f;
+    public float xMin = -8f;
+    public float xMax = 8f;
+    public float startOffsetRange = 3f;
+
+    [Header("Behavior Settings")]
+    public float directionChangeChance = 0.1f;
+    public float speedVariation = 0.3f;
+    public float pauseChance = 0.2f;
+    public float lookAroundChance = 0.15f;
 
     private Rigidbody rb;
     private Animator animator;
     private float timer;
     private bool isWalking = false;
-    private Vector2 moveDirection; // X, Z 평면에서 움직임
+    private bool isRotating = false;
+    private float currentSpeed;
+    private Vector3 currentDirection;
+    private Vector3 targetDirection;
+    private float currentWalkDuration;
+    private float currentIdleDuration;
+    private bool useTransform = false;
+
+    private float speedMultiplier = 1f;
+    private float rotationTimer = 0f;
+    private bool isPausing = false;
+    private bool isLookingAround = false;
+    private float lookAroundTimer = 0f;
+
+    private Vector3[] primaryDirections = {
+        Vector3.forward,
+        Vector3.back,
+        Vector3.right,
+        Vector3.left
+    };
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
 
-        // 시작 위치에 랜덤 오프셋 적용 (Z축 포함)
-        Vector3 offset = new Vector3(Random.Range(-startOffsetRange, startOffsetRange), 0f, Random.Range(zMin, zMax));
+        if (rb != null && rb.isKinematic)
+        {
+            useTransform = true;
+        }
+
+        Vector3 offset = new Vector3(
+            Random.Range(-startOffsetRange, startOffsetRange),
+            0f,
+            Random.Range(zMin, zMax)
+        );
         transform.position += offset;
 
-        timer = idleDuration;
-        isWalking = false;
+        currentDirection = GetRandomDirection();
+        targetDirection = currentDirection;
+        SetInitialRotation();
+        currentSpeed = walkSpeed;
+
+        speedVariation = Random.Range(0.8f, 1.2f);
+        walkSpeed *= speedVariation;
+        runSpeed *= speedVariation;
+
+        StartIdling();
     }
 
     void Update()
     {
         timer -= Time.deltaTime;
 
+        if (isLookingAround)
+        {
+            HandleLookAround();
+            return;
+        }
+
+        if (isRotating)
+        {
+            HandleRotation();
+            return;
+        }
+
+        if (isPausing)
+        {
+            if (timer <= 0f)
+            {
+                isPausing = false;
+                StartWalking();
+            }
+            return;
+        }
+
         if (timer <= 0f)
         {
             if (isWalking)
             {
-                // 멈추기
-                moveDirection = Vector2.zero;
-                rb.linearVelocity = Vector3.zero;
-                animator.SetFloat("Speed", 0f);
-                animator.speed = 0f;
-                isWalking = false;
-                timer = idleDuration;
+                if (Random.Range(0f, 1f) < lookAroundChance)
+                {
+                    StartLookingAround();
+                }
+                else
+                {
+                    StartIdling();
+                }
             }
             else
             {
-                // 걷기 시작
-                moveDirection = GetRandomDirection();
-                isWalking = true;
-                timer = walkDuration;
-
-                animator.speed = 1f;
-                animator.SetFloat("Speed", 1f);
+                if (Random.Range(0f, 1f) < pauseChance)
+                {
+                    StartPausing();
+                }
+                else
+                {
+                    StartWalking();
+                }
             }
+        }
+
+        if (isWalking && Random.Range(0f, 1f) < directionChangeChance * Time.deltaTime)
+        {
+            ChangeDirection();
+        }
+
+        if (isWalking)
+        {
+            speedMultiplier = Mathf.Lerp(speedMultiplier,
+                Random.Range(0.8f, 1.2f), Time.deltaTime * 0.5f);
         }
     }
 
     void FixedUpdate()
     {
-        if (isWalking)
+        if (isWalking && !isRotating && !isPausing && !isLookingAround)
         {
-            Vector3 velocity = new Vector3(moveDirection.x, 0, moveDirection.y) * moveSpeed;
-            rb.linearVelocity = velocity;
+            float actualSpeed = currentSpeed * speedMultiplier;
+            Vector3 movement = currentDirection * actualSpeed * Time.fixedDeltaTime;
 
-            // 회전 (Y축 기준)
-            if (moveDirection != Vector2.zero)
+            if (useTransform)
             {
-                float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-                transform.eulerAngles = new Vector3(0f, 90f - angle, 0f);
-                // 90도 빼는 건 방향 맞추기 위해서 (필요시 조절)
+                transform.position += movement;
+            }
+            else
+            {
+                rb.linearVelocity = new Vector3(
+                    currentDirection.x * actualSpeed,
+                    rb.linearVelocity.y,
+                    currentDirection.z * actualSpeed
+                );
             }
 
-            // Z축 범위 
-            if (transform.position.z < zMin || transform.position.z > zMax)
-            {
-                // 방향 Y 성분 반전 (Z축 대응)
-                moveDirection = new Vector2(moveDirection.x, -moveDirection.y);
-
-                // Y축 180도 회전 
-                Vector3 rot = transform.eulerAngles;
-                rot.y = (rot.y + 180f) % 360f;
-                transform.eulerAngles = rot;
-
-                // Z 위치 클램핑
-                float clampedZ = Mathf.Clamp(transform.position.z, zMin, zMax);
-                transform.position = new Vector3(transform.position.x, transform.position.y, clampedZ);
-            }
+            CheckBoundaries();
+        }
+        else if (!useTransform && rb != null)
+        {
+            Vector3 currentVel = rb.linearVelocity;
+            rb.linearVelocity = new Vector3(
+                Mathf.Lerp(currentVel.x, 0, Time.fixedDeltaTime * 5f),
+                currentVel.y,
+                Mathf.Lerp(currentVel.z, 0, Time.fixedDeltaTime * 5f)
+            );
         }
     }
 
-    // 무작위 방향 반환 (X, Z 평면)
-    Vector2 GetRandomDirection()
+    void StartWalking()
     {
-        float angle = Random.Range(0f, 2f * Mathf.PI);
-        return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
+        isWalking = true;
+        isPausing = false;
+        currentWalkDuration = Random.Range(walkDuration * 0.5f, walkDuration * 1.5f);
+        timer = currentWalkDuration;
+
+        currentSpeed = Random.Range(0f, 1f) < 0.1f ? runSpeed : walkSpeed;
+
+        if (animator != null)
+        {
+            float animSpeed = currentSpeed / walkSpeed;
+            animator.speed = Random.Range(0.9f, 1.1f) * animSpeed;
+            animator.SetFloat("Speed", animSpeed);
+        }
+    }
+
+    void StartIdling()
+    {
+        isWalking = false;
+        isPausing = false;
+        currentIdleDuration = Random.Range(idleDuration * 0.3f, idleDuration * 1.2f);
+        timer = currentIdleDuration;
+
+        if (animator != null)
+        {
+            animator.SetFloat("Speed", 0f);
+            animator.speed = Random.Range(0.5f, 1f);
+        }
+    }
+
+    void StartPausing()
+    {
+        isPausing = true;
+        timer = Random.Range(0.5f, 2f);
+
+        if (animator != null)
+        {
+            animator.SetFloat("Speed", 0f);
+        }
+    }
+
+    void StartLookingAround()
+    {
+        isLookingAround = true;
+        isWalking = false;
+        lookAroundTimer = Random.Range(2f, 4f);
+
+        if (animator != null)
+        {
+            animator.SetFloat("Speed", 0f);
+        }
+    }
+
+    void HandleLookAround()
+    {
+        lookAroundTimer -= Time.deltaTime;
+
+        float lookAngle = Mathf.Sin(Time.time * 2f) * 30f;
+        Vector3 currentRotation = transform.eulerAngles;
+        Quaternion targetRotation = Quaternion.Euler(0, currentRotation.y + lookAngle, 0);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 2f);
+
+        if (lookAroundTimer <= 0f)
+        {
+            isLookingAround = false;
+            ChangeDirection();
+            StartIdling();
+        }
+    }
+
+    void ChangeDirection()
+    {
+        Vector3 newDirection = GetRandomDirection();
+        if (newDirection != currentDirection)
+        {
+            targetDirection = newDirection;
+            StartRotating();
+        }
+    }
+
+    void StartRotating()
+    {
+        isRotating = true;
+        rotationTimer = 0f;
+    }
+
+    void HandleRotation()
+    {
+        rotationTimer += Time.deltaTime;
+
+        currentDirection = Vector3.Slerp(currentDirection, targetDirection,
+            Time.deltaTime * (rotationSpeed / 90f));
+
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation,
+                Time.deltaTime * (rotationSpeed / 90f));
+        }
+
+        if (Vector3.Angle(currentDirection, targetDirection) < 5f || rotationTimer > 2f)
+        {
+            currentDirection = targetDirection;
+            isRotating = false;
+        }
+    }
+
+    Vector3 GetRandomDirection()
+    {
+        return primaryDirections[Random.Range(0, primaryDirections.Length)];
+    }
+
+    void SetInitialRotation()
+    {
+        if (currentDirection != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(currentDirection);
+        }
+    }
+
+    void CheckBoundaries()
+    {
+        Vector3 pos = transform.position;
+        bool shouldChangeDirection = false;
+
+        if (pos.x <= xMin || pos.x >= xMax || pos.z <= zMin || pos.z >= zMax)
+        {
+            Vector3 clampedPos = new Vector3(
+                Mathf.Clamp(pos.x, xMin + 0.1f, xMax - 0.1f),
+                pos.y,
+                Mathf.Clamp(pos.z, zMin + 0.1f, zMax - 0.1f)
+            );
+            transform.position = clampedPos;
+            shouldChangeDirection = true;
+        }
+
+        if (shouldChangeDirection)
+        {
+            Vector3 centerDirection = (Vector3.zero - transform.position).normalized;
+            centerDirection.y = 0;
+            targetDirection = centerDirection;
+            StartRotating();
+        }
+    }
+
+    // 시민 상태를 초기화하고 새로운 위치에서 걷기 시작하게 함
+    public void ResetWandering()
+    {
+        isWalking = false;
+        isRotating = false;
+        isPausing = false;
+        isLookingAround = false;
+
+        currentDirection = GetRandomDirection();
+        targetDirection = currentDirection;
+
+        SetInitialRotation();
+        StartIdling();
     }
 }

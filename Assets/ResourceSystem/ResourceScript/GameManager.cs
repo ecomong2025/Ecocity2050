@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
 
     // 건물별 수입 코루틴 관리용 딕셔너리
     private Dictionary<Transform, Coroutine> incomeCoroutines = new Dictionary<Transform, Coroutine>();
+
+    // 빌딩 설치 카운트
+    private int buildingCount = 0;
 
     private void Awake()
     {
@@ -57,6 +60,29 @@ public class GameManager : MonoBehaviour
         {
             Coroutine c = StartCoroutine(GenerateIncomePeriodically(incomePer5Min, maxIncomeAmount, buildingTransform));
             incomeCoroutines[buildingTransform] = c;
+        }
+
+        // 빌딩 설치 시 시민 수 증가 로직
+        buildingCount++;
+        if (citizenGroupController != null)
+        {
+            // 빌딩 위치에 시민이 있으면 이동
+            if (buildingTransform != null)
+            {
+                citizenGroupController.MoveCitizensAwayFromBuilding(buildingTransform.position);
+            }
+
+            // 시민 수 증가
+            if (buildingCount == 1)
+            {
+                // 첫 번째 빌딩 설치 시 1명 증가
+                citizenGroupController.AddCitizen(1);
+            }
+            else
+            {
+                // 그 이후로는 만족도에 따라 증가
+                citizenGroupController.UpdateCitizensByBuilding();
+            }
         }
 
         UpdateUI();
@@ -182,6 +208,5 @@ public class GameManager : MonoBehaviour
     {
         gamePanel.SetActive(true);
         quizMainPanel.SetActive(false);
-
     }
 }
