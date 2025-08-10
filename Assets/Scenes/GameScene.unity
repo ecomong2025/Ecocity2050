@@ -3579,8 +3579,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &127190385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4103,8 +4101,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &142959405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5652,8 +5648,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &191485488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8202,8 +8196,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &309716278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8455,7 +8447,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1308e713dcca54442babcab68d9e407d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d928e19cc068a4eb3ad62d06d6a437bc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9428,8 +9420,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &345695768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10241,8 +10231,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &382830479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15140,8 +15128,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &642698866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15386,8 +15372,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &648089038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18610,8 +18594,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &774556229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21117,8 +21099,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &897056098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28330,8 +28310,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1204495154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30819,8 +30797,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1282291952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32898,8 +32874,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1367790473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34485,8 +34459,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1421024563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35100,8 +35072,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1444578319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36225,8 +36195,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1464684779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37177,8 +37145,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1520789305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37424,8 +37390,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1525481792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37670,8 +37634,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1528269930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39830,8 +39792,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1621191240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40703,8 +40663,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1651436019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44413,8 +44371,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1788582177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46858,8 +46814,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1870223656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47626,8 +47580,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
 --- !u!114 &1906696456
 MonoBehaviour:
   m_ObjectHideFlags: 0

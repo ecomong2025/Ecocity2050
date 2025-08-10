@@ -11,7 +11,7 @@ public class DisasterManager : MonoBehaviour
 
     void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = FindFirstObjectByType<GameManager>();
         if (gameManager == null)
         {
             Debug.LogError("GameManager를 찾을 수 없습니다.");
