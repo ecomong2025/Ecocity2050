@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
     public TMP_Text co2Text;
     public TMP_Text satisfactionText;
 
+    public GameObject gamePanel; //게임 화면 전체
+    public GameObject quizMainPanel; // 퀴즈 전체 UI
+
     public GameObject coinUIPrefab;
     public Canvas uiCanvas;
 
@@ -166,5 +169,19 @@ public class GameManager : MonoBehaviour
         else if (co2 < 700) return 0.5f;
         else if (co2 < 900) return 0.3f;
         else return 0.1f;
+    }
+
+    //퀴즈 관련 버튼 연결 
+    public void OpenQuiz()
+    {
+        gamePanel.SetActive(false);
+        quizMainPanel.SetActive(true);
+    }
+
+    public void CloseQuiz()
+    {
+        gamePanel.SetActive(true);
+        quizMainPanel.SetActive(false);
+
     }
 }

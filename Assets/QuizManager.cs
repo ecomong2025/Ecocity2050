@@ -31,6 +31,9 @@ public class QuizManager : MonoBehaviour
     public GameObject correctPanel;
     public GameObject incorrectPanel;
 
+    public GameObject gamePanel;
+    public GameObject quizMainPanel;
+
     [Header("Quiz Elements")]
     public TMP_Text questionText;
     public List<TMP_Text> optionTexts;
@@ -102,7 +105,7 @@ public class QuizManager : MonoBehaviour
 
     public void OnBackToGame()
     {
-        SceneManager.LoadScene("GameScene");
+        GameManager.Instance.CloseQuiz();
     }
 
     void LoadQuizData()
@@ -190,7 +193,7 @@ public class QuizManager : MonoBehaviour
         if (selectedIndex == quiz.answerIndex)
         {
             Debug.Log("✅ 정답입니다!");
-            GameData.resource += 30;
+            GameManager.Instance.AddBudget(30);
             ShowCorrectPanel();
         }
         else
