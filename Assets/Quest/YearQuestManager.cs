@@ -79,6 +79,13 @@ public class YearQuestManager : MonoBehaviour
 
         RefreshGauge();   // 게이지 업데이트
         RefreshYearText(); // 중앙 YearText 업데이트
+
+        //연도 변경시 퀴즈 카운트 초기화 요청
+        QuizManager quizMgr = FindObjectOfType<QuizManager>();
+        if (quizMgr != null)
+        {
+            quizMgr.ResetQuizCorrectCount();
+        }
     }
 
     private void RefreshGauge()

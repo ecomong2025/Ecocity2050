@@ -62,3 +62,5 @@ MonoBehaviour:
     - "\uD034\uC988 \uAD00\uB828 \uD018\uC2A4\uD2B8"
     - "\uC2DC\uBBFC \uAD00\uB828 \uD018\uC2A4\uD2B8"
   questUI: {fileID: 0}
+  gaugePieces: []
+  yearTextUI: {fileID: 0}

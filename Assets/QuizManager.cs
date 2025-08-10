@@ -57,6 +57,12 @@ public class QuizManager : MonoBehaviour
     private bool isHintVisible = false;
     private bool isAnswered = false;
 
+    //퀘스트 관련
+    private int quizCorrectCount = 0;  // 지금까지 맞춘 퀴즈 개수
+    private int quizQuestIndex = 2;    // 퀴즈 관련 퀘스트 인덱스
+    private int completeThreshold = 2; // 몇 개 맞추면 퀘스트 완료 처리할지 기준
+
+
     void Start()
     {
         gamePanel.SetActive(false);
@@ -213,6 +219,23 @@ public class QuizManager : MonoBehaviour
             Debug.Log("✅ 정답입니다!");
             GameManager.Instance.AddBudget(30);
             ShowCorrectPanel();
+
+            quizCorrectCount++;  // 맞춘 개수 증가
+
+            // 기준 넘었으면 YearQuestManager에 완료 알림
+            if (quizCorrectCount >= completeThreshold)
+            {
+                if (YearQuestManager.Instance != null)
+                {
+                    Debug.Log("YearQuestManager.Instance is NOT null - CompleteQuest 호출");
+                    YearQuestManager.Instance.CompleteQuest(quizQuestIndex);
+                }
+                else
+                {
+                    Debug.LogError("YearQuestManager.Instance is NULL!");
+                }
+
+            }
         }
         else
         {
@@ -220,6 +243,12 @@ public class QuizManager : MonoBehaviour
             ShowIncorrectPanel();
             reasonText.text = quiz.wrongNote;
         }
+    }
+
+    //퀴즈 개수 초기화
+    public void ResetQuizCorrectCount()
+    {
+        quizCorrectCount = 0;
     }
 
     void HandleTimeout()
