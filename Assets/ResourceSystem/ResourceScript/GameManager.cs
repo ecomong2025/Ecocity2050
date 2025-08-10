@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
         int accumulated = 0;
         while (accumulated < maxAmount)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(1f); // 1초 간격
             int delta = Mathf.Min(perSecond, maxAmount - accumulated);
             co2 += delta;
             accumulated += delta;

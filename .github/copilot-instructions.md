@@ -4,11 +4,11 @@
 - Active scene:
   - Name: GameScene
   - Tags:
-    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Tile
+    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Tile, Factory
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI
 - Active game object:
-  - Name: EVChargerBtn
+  - Name: GameManager
   - Tag: Untagged
-  - Layer: UI
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
