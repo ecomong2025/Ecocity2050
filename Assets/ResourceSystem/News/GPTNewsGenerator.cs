@@ -224,7 +224,7 @@ public class GPTNewsGenerator : MonoBehaviour
     {
         RectTransform rect = newsPanel.GetComponent<RectTransform>();
         Vector2 hiddenPos = new Vector2(rect.anchoredPosition.x, 120);   // 화면 위쪽(숫자 조정)
-        Vector2 visiblePos = new Vector2(rect.anchoredPosition.x, -120); // 화면 내 위치
+        Vector2 visiblePos = new Vector2(rect.anchoredPosition.x, -115); // 화면 내 위치
 
         // 시작 위치: 숨김
         rect.anchoredPosition = hiddenPos;

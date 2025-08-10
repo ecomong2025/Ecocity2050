@@ -10,5 +10,5 @@
 - Active game object:
   - Name: YearQuestManagerPrefab
   - Tag: Untagged
-  - Layer: UI
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
