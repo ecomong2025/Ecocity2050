@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9ae757ac06ff0b5429b79aa5692a56c8, type: 3}
       propertyPath: m_Name
-      value: recycle center
+      value: RecycleHubPrefab
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -79,9 +79,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileWidth: 2
   tileHeight: 2
-  cost: 0
+  cost: 120
   maxIncomeAmount: 0
   incomePer5Minutes: 0
-  instantCO2Change: 0
-  co2PerSecond: 0
-  maxCO2Change: 0
+  instantCO2Change: -30
+  co2PerSecond: -10
+  maxCO2Change: -100
