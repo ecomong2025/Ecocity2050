@@ -79,7 +79,15 @@ public class GPTNewsGenerator : MonoBehaviour
 
     IEnumerator RequestDisasterNews(string disasterType, string buildingName)
     {
-        string prompt = $"재난 종류는 '{disasterType}'이고, 붕괴된 건물 이름은 '{buildingName}'입니다. 이 상황을 알리는 뉴스 제목(18자 이내)과 내용(30자 이내)을 각각 줄바꿈으로 구분해서 출력해줘.";
+        string prompt =
+            $"재난 종류는 '{disasterType}'이고, 붕괴된 건물 이름은 '{buildingName}'입니다. " +
+            "뉴스 제목은 18자 이내, 내용은 30자 이내로 작성하고, 두 줄로 출력하세요. " +
+            "첫 줄은 제목, 둘째 줄은 내용입니다. " +
+            "내용 문장은 반드시 '~니다.'로 끝나야 합니다. " +
+            "예시:\n" +
+            "공장에서 화재 발생!\n" +
+            $"탄소배출량 증가로 인한 화재 발생으로 {buildingName}이 붕괴되었습니다.";
+
         string apiUrl = "https://api.openai.com/v1/chat/completions";
 
         string jsonBody = @"{
@@ -127,7 +135,15 @@ public class GPTNewsGenerator : MonoBehaviour
 
     IEnumerator RequestNews(string satisfaction)
     {
-        string prompt = $"탄소 배출량 증가로 시민 만족도가 '{satisfaction}'로 하락했습니다. 이 상황에 맞는 뉴스 제목(18자 이내)과 내용(30자 이내)을 생성해줘. 제목과 내용을 각각 줄바꿈으로 구분해서 출력해줘.";
+        string prompt =
+            $"탄소 배출량 증가로 시민 만족도가 '{satisfaction}'로 하락했습니다. " +
+            "뉴스 제목은 18자 이내, 내용은 30자 이내로 작성하고, 두 줄로 출력하세요. " +
+            "첫 줄은 제목, 둘째 줄은 내용입니다. " +
+            "내용 문장은 반드시 '~니다.'로 끝나야 합니다. " +
+            "예시:\n" +
+            "탄소 배출 급증 시민 불만 증가\n" +
+            "탄소배출량 증가로 시민 만족도가 하락했습니다.";
+
         string apiUrl = "https://api.openai.com/v1/chat/completions";
 
         string jsonBody = @"{
@@ -157,9 +173,6 @@ public class GPTNewsGenerator : MonoBehaviour
                 string[] lines = newsText.Split('\n');
                 string title = lines.Length > 0 ? lines[0].Trim() : "";
                 string body = lines.Length > 1 ? lines[1].Trim() : "";
-
-                if (title.Length > 18) title = title.Substring(0, 18);
-                if (body.Length > 30) body = body.Substring(0, 30);
 
                 if (titleText != null) titleText.text = title;
                 if (contentText != null) contentText.text = body;
