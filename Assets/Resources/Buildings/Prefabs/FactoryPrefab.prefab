@@ -743,8 +743,8 @@ MonoBehaviour:
   cost: 150
   maxIncomeAmount: 300
   incomePer5Minutes: 30
-  instantCO2Change: 10
-  co2PerSecond: 5
+  instantCO2Change: 0
+  co2PerSecond: 10
   maxCO2Change: 300
 --- !u!1 &3309717425723744805
 GameObject:
