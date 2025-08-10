@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using System;
@@ -46,6 +46,9 @@ public class GPTChatManager : MonoBehaviour
     [SerializeField] private string model = "gpt-3.5-turbo";
     [SerializeField] private float temperature = 0.7f;
     [SerializeField] private int maxTokens = 500;
+
+    // 채팅을 한 번 이상 했는지 확인하는 플래그
+    private bool hasChatted = false;
 
     private System.Collections.Generic.List<GPTMessage> conversationHistory =
         new System.Collections.Generic.List<GPTMessage>();
@@ -197,6 +200,16 @@ public class GPTChatManager : MonoBehaviour
                     };
                     conversationHistory.Add(botMsg);
 
+                    //  첫 번째 성공적인 채팅 완료 시 퀘스트 완료
+                    if (!hasChatted)
+                    {
+                        hasChatted = true;
+                        if (YearQuestManager.Instance != null)
+                        {
+                            YearQuestManager.Instance.OnChatCompleted();
+                        }
+                    }
+
                     onResponse?.Invoke(botMessage);
                 }
                 catch (System.Exception e)
@@ -214,6 +227,8 @@ public class GPTChatManager : MonoBehaviour
     {
         conversationHistory.Clear();
         SetupSystemMessage();
+        // 대화 기록 초기화 시 채팅 플래그도 초기화 
+        hasChatted = false;
         Debug.Log("[시스템] 대화 기록이 초기화되었습니다.");
     }
 }

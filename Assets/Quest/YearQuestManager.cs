@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,8 +7,8 @@ using TMPro;
 [System.Serializable]
 public class YearQuests
 {
-    [Range(2025, 2050)] public int year;           
-    public string[] questTexts = new string[4];    
+    [Range(2025, 2050)] public int year;
+    public string[] questTexts = new string[4];
 }
 
 [System.Serializable]
@@ -28,6 +28,9 @@ public class YearQuestManager : MonoBehaviour
     [Tooltip("무(無)배출 건물 설치 퀘스트 인덱스 (0~3)")]
     [SerializeField][Range(0, 3)] private int zeroEmissionQuestIndex = 1;
 
+    [Tooltip("채팅 퀘스트가 위치한 인덱스 (0~3)")]
+    [SerializeField][Range(0, 3)] private int chatQuestIndex = 3;
+
     /// <summary>
     /// TileClickInstaller에서 설치 확정되면 호출
     /// </summary>
@@ -43,6 +46,13 @@ public class YearQuestManager : MonoBehaviour
 
         if (isFactory) CompleteQuest(factoryQuestIndex);
         if (isZero) CompleteQuest(zeroEmissionQuestIndex);
+    }
+
+    /// GPT 채팅 완료 시 호출되는 메서드
+    public void OnChatCompleted()
+    {
+        Debug.Log("[YearQuestManager] Chat quest completed!");
+        CompleteQuest(chatQuestIndex);
     }
 
     // === 판정 유틸 ===
