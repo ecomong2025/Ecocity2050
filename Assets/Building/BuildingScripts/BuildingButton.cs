@@ -5,18 +5,31 @@ public class BuildingButton : MonoBehaviour
 {
     [SerializeField] private string panelNameToClose = "BuildingPanel";
 
+    private string panelPath = "WarningPanel";
     private GameObject warningPanel;      
     private Button confirmButton;         
     private GameObject buildingPrefab;
 
     void Awake()
     {
-        // warningPanel 자동 검색 (같은 Canvas 안에서 찾기)
-        warningPanel = GameObject.Find("WarningPanel");
+        if (warningPanel == null)
+        {
+            var canvas = GetComponentInParent<Canvas>(true);
+            var t = canvas ? canvas.transform.Find(panelPath) : null;
+            if (t) warningPanel = t.gameObject;
+        }
 
-        // confirmButton 자동 검색 (WarningPanel 안에서 찾기)
-        if (warningPanel != null)
+        if (confirmButton == null && warningPanel != null)
             confirmButton = warningPanel.GetComponentInChildren<Button>(true);
+
+        if (confirmButton != null)
+        {
+            confirmButton.onClick.RemoveAllListeners();
+            confirmButton.onClick.AddListener(() => warningPanel.SetActive(false));
+        }
+
+        // 시작은 숨김(선택)
+        if (warningPanel != null) warningPanel.SetActive(false);
     }
 
     void Start()
