@@ -6,6 +6,8 @@ public class CameraScaler : MonoBehaviour
     [Range(5, 13)] public int mapSize = 5;
 
     public GameObject buildingPanel; 
+    public GameObject chatPanel;
+    public GameObject questUI;
 
     [Header("Zoom Settings")]
     public float zoomSpeed = 10f;
@@ -30,7 +32,13 @@ public class CameraScaler : MonoBehaviour
 
     void Update()
     {
-        if (buildingPanel != null && buildingPanel.activeSelf) return; // ✅ UI 열려 있으면 입력 무시
+        // ✅ 세 패널 중 하나라도 켜져 있으면 입력 무시
+        if ((buildingPanel != null && buildingPanel.activeSelf) ||
+            (chatPanel != null && chatPanel.activeSelf) ||
+            (questUI != null && questUI.activeSelf))
+        {
+            return;
+        }
 
         HandleZoom();
         HandleMouseDrag();
