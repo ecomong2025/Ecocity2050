@@ -76,17 +76,17 @@ public class GPTNewsGenerator : MonoBehaviour
     {
         StartCoroutine(RequestDisasterNews(disasterType, buildingName));
     }
-
+    
     IEnumerator RequestDisasterNews(string disasterType, string buildingName)
     {
         string prompt =
-            $"재난 종류는 '{disasterType}'이고, 붕괴된 건물 이름은 '{buildingName}'입니다. " +
+            $"재난 종류는 '{disasterType}'이고, 설치된 건물이 붕괴되었습니다." +
             "뉴스 제목은 18자 이내, 내용은 30자 이내로 작성하고, 두 줄로 출력하세요. " +
             "첫 줄은 제목, 둘째 줄은 내용입니다. " +
             "내용 문장은 반드시 '~니다.'로 끝나야 합니다. " +
             "예시:\n" +
-            "공장에서 화재 발생!\n" +
-            $"탄소배출량 증가로 인한 화재 발생으로 {buildingName}이 붕괴되었습니다.";
+            $"{disasterType} 발생!\n" +
+            $"탄소배출량 증가로 인한 {disasterType} 발생으로 건물이 붕괴되었습니다.";
 
         string apiUrl = "https://api.openai.com/v1/chat/completions";
 
@@ -252,6 +252,5 @@ public class GPTNewsGenerator : MonoBehaviour
             yield return null;
         }
         rect.anchoredPosition = hiddenPos;
-        newsPanel.SetActive(false);
     }
 }
