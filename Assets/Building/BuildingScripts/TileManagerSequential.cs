@@ -1,11 +1,22 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
+
+[System.Serializable]
+public class YearTileMap
+{
+    public int year;        // 2025, 2030, ...
+    public int tileNumber;  // 7 이면 "Tile_7"
+}
 
 public class TileManagerSequential : MonoBehaviour
 {
     private List<GameObject> tileList = new List<GameObject>();
-    public CameraScaler cameraScaler; 
+    public CameraScaler cameraScaler;
+
+    [Header("연도→타일 매핑")]
+    public List<YearTileMap> yearTileMaps = new List<YearTileMap>();
 
     void Start()
     {
@@ -23,8 +34,6 @@ public class TileManagerSequential : MonoBehaviour
         if (tileList.Count > 0)
         {
             tileList[0].SetActive(true);
-
-            // 최초 카메라 위치 조정
             int initialMapSize = ExtractTileNumber(tileList[0].name);
             UpdateCamera(initialMapSize);
         }
@@ -32,6 +41,7 @@ public class TileManagerSequential : MonoBehaviour
 
     void Update()
     {
+        // 기존: 숫자키로 수동 오픈 기능 유지
         for (int i = 1; i <= 9; i++)
         {
             if (Input.GetKeyDown(KeyCode.Alpha0 + i))
@@ -40,8 +50,6 @@ public class TileManagerSequential : MonoBehaviour
                 if (index < tileList.Count)
                 {
                     tileList[index].SetActive(true);
-
-                    // 새로운 타일 크기 얻기
                     int mapSize = ExtractTileNumber(tileList[index].name);
                     UpdateCamera(mapSize);
                 }
@@ -49,14 +57,34 @@ public class TileManagerSequential : MonoBehaviour
         }
     }
 
+    // ✅ 연도 완료 시 호출 (YearQuestManager에서 씀)
+    public void UnlockTileForYear(int year)
+    {
+        var map = yearTileMaps.FirstOrDefault(m => m.year == year);
+        if (map == null) { Debug.LogWarning($"[TMS] {year} 매핑 없음"); return; }
+
+        int num = map.tileNumber;
+        var go = tileList.FirstOrDefault(t => ExtractTileNumber(t.name) == num);
+        if (go == null) { Debug.LogWarning($"[TMS] Tile_{num} 없음"); return; }
+
+        if (!go.activeSelf) go.SetActive(true);
+        UpdateCamera(num);
+        Debug.Log($"[TMS] {year} 완료 → Tile_{num} 활성화");
+    }
+
+    // (옵션) 다음 비활성 타일 하나 자동 오픈
+    public void UnlockNextTile()
+    {
+        var next = tileList.FirstOrDefault(t => !t.activeSelf);
+        if (next == null) { Debug.Log("[TMS] 더 열 타일 없음"); return; }
+        next.SetActive(true);
+        UpdateCamera(ExtractTileNumber(next.name));
+    }
+
     int ExtractTileNumber(string name)
     {
-        Match match = Regex.Match(name, @"Tile_(\d+)");
-        if (match.Success)
-        {
-            return int.Parse(match.Groups[1].Value);
-        }
-        return 0;
+        var m = Regex.Match(name, @"Tile_(\d+)");
+        return m.Success ? int.Parse(m.Groups[1].Value) : 0;
     }
 
     void UpdateCamera(int mapSize)
@@ -66,9 +94,6 @@ public class TileManagerSequential : MonoBehaviour
             cameraScaler.mapSize = mapSize;
             cameraScaler.AdjustCameraToMap();
         }
-        else
-        {
-            Debug.LogWarning("[TileManagerSequential] CameraScaler 참조가 설정되지 않았습니다.");
-        }
+        else Debug.LogWarning("[TMS] CameraScaler 미할당");
     }
 }

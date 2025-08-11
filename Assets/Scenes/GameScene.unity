@@ -37436,7 +37436,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1519766998
 RectTransform:
   m_ObjectHideFlags: 0
@@ -49827,6 +49827,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraScaler: {fileID: 2096422115}
+  yearTileMaps:
+  - year: 2025
+    tileNumber: 7
+  - year: 2030
+    tileNumber: 9
+  - year: 2035
+    tileNumber: 11
+  - year: 2040
+    tileNumber: 13
+  - year: 2045
+    tileNumber: 15
 --- !u!1 &1992364032
 GameObject:
   m_ObjectHideFlags: 0

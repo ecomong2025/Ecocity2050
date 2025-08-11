@@ -173,16 +173,18 @@ public class YearQuestManager : MonoBehaviour
 
         if (completed.All(x => x))
         {
+            // 🔔 현재 연도 완료 → 해당 타일 열기
+            var tms = FindObjectOfType<TileManagerSequential>();
+            if (tms != null) tms.UnlockTileForYear(currentYear);
+            // (원하면 tms.UnlockNextTile(); 로 순차 오픈도 가능)
+
             int next = Mathf.Clamp(currentYear + step, minYear, maxYear);
-            if (next == currentYear)
-            {
-                Debug.Log("[YearQuestManager] 마지막 연도입니다.");
-                return;
-            }
+            if (next == currentYear) { Debug.Log("[YQM] 마지막 연도"); return; }
 
             currentYear = next;
-            LoadYear(currentYear); // 내부에서 게이지+YearText 둘 다 업데이트
+            LoadYear(currentYear);
         }
+
     }
 
     public void ResetCurrent() => LoadYear(currentYear);
