@@ -12614,7 +12614,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8768695663442122764, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: m_Name
-      value: YearQuestManagerPrefab
+      value: YearQuestManager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

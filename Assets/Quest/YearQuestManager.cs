@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;     // ★ 유지
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+
+// YearQuestManager.cs 안, public static YearQuestManager Instance; 아래나 아무 public 메서드 자리
 
 [System.Serializable]
 public class YearQuests
@@ -14,26 +17,27 @@ public class YearQuests
 [System.Serializable]
 public class YearGaugePiece
 {
-    public int year;              // 2030, 2035, 2040, 2045, 2050
-    public GameObject imageObj;   // 해당 연도에 채워질 게이지 이미지 오브젝트
+    public int year;
+    public GameObject imageObj;
 }
 
 public class YearQuestManager : MonoBehaviour
 {
-    // YearQuestManager 클래스 내부에 추가
+
+    public bool[] GetCompletedSnapshot()
+    {
+        // 외부에서 completed 배열을 수정하지 못하게 복사본 반환
+        return (bool[])completed.Clone();
+    }
+    // ★ UI 준비 전 들어오는 체크 이벤트 임시 저장
+    private bool uiReady = false;
+    private readonly Queue<int> pendingChecks = new Queue<int>();
+
     [Header("Auto-complete Rules")]
-    [Tooltip("공장 설치 퀘스트가 위치한 인덱스 (0~3)")]
     [SerializeField][Range(0, 3)] private int factoryQuestIndex = 0;
-
-    [Tooltip("무(無)배출 건물 설치 퀘스트 인덱스 (0~3)")]
     [SerializeField][Range(0, 3)] private int zeroEmissionQuestIndex = 1;
-
-    [Tooltip("채팅 퀘스트가 위치한 인덱스 (0~3)")]
     [SerializeField][Range(0, 3)] private int chatQuestIndex = 3;
 
-    /// <summary>
-    /// TileClickInstaller에서 설치 확정되면 호출
-    /// </summary>
     public void OnBuildingInstalled(GameObject prefab, BuildingData data)
     {
         if (prefab == null || data == null) return;
@@ -41,38 +45,27 @@ public class YearQuestManager : MonoBehaviour
         bool isFactory = IsFactory(prefab, data);
         bool isZero = IsZeroEmission(data);
 
-        // 디버그 로그로 흐름 확인
         Debug.Log($"[YearQuestManager] Installed: {prefab.name}, isFactory={isFactory}, zero={isZero}");
 
         if (isFactory) CompleteQuest(factoryQuestIndex);
         if (isZero) CompleteQuest(zeroEmissionQuestIndex);
     }
 
-    /// GPT 채팅 완료 시 호출되는 메서드
     public void OnChatCompleted()
     {
         Debug.Log("[YearQuestManager] Chat quest completed!");
         CompleteQuest(chatQuestIndex);
     }
 
-    // === 판정 유틸 ===
-    // 가장 좋은 건 BuildingData에 명시 필드가 있는 것(예: data.isFactory)
     private bool IsFactory(GameObject prefab, BuildingData data)
     {
-        // BuildingData에 bool isFactory가 있다면 아래 주석을 사용하고 나머지는 삭제
-        // return data.isFactory;
-
-        // 없을 땐 Tag/이름으로 판정 (권장: 프리팹 Tag = "Factory")
-        if (prefab.CompareTag("Factory")) return true;
-
-        string n = prefab.name.ToLower();
-        return n.Contains("factory") || n.Contains("plant"); // 필요시 키워드 추가
+        if (prefab != null && prefab.CompareTag("Factory")) return true;
+        string n = prefab != null ? prefab.name.ToLower() : "";
+        return n.Contains("factory") || n.Contains("plant"); // 필요 시 "공장"도 추가
     }
 
     private bool IsZeroEmission(BuildingData data)
     {
-        // co2PerSecond, instantCO2Change, maxCO2Change 값이
-        // 0 또는 음수(-)면 무배출로 판정
         return data.co2PerSecond <= 0f
             && data.instantCO2Change <= 0f
             && data.maxCO2Change <= 0f;
@@ -96,7 +89,7 @@ public class YearQuestManager : MonoBehaviour
     [SerializeField] private YearGaugePiece[] gaugePieces;
 
     [Header("Year Text (화면 중앙 표시)")]
-    [SerializeField] private TextMeshProUGUI yearTextUI;  // ⬅ YearText 연결
+    [SerializeField] private TextMeshProUGUI yearTextUI;
 
     private bool[] completed = new bool[4];
 
@@ -105,8 +98,14 @@ public class YearQuestManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else { Destroy(gameObject); return; }
 
+        // ★ 비활성 포함 탐색 (가능하면 인스펙터 드래그로 고정 권장)
+#if UNITY_2022_2_OR_NEWER
         if (questUI == null)
-            questUI = FindFirstObjectByType<QuestUITemplate>();
+            questUI = FindFirstObjectByType<QuestUITemplate>(FindObjectsInactive.Include);
+#else
+        if (questUI == null)
+            questUI = Resources.FindObjectsOfTypeAll<QuestUITemplate>().FirstOrDefault();
+#endif
 
         if (gaugePieces != null && gaugePieces.Length > 0)
             Array.Sort(gaugePieces, (a, b) => a.year.CompareTo(b.year));
@@ -114,42 +113,39 @@ public class YearQuestManager : MonoBehaviour
 
     void Start()
     {
+        if (questUI == null)
+            questUI = FindObjectOfType<QuestUITemplate>(true);
+
         LoadYear(currentYear);
     }
 
     private void LoadYear(int year)
     {
-        var set = yearSets.FirstOrDefault(s => s.year == year);
+        uiReady = false;  // ★ 바인딩 전 잠금
 
-        string[] texts;
-        if (set == null || set.questTexts == null || set.questTexts.Length != 4)
-        {
-            texts = new[] { "Quest1", "Quest2", "Quest3", "Quest4" };
-            Debug.LogWarning($"[YearQuestManager] {year} 연도 세트가 없어 기본 라벨로 표시합니다.");
-        }
-        else
-        {
-            texts = set.questTexts;
-        }
+        var set = yearSets.FirstOrDefault(s => s.year == year);
+        string[] texts = (set == null || set.questTexts == null || set.questTexts.Length != 4)
+            ? new[] { "Quest1", "Quest2", "Quest3", "Quest4" }
+            : set.questTexts;
 
         completed = new bool[4] { false, false, false, false };
         questUI?.BindYear(year, texts, completed);
 
-        RefreshGauge();   // 게이지 업데이트
-        RefreshYearText(); // 중앙 YearText 업데이트
+        RefreshGauge();
+        RefreshYearText();
 
-        //연도 변경시 퀴즈 카운트 초기화 요청
-        QuizManager quizMgr = FindObjectOfType<QuizManager>();
-        if (quizMgr != null)
-        {
-            quizMgr.ResetQuizCorrectCount();
-        }
+        FindObjectOfType<QuizManager>()?.ResetQuizCorrectCount();
+
+        uiReady = true;   // ★ 바인딩 완료
+
+        // ★ 바인딩 중 도착한 체크 처리
+        while (pendingChecks.Count > 0)
+            CompleteQuest_Internal(pendingChecks.Dequeue());
     }
 
     private void RefreshGauge()
     {
         if (gaugePieces == null) return;
-
         foreach (var p in gaugePieces)
         {
             if (p.imageObj == null) continue;
@@ -166,17 +162,31 @@ public class YearQuestManager : MonoBehaviour
     public void CompleteQuest(int index)
     {
         if (index < 0 || index > 3) return;
-        if (completed[index]) return;
+        Debug.Log($"[YQM] CompleteQuest request index={index} ui={(questUI ? questUI.name : "NULL")}");
+
+        if (!uiReady)
+        {
+            pendingChecks.Enqueue(index); // ★ UI 준비 전이면 큐에만 넣고 끝
+            return;
+        }
+
+        CompleteQuest_Internal(index);    // ★ 실제 처리는 내부에서만
+    }
+
+    // ★ 실제 처리 단일 경로
+    private void CompleteQuest_Internal(int index)
+    {
+        if (index < 0 || index > 3) return;
+        if (completed[index]) { Debug.Log($"[YQM] Already completed idx={index}"); return; }
 
         completed[index] = true;
         questUI?.UpdateCheck(index, true);
 
+        // 모두 완료 시 다음 단계
         if (completed.All(x => x))
         {
-            // 🔔 현재 연도 완료 → 해당 타일 열기
-            var tms = FindObjectOfType<TileManagerSequential>();
+            var tms = FindObjectOfType<TileManagerSequential>(true);
             if (tms != null) tms.UnlockTileForYear(currentYear);
-            // (원하면 tms.UnlockNextTile(); 로 순차 오픈도 가능)
 
             int next = Mathf.Clamp(currentYear + step, minYear, maxYear);
             if (next == currentYear) { Debug.Log("[YQM] 마지막 연도"); return; }
@@ -184,7 +194,6 @@ public class YearQuestManager : MonoBehaviour
             currentYear = next;
             LoadYear(currentYear);
         }
-
     }
 
     public void ResetCurrent() => LoadYear(currentYear);
