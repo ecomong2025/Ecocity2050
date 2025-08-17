@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
@@ -220,7 +220,17 @@ public class TileClickInstaller : MonoBehaviour
             }
         }
 
-        // 비용/효과 적용
+        //  건물 정보를 GameManager에 추가 (GPT가 인식할 수 있도록)
+        gameManager.AddBuilding(
+            selectedBuildingPrefab.name.Replace("Prefab", ""), // 건물 이름
+            buildingData.cost,
+            buildingData.instantCO2Change + (buildingData.co2PerSecond * buildingData.maxCO2Change / buildingData.co2PerSecond), // 총 CO2 영향
+            buildingData.incomePer5Minutes / 5, // 5분당 -> 1분당 수입으로 변환
+            previewInstance.transform.position,
+            previewInstance
+        );
+
+        // 비용/효과 적용 (기존 코드)
         gameManager.ApplyBuildingCost(
             buildingData.cost,
             buildingData.instantCO2Change,
@@ -235,7 +245,6 @@ public class TileClickInstaller : MonoBehaviour
         YearQuestManager.Instance?.OnBuildingInstalled(selectedBuildingPrefab, buildingData);
 
         ClearPreviewAndPanel();
-
     }
 
     void CancelInstall()
