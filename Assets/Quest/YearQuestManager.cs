@@ -23,6 +23,7 @@ public class YearGaugePiece
 
 public class YearQuestManager : MonoBehaviour
 {
+    public static event System.Action<int> OnYearChanged;
 
     public bool[] GetCompletedSnapshot()
     {
