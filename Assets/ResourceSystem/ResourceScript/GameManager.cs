@@ -93,30 +93,46 @@ public class GameManager : MonoBehaviour
 
         while (accumulated < maxIncome)
         {
-            if (buildingTransform == null)
-                yield break;
+            if (buildingTransform == null) yield break;
 
-            yield return new WaitForSeconds(300f); // 5분 간격
+            yield return new WaitForSeconds(5f); // 5초 간격 (5분이면 300f)
 
-            if (buildingTransform == null)
-                yield break;
+            if (buildingTransform == null) yield break;
 
-            Renderer rend = buildingTransform.GetComponentInChildren<Renderer>();
-            if (rend == null) yield break;
+            // 1) 모든 Renderer 통합 Bounds 계산
+            Renderer[] rends = buildingTransform.GetComponentsInChildren<Renderer>();
+            Bounds combined;
+            if (rends != null && rends.Length > 0)
+            {
+                combined = rends[0].bounds;
+                for (int i = 1; i < rends.Length; i++)
+                    combined.Encapsulate(rends[i].bounds);
+            }
+            else
+            {
+                // 렌더러가 없으면 대체 기준
+                combined = new Bounds(buildingTransform.position, Vector3.one * 2f);
+            }
 
+            // 2) 옥상 바로 위를 기준점으로 사용
+            Vector3 basePos = new Vector3(combined.center.x, combined.max.y, combined.center.z);
+
+            // 3) 카메라 쪽으로 살짝 밀기 (가림 방지)
+            Vector3 spawnPos = basePos + Vector3.up * 0.3f; // ✅ 옥상에서 살짝 띄우기
+            var cam = Camera.main;
+            if (cam != null)
+            {
+                Vector3 dir = (spawnPos - cam.transform.position).normalized;
+                spawnPos += dir * 0.3f;
+            }
+
+            // 4) 코인 생성/설정
             int remaining = maxIncome - accumulated;
             int income = Mathf.Min(amount, remaining);
             accumulated += income;
 
             GameObject coin = Instantiate(coinUIPrefab);
             coin.GetComponent<CoinUIController>().incomeAmount = income;
-
-            float height = rend.bounds.size.y;
-            Vector3 spawnPos = rend.bounds.center + new Vector3(0, height / 2f + 2.8f, 0);
-
-            Vector3 cameraDir = (spawnPos - Camera.main.transform.position).normalized;
-            spawnPos += cameraDir * 0.3f;
-
             coin.GetComponent<CoinUIController>().SetWorldPosition(spawnPos);
         }
     }
