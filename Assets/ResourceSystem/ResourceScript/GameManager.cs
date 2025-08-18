@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
             if (buildingTransform == null)
                 yield break;
 
-            yield return new WaitForSeconds(300f); // 5분 간격
+            yield return new WaitForSeconds(5f); // 5분 간격
 
             if (buildingTransform == null)
                 yield break;
