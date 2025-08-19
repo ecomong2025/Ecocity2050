@@ -227,7 +227,7 @@ public class TileClickInstaller : MonoBehaviour
             buildingData.co2PerSecond,
             buildingData.maxCO2Change,
             buildingData.incomePer5Minutes,
-            previewInstance.transform,
+            buildingData.transform,
             buildingData.maxIncomeAmount
         );
 
