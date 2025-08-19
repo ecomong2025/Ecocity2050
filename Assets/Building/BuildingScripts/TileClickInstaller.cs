@@ -219,6 +219,9 @@ public class TileClickInstaller : MonoBehaviour
                 occ.transform.SetParent(tile.transform, false);
             }
         }
+        // ✅ 추가: 설치된 "실제 건물"에 풋프린트 기록
+        var footprint = buildingData.gameObject.AddComponent<BuildingFootprint>();
+        footprint.Init(currentTiles, occupiedMarkerName);
 
         // 비용/효과 적용
         gameManager.ApplyBuildingCost(
