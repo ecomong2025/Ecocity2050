@@ -12709,8 +12709,24 @@ PrefabInstance:
       value: 2025
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: yearSets.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: gaugePieces.Array.size
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: yearSets.Array.data[2].year
+      value: 2035
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: yearSets.Array.data[3].year
+      value: 2040
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: yearSets.Array.data[4].year
+      value: 2045
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: gaugePieces.Array.data[0].year
@@ -12752,6 +12768,74 @@ PrefabInstance:
       propertyPath: gaugePieces.Array.data[4].imageObj
       value: 
       objectReference: {fileID: 123525762}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: yearSets.Array.data[2].questTexts.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: yearSets.Array.data[3].questTexts.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: yearSets.Array.data[4].questTexts.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[0].questTexts.Array.data[1]'
+      value: "\uD0C4\uC18C\uBC30\uCD9C\uB7C9 0\uC778 \uAC74\uBB3C \uC124\uCE58"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[1].questTexts.Array.data[0]'
+      value: "\uC790\uC804\uAC70 \uB3C4\uB85C \uC124\uCE58"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[2].questTexts.Array.data[0]'
+      value: "\uC5D0\uB108\uC9C0 \uC808\uC57D\uD615 \uAC74\uBB3C \uC124\uCE58"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[2].questTexts.Array.data[1]'
+      value: "\uC2DC\uBBFC \uB9CC\uC871\uB3C4 \uC88B\uC74C \uB2EC\uC131"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[2].questTexts.Array.data[2]'
+      value: "\uD034\uC988 \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[2].questTexts.Array.data[3]'
+      value: "\uC2DC\uBBFC \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[3].questTexts.Array.data[0]'
+      value: "\uC9C0\uD558\uCCA0 \uC124\uCE58"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[3].questTexts.Array.data[1]'
+      value: "\uC2DC\uBBFC \uB9CC\uC871\uB3C4 \uC88B\uC74C \uB2EC\uC131"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[3].questTexts.Array.data[2]'
+      value: "\uD034\uC988 \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[3].questTexts.Array.data[3]'
+      value: "\uC2DC\uBBFC \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[0]'
+      value: "\uCE5C\uD658\uACBD \uBC1C\uC804\uC18C \uC124\uCE58"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[1]'
+      value: "\uC2DC\uBBFC \uB9CC\uC871\uB3C4 \uC88B\uC74C \uB2EC\uC131"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[2]'
+      value: "\uD034\uC988 \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[3]'
+      value: "\uC2DC\uBBFC \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      objectReference: {fileID: 0}
     - target: {fileID: 7788278118185516103, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 888.14435
