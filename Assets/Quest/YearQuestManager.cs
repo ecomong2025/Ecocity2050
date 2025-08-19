@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;     // ★ 유지
+using System.Collections.Generic;     
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -51,38 +51,91 @@ public class YearQuestManager : MonoBehaviour
         if (isFactory) CompleteQuest(factoryQuestIndex);
         if (isZero) CompleteQuest(zeroEmissionQuestIndex);
 
-        // ✅ 2030년: 자전거 도로 설치 → 퀘스트 0번
+        //  2030년: 자전거 도로 설치 → 퀘스트 0번
         if (prefab.CompareTag("BikeRoad") && currentYear == 2030)
         {
             CompleteQuest(0);
             Debug.Log("[YearQuestManager] 2030년 자전거 도로 설치 → 퀘스트 0번 체크됨!");
         }
 
-        // ✅ 2035년: 에너지절약형 건물 설치 → 퀘스트 0번
+        //  2035년: 에너지절약형 건물 설치 → 퀘스트 0번
         if (prefab.CompareTag("EnergySaving") && currentYear == 2035)
         {
             CompleteQuest(0);
             Debug.Log("[YearQuestManager] 2035년 에너지절약형 건물 설치 → 퀘스트 0번 체크됨!");
         }
 
-        // ✅ 2040년: 지하철 설치 → 퀘스트 0번
+        //  2040년: 지하철 설치 → 퀘스트 0번
         if (prefab.CompareTag("PublicTransport") && currentYear == 2040)
         {
             CompleteQuest(0);
             Debug.Log("[YearQuestManager] 2040년 지하철 설치 → 퀘스트 0번 체크됨!");
         }
 
-        // ✅ 2045년: 친환경 발전소 설치 → 퀘스트 0번
+        //  2045년: 친환경 발전소 설치 → 퀘스트 0번
         if ((prefab.CompareTag("EcoPlant") || prefab.name.Contains("발전소")) && currentYear == 2045)
         {
             CompleteQuest(0);
             Debug.Log("[YearQuestManager] 2045년 친환경 발전소 설치 → 퀘스트 0번 체크됨!");
         }
+
+        //  2040년 추가: 봇이 추천한 건물 설치 시 퀘스트 완료 (조언 기반 퀘스트)
+        if (currentYear == 2040)
+        {
+            CheckAdviceBasedQuest(prefab, data);
+        }
+
+        //  2045년 추가: 수익성 건물 설치 시 예산 관리 퀘스트와 연계
+        if (currentYear == 2045 && data.incomePer5Minutes > 0)
+        {
+            CheckBudgetQuestBuilding();
+        }
+    }
+
+    // 2040년: 조언 기반 건물 설치 체크
+    private void CheckAdviceBasedQuest(GameObject prefab, BuildingData data)
+    {
+        // 봇의 최근 조언과 설치된 건물이 매치되는지 확인
+        // 간단한 구현: 친환경 건물, 공원, 상업 시설 등
+        bool isAdviceBuilding = false;
+
+        if (prefab.name.ToLower().Contains("공원") || prefab.name.ToLower().Contains("park"))
+        {
+            isAdviceBuilding = true;
+            Debug.Log("[YearQuestManager] 2040년 - 봇이 추천한 공원 설치!");
+        }
+        else if (IsZeroEmission(data))
+        {
+            isAdviceBuilding = true;
+            Debug.Log("[YearQuestManager] 2040년 - 봇이 추천한 친환경 건물 설치!");
+        }
+        else if (data.incomePer5Minutes > 0)
+        {
+            isAdviceBuilding = true;
+            Debug.Log("[YearQuestManager] 2040년 - 봇이 추천한 상업 시설 설치!");
+        }
+
+        if (isAdviceBuilding)
+        {
+            CompleteQuest(2); // 2040년 퀘스트 인덱스 2번으로 가정
+        }
+    }
+
+    // 2045년: 예산 관리와 연계된 건물 설치 체크
+    private void CheckBudgetQuestBuilding()
+    {
+        // GPTChatManager에서 예산 관련 대화가 완료되었는지 확인
+        var gptManager = FindObjectOfType<GPTChatManager>();
+        if (gptManager != null && gptManager.IsChatCompletedForYear(2045))
+        {
+            CompleteQuest(2); // 2045년 퀘스트 인덱스 2번으로 가정
+            Debug.Log("[YearQuestManager] 2045년 - 예산 상담 후 수익 건물 설치 완료!");
+        }
     }
 
     public void OnChatCompleted()
     {
-        Debug.Log("[YearQuestManager] Chat quest completed!");
+        Debug.Log($"[YearQuestManager] Chat quest completed for year {currentYear}!");
         CompleteQuest(chatQuestIndex);
     }
 
@@ -170,11 +223,21 @@ public class YearQuestManager : MonoBehaviour
 
         FindObjectOfType<QuizManager>()?.ResetQuizCorrectCount();
 
+        // GPTChatManager에게 연도 변경 알림
+        var gptManager = FindObjectOfType<GPTChatManager>();
+        if (gptManager != null)
+        {
+            gptManager.OnYearChanged(year);
+        }
+
         uiReady = true;   // ★ 바인딩 완료
 
         // ★ 바인딩 중 도착한 체크 처리
         while (pendingChecks.Count > 0)
             CompleteQuest_Internal(pendingChecks.Dequeue());
+
+        // 연도 변경 이벤트 발생
+        OnYearChanged?.Invoke(year);
     }
 
     private void RefreshGauge()
