@@ -3290,9 +3290,9 @@ RectTransform:
   - {fileID: 113799386}
   m_Father: {fileID: 1503801109}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 660, y: -350}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 570, y: -300}
   m_SizeDelta: {x: 340, y: 307}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &122637611
@@ -3536,6 +3536,8 @@ GameObject:
   - component: {fileID: 127190386}
   - component: {fileID: 127190385}
   - component: {fileID: 127190384}
+  - component: {fileID: 127190388}
+  - component: {fileID: 127190389}
   m_Layer: 5
   m_Name: EVChargerBtn
   m_TagString: Untagged
@@ -3597,7 +3599,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -3660,6 +3662,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 127190382}
   m_CullTransparentMesh: 1
+--- !u!114 &127190388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127190382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2045
+--- !u!114 &127190389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127190382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &134240651
 GameObject:
   m_ObjectHideFlags: 0
@@ -4058,6 +4088,8 @@ GameObject:
   - component: {fileID: 142959406}
   - component: {fileID: 142959405}
   - component: {fileID: 142959404}
+  - component: {fileID: 142959408}
+  - component: {fileID: 142959409}
   m_Layer: 5
   m_Name: House2Btn
   m_TagString: Untagged
@@ -4119,7 +4151,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -4182,6 +4214,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142959402}
   m_CullTransparentMesh: 1
+--- !u!114 &142959408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142959402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2035
+--- !u!114 &142959409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142959402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &145971655
 GameObject:
   m_ObjectHideFlags: 0
@@ -4431,9 +4491,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1503801109}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 780, y: -440}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 690, y: -390}
   m_SizeDelta: {x: 232, y: 137}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &151886131
@@ -5024,9 +5084,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 700348017}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -840, y: -440}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 120, y: 100}
   m_SizeDelta: {x: 174, y: 174}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &174177535
@@ -5605,6 +5665,8 @@ GameObject:
   - component: {fileID: 191485489}
   - component: {fileID: 191485488}
   - component: {fileID: 191485487}
+  - component: {fileID: 191485491}
+  - component: {fileID: 191485492}
   m_Layer: 5
   m_Name: SmartFactoryBtn
   m_TagString: Untagged
@@ -5666,7 +5728,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -5729,6 +5791,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 191485485}
   m_CullTransparentMesh: 1
+--- !u!114 &191485491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191485485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2035
+--- !u!114 &191485492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191485485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &191573052
 GameObject:
   m_ObjectHideFlags: 0
@@ -8153,6 +8243,8 @@ GameObject:
   - component: {fileID: 309716279}
   - component: {fileID: 309716278}
   - component: {fileID: 309716277}
+  - component: {fileID: 309716281}
+  - component: {fileID: 309716282}
   m_Layer: 5
   m_Name: BusStopBtn
   m_TagString: Untagged
@@ -8214,7 +8306,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -8277,6 +8369,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 309716275}
   m_CullTransparentMesh: 1
+--- !u!114 &309716281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309716275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2035
+--- !u!114 &309716282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309716275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &319320197
 GameObject:
   m_ObjectHideFlags: 0
@@ -8944,7 +9064,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.31598538, y: 0.3596048, z: -0.13088542, w: 0.8681629}
-  m_LocalPosition: {x: -3.5, y: 4.3, z: -3.5}
+  m_LocalPosition: {x: -3.5, y: 4.5, z: -3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9377,6 +9497,8 @@ GameObject:
   - component: {fileID: 345695769}
   - component: {fileID: 345695768}
   - component: {fileID: 345695767}
+  - component: {fileID: 345695771}
+  - component: {fileID: 345695772}
   m_Layer: 5
   m_Name: SubwayBtn
   m_TagString: Untagged
@@ -9438,7 +9560,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -9501,6 +9623,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 345695765}
   m_CullTransparentMesh: 1
+--- !u!114 &345695771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345695765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2040
+--- !u!114 &345695772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345695765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &352555862
 GameObject:
   m_ObjectHideFlags: 0
@@ -10261,6 +10411,8 @@ GameObject:
   - component: {fileID: 382830480}
   - component: {fileID: 382830479}
   - component: {fileID: 382830478}
+  - component: {fileID: 382830482}
+  - component: {fileID: 382830483}
   m_Layer: 5
   m_Name: HouseBtn
   m_TagString: Untagged
@@ -10321,7 +10473,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -10384,6 +10536,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 382830476}
   m_CullTransparentMesh: 1
+--- !u!114 &382830482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382830476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2025
+--- !u!114 &382830483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382830476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &384877265
 GameObject:
   m_ObjectHideFlags: 0
@@ -12612,6 +12792,10 @@ PrefabInstance:
     - target: {fileID: 8768695663442122764, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: m_Name
       value: YearQuestManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8768695663442122764, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15155,6 +15339,8 @@ GameObject:
   - component: {fileID: 642698867}
   - component: {fileID: 642698866}
   - component: {fileID: 642698865}
+  - component: {fileID: 642698869}
+  - component: {fileID: 642698870}
   m_Layer: 5
   m_Name: Park2Btn
   m_TagString: Untagged
@@ -15216,7 +15402,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -15279,6 +15465,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 642698863}
   m_CullTransparentMesh: 1
+--- !u!114 &642698869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 642698863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2040
+--- !u!114 &642698870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 642698863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &643197536
 GameObject:
   m_ObjectHideFlags: 0
@@ -15400,6 +15614,8 @@ GameObject:
   - component: {fileID: 648089039}
   - component: {fileID: 648089038}
   - component: {fileID: 648089037}
+  - component: {fileID: 648089041}
+  - component: {fileID: 648089042}
   m_Layer: 5
   m_Name: FactoryBtn
   m_TagString: Untagged
@@ -15460,7 +15676,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -15523,6 +15739,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 648089035}
   m_CullTransparentMesh: 1
+--- !u!114 &648089041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 648089035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2025
+--- !u!114 &648089042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 648089035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &654045463
 GameObject:
   m_ObjectHideFlags: 0
@@ -18626,6 +18870,8 @@ GameObject:
   - component: {fileID: 774556230}
   - component: {fileID: 774556229}
   - component: {fileID: 774556228}
+  - component: {fileID: 774556232}
+  - component: {fileID: 774556233}
   m_Layer: 5
   m_Name: HospitalBtn
   m_TagString: Untagged
@@ -18687,7 +18933,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -18750,6 +18996,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 774556226}
   m_CullTransparentMesh: 1
+--- !u!114 &774556232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774556226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2030
+--- !u!114 &774556233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774556226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1001 &774733479
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21123,6 +21397,8 @@ GameObject:
   - component: {fileID: 897056099}
   - component: {fileID: 897056098}
   - component: {fileID: 897056097}
+  - component: {fileID: 897056101}
+  - component: {fileID: 897056102}
   m_Layer: 5
   m_Name: BikeLaneBtn
   m_TagString: Untagged
@@ -21184,7 +21460,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -21247,6 +21523,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 897056095}
   m_CullTransparentMesh: 1
+--- !u!114 &897056101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897056095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2030
+--- !u!114 &897056102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897056095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &898545903
 GameObject:
   m_ObjectHideFlags: 0
@@ -28417,6 +28721,8 @@ GameObject:
   - component: {fileID: 1204495155}
   - component: {fileID: 1204495154}
   - component: {fileID: 1204495153}
+  - component: {fileID: 1204495157}
+  - component: {fileID: 1204495158}
   m_Layer: 5
   m_Name: TreeBtn
   m_TagString: Untagged
@@ -28477,7 +28783,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -28540,6 +28846,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1204495151}
   m_CullTransparentMesh: 1
+--- !u!114 &1204495157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204495151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2025
+--- !u!114 &1204495158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204495151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1206613314
 GameObject:
   m_ObjectHideFlags: 0
@@ -30464,12 +30798,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -30973,6 +31307,8 @@ GameObject:
   - component: {fileID: 1282291953}
   - component: {fileID: 1282291952}
   - component: {fileID: 1282291951}
+  - component: {fileID: 1282291955}
+  - component: {fileID: 1282291956}
   m_Layer: 5
   m_Name: ShrubBtn
   m_TagString: Untagged
@@ -31034,7 +31370,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -31097,6 +31433,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1282291949}
   m_CullTransparentMesh: 1
+--- !u!114 &1282291955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1282291949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2030
+--- !u!114 &1282291956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1282291949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1285799601
 GameObject:
   m_ObjectHideFlags: 0
@@ -33048,6 +33412,8 @@ GameObject:
   - component: {fileID: 1367790474}
   - component: {fileID: 1367790473}
   - component: {fileID: 1367790472}
+  - component: {fileID: 1367790476}
+  - component: {fileID: 1367790477}
   m_Layer: 5
   m_Name: CompanyBtn
   m_TagString: Untagged
@@ -33109,7 +33475,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -33172,6 +33538,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1367790470}
   m_CullTransparentMesh: 1
+--- !u!114 &1367790476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367790470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2045
+--- !u!114 &1367790477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367790470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1372643488
 GameObject:
   m_ObjectHideFlags: 0
@@ -34631,6 +35025,8 @@ GameObject:
   - component: {fileID: 1421024564}
   - component: {fileID: 1421024563}
   - component: {fileID: 1421024562}
+  - component: {fileID: 1421024566}
+  - component: {fileID: 1421024567}
   m_Layer: 5
   m_Name: SolarPlantBtn
   m_TagString: Untagged
@@ -34692,7 +35088,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -34755,6 +35151,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1421024560}
   m_CullTransparentMesh: 1
+--- !u!114 &1421024566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421024560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2040
+--- !u!114 &1421024567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421024560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1421606834
 GameObject:
   m_ObjectHideFlags: 0
@@ -34800,6 +35224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   contentRoot: {fileID: 856841327}
+  overlayName: BuildingLockOverlay
 --- !u!1 &1426937372
 GameObject:
   m_ObjectHideFlags: 0
@@ -35242,6 +35667,8 @@ GameObject:
   - component: {fileID: 1444578320}
   - component: {fileID: 1444578319}
   - component: {fileID: 1444578318}
+  - component: {fileID: 1444578323}
+  - component: {fileID: 1444578324}
   m_Layer: 5
   m_Name: ApartmentBtn
   m_TagString: Untagged
@@ -35303,7 +35730,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -35366,6 +35793,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1444578316}
   m_CullTransparentMesh: 1
+--- !u!114 &1444578323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1444578316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2030
+--- !u!114 &1444578324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1444578316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1444884833
 GameObject:
   m_ObjectHideFlags: 0
@@ -36582,6 +37037,8 @@ GameObject:
   - component: {fileID: 1464684780}
   - component: {fileID: 1464684779}
   - component: {fileID: 1464684778}
+  - component: {fileID: 1464684782}
+  - component: {fileID: 1464684783}
   m_Layer: 5
   m_Name: RoadBtn
   m_TagString: Untagged
@@ -36642,7 +37099,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -36705,6 +37162,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1464684776}
   m_CullTransparentMesh: 1
+--- !u!114 &1464684782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464684776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2025
+--- !u!114 &1464684783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464684776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1465485921
 GameObject:
   m_ObjectHideFlags: 0
@@ -37317,7 +37802,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1503801109
 RectTransform:
   m_ObjectHideFlags: 0
@@ -37531,6 +38016,8 @@ GameObject:
   - component: {fileID: 1520789306}
   - component: {fileID: 1520789305}
   - component: {fileID: 1520789304}
+  - component: {fileID: 1520789308}
+  - component: {fileID: 1520789309}
   m_Layer: 5
   m_Name: Apartment3Btn
   m_TagString: Untagged
@@ -37592,7 +38079,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -37655,6 +38142,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1519927008}
   m_CullTransparentMesh: 1
+--- !u!114 &1520789308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519927008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2045
+--- !u!114 &1520789309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519927008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1524917528
 GameObject:
   m_ObjectHideFlags: 0
@@ -37776,6 +38291,8 @@ GameObject:
   - component: {fileID: 1525481793}
   - component: {fileID: 1525481792}
   - component: {fileID: 1525481791}
+  - component: {fileID: 1525481795}
+  - component: {fileID: 1525481796}
   m_Layer: 5
   m_Name: Tree2Btn
   m_TagString: Untagged
@@ -37837,7 +38354,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -37900,6 +38417,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1525481789}
   m_CullTransparentMesh: 1
+--- !u!114 &1525481795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525481789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2035
+--- !u!114 &1525481796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525481789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1525824926
 GameObject:
   m_ObjectHideFlags: 0
@@ -38021,6 +38566,8 @@ GameObject:
   - component: {fileID: 1528269931}
   - component: {fileID: 1528269930}
   - component: {fileID: 1528269929}
+  - component: {fileID: 1528269933}
+  - component: {fileID: 1528269934}
   m_Layer: 5
   m_Name: ParkBtn
   m_TagString: Untagged
@@ -38081,7 +38628,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -38144,6 +38691,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1528269927}
   m_CullTransparentMesh: 1
+--- !u!114 &1528269933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528269927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2025
+--- !u!114 &1528269934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528269927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1543893736
 GameObject:
   m_ObjectHideFlags: 0
@@ -40172,6 +40747,8 @@ GameObject:
   - component: {fileID: 1621191241}
   - component: {fileID: 1621191240}
   - component: {fileID: 1621191239}
+  - component: {fileID: 1621191243}
+  - component: {fileID: 1621191244}
   m_Layer: 5
   m_Name: Apartment2Btn
   m_TagString: Untagged
@@ -40233,7 +40810,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -40296,6 +40873,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1621191237}
   m_CullTransparentMesh: 1
+--- !u!114 &1621191243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621191237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2035
+--- !u!114 &1621191244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621191237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!4 &1628266355 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 456744, guid: 82f6882977329724ca4b934e09af87fc, type: 3}
@@ -41041,6 +41646,8 @@ GameObject:
   - component: {fileID: 1651436020}
   - component: {fileID: 1651436019}
   - component: {fileID: 1651436018}
+  - component: {fileID: 1651436022}
+  - component: {fileID: 1651436023}
   m_Layer: 5
   m_Name: SchoolBtn
   m_TagString: Untagged
@@ -41102,7 +41709,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -41165,6 +41772,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1651436016}
   m_CullTransparentMesh: 1
+--- !u!114 &1651436022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651436016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2045
+--- !u!114 &1651436023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651436016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1653144639
 GameObject:
   m_ObjectHideFlags: 0
@@ -42698,9 +43333,9 @@ RectTransform:
   - {fileID: 187250963}
   m_Father: {fileID: 1503801109}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -850, y: 440}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: -740, y: 390}
   m_SizeDelta: {x: 104, y: 112}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1719315267
@@ -44749,6 +45384,8 @@ GameObject:
   - component: {fileID: 1788582178}
   - component: {fileID: 1788582177}
   - component: {fileID: 1788582176}
+  - component: {fileID: 1788582180}
+  - component: {fileID: 1788582181}
   m_Layer: 5
   m_Name: Tree3Btn
   m_TagString: Untagged
@@ -44810,7 +45447,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -44873,6 +45510,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1788582174}
   m_CullTransparentMesh: 1
+--- !u!114 &1788582180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1788582174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2040
+--- !u!114 &1788582181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1788582174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1797150170
 GameObject:
   m_ObjectHideFlags: 0
@@ -47196,6 +47861,8 @@ GameObject:
   - component: {fileID: 1870223657}
   - component: {fileID: 1870223656}
   - component: {fileID: 1870223655}
+  - component: {fileID: 1870223659}
+  - component: {fileID: 1870223660}
   m_Layer: 5
   m_Name: WindPlantBtn
   m_TagString: Untagged
@@ -47257,7 +47924,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -47320,6 +47987,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1870223653}
   m_CullTransparentMesh: 1
+--- !u!114 &1870223659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1870223653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2040
+--- !u!114 &1870223660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1870223653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1889516693
 GameObject:
   m_ObjectHideFlags: 0
@@ -47962,6 +48657,8 @@ GameObject:
   - component: {fileID: 1906696457}
   - component: {fileID: 1906696456}
   - component: {fileID: 1906696455}
+  - component: {fileID: 1906696459}
+  - component: {fileID: 1906696460}
   m_Layer: 5
   m_Name: RecycleHubBtn
   m_TagString: Untagged
@@ -48023,7 +48720,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -48086,6 +48783,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1906696453}
   m_CullTransparentMesh: 1
+--- !u!114 &1906696459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906696453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockYear: 2030
+--- !u!114 &1906696460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906696453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d6f7de06b1e9024983aa6a05aa0d7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  overlayName: BuildingLockOverlay
+  defaultUnlockYear: 2025
 --- !u!1 &1908352546
 GameObject:
   m_ObjectHideFlags: 0
@@ -52402,8 +53127,11 @@ MonoBehaviour:
   questUI: {fileID: 1519766997}
   zoomSpeed: 5
   minDistance: 5
-  maxDistance: 30
+  maxDistance: 20
+  mapCenter: {x: 0, y: 0, z: 0}
   panSpeed: 5
+  limitX: {x: -15, y: 15}
+  limitZ: {x: -15, y: 15}
 --- !u!1 &2096917681
 GameObject:
   m_ObjectHideFlags: 0
@@ -53487,8 +54215,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f86a413397f453aa7d79b8a33610fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalDisasterInterval: 300
-  severeDisasterInterval: 180
+  normalDisasterInterval: 10
+  severeDisasterInterval: 10
 --- !u!1 &2132139039
 GameObject:
   m_ObjectHideFlags: 0
