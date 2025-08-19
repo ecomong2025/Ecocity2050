@@ -47,7 +47,9 @@ public class GPTChatManager : MonoBehaviour
     [SerializeField] private float temperature = 0.7f;
     [SerializeField] private int maxTokens = 800;
 
-    private bool hasChatted = false;
+    // 연도별 채팅 완료 상태 추적
+    private System.Collections.Generic.Dictionary<int, bool> yearChatCompleted =
+        new System.Collections.Generic.Dictionary<int, bool>();
 
     private System.Collections.Generic.List<GPTMessage> conversationHistory =
         new System.Collections.Generic.List<GPTMessage>();
@@ -56,6 +58,31 @@ public class GPTChatManager : MonoBehaviour
     {
         LoadAPIKey();
         SetupSystemMessage();
+
+        // 연도별 채팅 상태 초기화
+        InitializeChatStatus();
+    }
+
+    // 연도별 채팅 상태 초기화
+    private void InitializeChatStatus()
+    {
+        yearChatCompleted[2025] = false;
+        yearChatCompleted[2030] = false;
+        yearChatCompleted[2035] = false;
+        yearChatCompleted[2040] = false;
+        yearChatCompleted[2045] = false;
+    }
+
+    // 연도 변경 시 채팅 상태 리셋 (YearQuestManager에서 호출)
+    public void OnYearChanged(int newYear)
+    {
+        // 새 연도의 채팅 상태가 없으면 false로 초기화
+        if (!yearChatCompleted.ContainsKey(newYear))
+        {
+            yearChatCompleted[newYear] = false;
+        }
+
+        Debug.Log($"[GPTChatManager] 연도 변경: {newYear}년, 채팅 완료 상태: {yearChatCompleted[newYear]}");
     }
 
     private void LoadAPIKey()
@@ -140,10 +167,9 @@ public class GPTChatManager : MonoBehaviour
 5. 설치된 건물의 시너지 효과를 고려한 다음 건물 추천
 
 답변 규칙:
-- 답변에 이모지는 절대 사용하지 마세요
+- 답변에 이모지는 사용하지 마세요 대신 느낌표, 물음표 등은 자유롭게 사용 가능
 - 구체적인 건물명과 수치를 포함하여 실용적인 조언 제공
-- 250자 내외로 간결하되 핵심적인 정보 포함
-- 느낌표, 물음표 등은 자유롭게 사용 가능
+- 160자 내로 간결하되 핵심적인 정보 포함
 
 답변 스타일: 전문적이면서도 친근한 도시계획 전문가처럼 조언해주세요.
 ";
@@ -204,10 +230,10 @@ public class GPTChatManager : MonoBehaviour
             conversationHistory.Insert(0, systemMsg);
         }
 
-        StartCoroutine(CallGPTAPI(onResponse));
+        StartCoroutine(CallGPTAPI(userMessage, onResponse));
     }
 
-    IEnumerator CallGPTAPI(System.Action<string> onResponse)
+    IEnumerator CallGPTAPI(string originalUserMessage, System.Action<string> onResponse)
     {
         GPTRequest request = new GPTRequest
         {
@@ -252,11 +278,8 @@ public class GPTChatManager : MonoBehaviour
                     };
                     conversationHistory.Add(botMsg);
 
-                    if (!hasChatted)
-                    {
-                        hasChatted = true;
-                        YearQuestManager.Instance?.OnChatCompleted();
-                    }
+                    // 연도별 채팅 퀘스트 처리
+                    ProcessChatQuest(originalUserMessage, botMessage);
 
                     onResponse?.Invoke(botMessage);
                 }
@@ -270,11 +293,118 @@ public class GPTChatManager : MonoBehaviour
         }
     }
 
+    // 연도별 채팅 퀘스트 처리
+    private void ProcessChatQuest(string userMessage, string botMessage)
+    {
+        int currentYear = YearQuestManager.Instance?.GetCurrentYear() ?? 2025;
+
+        // 이미 해당 연도의 채팅 퀘스트를 완료했다면 리턴
+        if (yearChatCompleted.ContainsKey(currentYear) && yearChatCompleted[currentYear])
+        {
+            Debug.Log($"[GPTChatManager] {currentYear}년 채팅 퀘스트 이미 완료됨");
+            return;
+        }
+
+        bool questCompleted = false;
+
+        switch (currentYear)
+        {
+            case 2025:
+                // 2025년: 첫 대화 성공 시 완료
+                questCompleted = true;
+                Debug.Log("[GPTChatManager] 2025년 - 시민과의 첫 대화 완료!");
+                break;
+
+            case 2030:
+                // 2030년: 환경 관련 키워드 포함 시 완료
+                string[] envKeywords = { "CO2", "환경", "배출", "친환경", "공원", "오염", "탄소" };
+                string combinedText = (userMessage + " " + botMessage).ToLower();
+
+                foreach (string keyword in envKeywords)
+                {
+                    if (combinedText.Contains(keyword.ToLower()))
+                    {
+                        questCompleted = true;
+                        Debug.Log($"[GPTChatManager] 2030년 - 환경 정책 상담 완료! (키워드: {keyword})");
+                        break;
+                    }
+                }
+                break;
+
+            case 2035:
+                // 2035년: 도시 발전 관련 키워드 포함 시 완료
+                string[] devKeywords = { "건설", "건물", "계획", "발전", "개발", "확장", "도시", "시설" };
+                string combinedText2035 = (userMessage + " " + botMessage).ToLower();
+
+                foreach (string keyword in devKeywords)
+                {
+                    if (combinedText2035.Contains(keyword.ToLower()))
+                    {
+                        questCompleted = true;
+                        Debug.Log($"[GPTChatManager] 2035년 - 도시 발전 계획 논의 완료! (키워드: {keyword})");
+                        break;
+                    }
+                }
+                break;
+
+            case 2040:
+                // 2040년: 봇의 조언과 관련된 건물 설치 체크는 YearQuestManager에서 처리
+                // 여기서는 조언이 포함된 대화인지만 확인
+                string[] adviceKeywords = { "공원", "친환경", "상업", "건설", "설치", "추천", "제안" };
+                string botText = botMessage.ToLower();
+
+                foreach (string keyword in adviceKeywords)
+                {
+                    if (botText.Contains(keyword.ToLower()))
+                    {
+                        questCompleted = true;
+                        Debug.Log($"[GPTChatManager] 2040년 - 조언 대화 완료! (키워드: {keyword})");
+                        break;
+                    }
+                }
+                break;
+
+            case 2045:
+                // 2045년: 예산 관리 관련 키워드 포함 시 완료
+                string[] budgetKeywords = { "예산", "돈", "수익", "재정", "비용", "경제", "수입", "자금" };
+                string combinedText2045 = (userMessage + " " + botMessage).ToLower();
+
+                foreach (string keyword in budgetKeywords)
+                {
+                    if (combinedText2045.Contains(keyword.ToLower()))
+                    {
+                        questCompleted = true;
+                        Debug.Log($"[GPTChatManager] 2045년 - 예산 관리 상담 완료! (키워드: {keyword})");
+                        break;
+                    }
+                }
+                break;
+        }
+
+        // 퀘스트 완료 처리
+        if (questCompleted)
+        {
+            yearChatCompleted[currentYear] = true;
+            YearQuestManager.Instance?.OnChatCompleted();
+        }
+    }
+
     public void ClearConversation()
     {
         conversationHistory.Clear();
         SetupSystemMessage();
-        hasChatted = false;
+        // 대화 기록 초기화 시 현재 연도의 채팅 상태만 리셋
+        int currentYear = YearQuestManager.Instance?.GetCurrentYear() ?? 2025;
+        if (yearChatCompleted.ContainsKey(currentYear))
+        {
+            yearChatCompleted[currentYear] = false;
+        }
         Debug.Log("[시스템] 대화 기록이 초기화되었습니다.");
+    }
+
+    // 연도별 채팅 완료 상태 확인 -> 디버그용
+    public bool IsChatCompletedForYear(int year)
+    {
+        return yearChatCompleted.ContainsKey(year) && yearChatCompleted[year];
     }
 }
