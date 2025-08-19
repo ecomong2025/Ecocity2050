@@ -1,31 +1,31 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CitizenWanderer : MonoBehaviour
 {
-    public float moveSpeed = 1.5f;
-    public float walkDuration = 2f;
-    public float idleDuration = 1.5f;
-    public float zMin = -1.8f;
-    public float zMax = 1.8f;
-    public float startOffsetRange = 2f;
+    [Header("Movement Settings")]
+    public float walkDuration = 10f;
+    public float idleDuration = 3f;
 
-    private Rigidbody rb;
+    [Header("Animation Settings")]
+    public float animationSpeed = 0.8f;
+    public float speedChangeRate = 1f;
+
+    public void OnNewBuildingInstalled() { }
+
     private Animator animator;
     private float timer;
     private bool isWalking = false;
-    private Vector2 moveDirection; // X, Z 평면에서 움직임
+
+    // 애니메이션 부드러움을 위한 변수
+    private float currentAnimationSpeed = 0f;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
-
-        // 시작 위치에 랜덤 오프셋 적용 (Z축 포함)
-        Vector3 offset = new Vector3(Random.Range(-startOffsetRange, startOffsetRange), 0f, Random.Range(zMin, zMax));
-        transform.position += offset;
 
         timer = idleDuration;
         isWalking = false;
+        currentAnimationSpeed = 0f;
     }
 
     void Update()
@@ -36,64 +36,42 @@ public class CitizenWanderer : MonoBehaviour
         {
             if (isWalking)
             {
-                // 멈추기
-                moveDirection = Vector2.zero;
-                rb.linearVelocity = Vector3.zero;
-                animator.SetFloat("Speed", 0f);
-                animator.speed = 0f;
-                isWalking = false;
-                timer = idleDuration;
+                StopWalking();
             }
             else
             {
-                // 걷기 시작
-                moveDirection = GetRandomDirection();
-                isWalking = true;
-                timer = walkDuration;
-
-                animator.speed = 1f;
-                animator.SetFloat("Speed", 1f);
+                StartWalking();
             }
         }
+
+        UpdateAnimation();
     }
 
-    void FixedUpdate()
+    void StartWalking()
     {
-        if (isWalking)
-        {
-            Vector3 velocity = new Vector3(moveDirection.x, 0, moveDirection.y) * moveSpeed;
-            rb.linearVelocity = velocity;
+        // 랜덤 회전 (90, -90, 180 중 하나)
+        float[] angles = { -90f, 90f, 180f };
+        float randomAngle = angles[Random.Range(0, angles.Length)];
+        transform.Rotate(0, randomAngle, 0);
 
-            // 회전 (Y축 기준)
-            if (moveDirection != Vector2.zero)
-            {
-                float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-                transform.eulerAngles = new Vector3(0f, 90f - angle, 0f);
-                // 90도 빼는 건 방향 맞추기 위해서 (필요시 조절)
-            }
-
-            // Z축 범위 
-            if (transform.position.z < zMin || transform.position.z > zMax)
-            {
-                // 방향 Y 성분 반전 (Z축 대응)
-                moveDirection = new Vector2(moveDirection.x, -moveDirection.y);
-
-                // Y축 180도 회전 
-                Vector3 rot = transform.eulerAngles;
-                rot.y = (rot.y + 180f) % 360f;
-                transform.eulerAngles = rot;
-
-                // Z 위치 클램핑
-                float clampedZ = Mathf.Clamp(transform.position.z, zMin, zMax);
-                transform.position = new Vector3(transform.position.x, transform.position.y, clampedZ);
-            }
-        }
+        isWalking = true;
+        timer = walkDuration;
     }
 
-    // 무작위 방향 반환 (X, Z 평면)
-    Vector2 GetRandomDirection()
+    void StopWalking()
     {
-        float angle = Random.Range(0f, 2f * Mathf.PI);
-        return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
+        isWalking = false;
+        timer = idleDuration;
+    }
+
+    void UpdateAnimation()
+    {
+        if (animator == null) return;
+
+        float targetAnimSpeed = isWalking ? animationSpeed : 0f;
+        currentAnimationSpeed = Mathf.Lerp(currentAnimationSpeed, targetAnimSpeed, Time.deltaTime * speedChangeRate);
+
+        animator.SetFloat("Speed", currentAnimationSpeed);
+        animator.speed = isWalking ? 1f : Mathf.Max(0.1f, currentAnimationSpeed);
     }
 }

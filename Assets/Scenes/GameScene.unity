@@ -1544,7 +1544,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &79657936
 Transform:
   m_ObjectHideFlags: 0
@@ -1581,7 +1581,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31388d416747c754c970d3dacf42b5c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  citizens:
+  Citizens:
   - {fileID: 774733481}
   - {fileID: 91878775}
   - {fileID: 1401655365}
@@ -1591,6 +1591,9 @@ MonoBehaviour:
   - {fileID: 1166165386}
   - {fileID: 805031659}
   - {fileID: 800743535}
+  citizenSpawnInterval: 8
+  minSatisfactionForGrowth: 0.6
+  maxSatisfactionDecayDelay: 5
 --- !u!1 &81575649
 GameObject:
   m_ObjectHideFlags: 0
@@ -1768,12 +1771,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b37a4276659db438e9df71f4c02329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  walkDuration: 2
-  idleDuration: 1.5
-  zMin: -1.8
-  zMax: 1.8
-  startOffsetRange: 2
+  walkDuration: 10
+  idleDuration: 3
+  animationSpeed: 0.8
+  speedChangeRate: 1
 --- !u!195 &86352838
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1923,12 +1924,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b37a4276659db438e9df71f4c02329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  walkDuration: 2
-  idleDuration: 1.5
-  zMin: -1.8
-  zMax: 1.8
-  startOffsetRange: 2
+  walkDuration: 10
+  idleDuration: 3
+  animationSpeed: 0.8
+  speedChangeRate: 1
 --- !u!195 &91878777
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2216,12 +2215,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b37a4276659db438e9df71f4c02329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  walkDuration: 2
-  idleDuration: 1.5
-  zMin: -1.8
-  zMax: 1.8
-  startOffsetRange: 2
+  walkDuration: 10
+  idleDuration: 3
+  animationSpeed: 0.8
+  speedChangeRate: 1
 --- !u!195 &94533654
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -3485,7 +3482,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 25}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &125573786
@@ -19130,12 +19127,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b37a4276659db438e9df71f4c02329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  walkDuration: 2
-  idleDuration: 1.5
-  zMin: -1.8
-  zMax: 1.8
-  startOffsetRange: 2
+  walkDuration: 10
+  idleDuration: 3
+  animationSpeed: 0.8
+  speedChangeRate: 1
 --- !u!195 &774733483
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -19641,12 +19636,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b37a4276659db438e9df71f4c02329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  walkDuration: 2
-  idleDuration: 1.5
-  zMin: -1.8
-  zMax: 1.8
-  startOffsetRange: 2
+  walkDuration: 10
+  idleDuration: 3
+  animationSpeed: 0.8
+  speedChangeRate: 1
 --- !u!195 &800743537
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -19796,12 +19789,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b37a4276659db438e9df71f4c02329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  walkDuration: 2
-  idleDuration: 1.5
-  zMin: -1.8
-  zMax: 1.8
-  startOffsetRange: 2
+  walkDuration: 10
+  idleDuration: 3
+  animationSpeed: 0.8
+  speedChangeRate: 1
 --- !u!195 &805031661
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -26563,7 +26554,7 @@ MonoBehaviour:
   coinUIPrefab: {fileID: 7388861841148158984, guid: 4d15a72cf704b4e65aca72124f8e1db0, type: 3}
   uiCanvas: {fileID: 700348016}
   emojiController: {fileID: 2059831101}
-  citizenGroupController: {fileID: 0}
+  citizenGroupController: {fileID: 79657937}
   quizManager: {fileID: 1250567772}
 --- !u!4 &1132717832
 Transform:
@@ -27562,12 +27553,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b37a4276659db438e9df71f4c02329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  walkDuration: 2
-  idleDuration: 1.5
-  zMin: -1.8
-  zMax: 1.8
-  startOffsetRange: 2
+  walkDuration: 10
+  idleDuration: 3
+  animationSpeed: 0.8
+  speedChangeRate: 1
 --- !u!195 &1166165388
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -32932,12 +32921,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b37a4276659db438e9df71f4c02329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  walkDuration: 2
-  idleDuration: 1.5
-  zMin: -1.8
-  zMax: 1.8
-  startOffsetRange: 2
+  walkDuration: 10
+  idleDuration: 3
+  animationSpeed: 0.8
+  speedChangeRate: 1
 --- !u!195 &1346969571
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -34515,12 +34502,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b37a4276659db438e9df71f4c02329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  walkDuration: 2
-  idleDuration: 1.5
-  zMin: -1.8
-  zMax: 1.8
-  startOffsetRange: 2
+  walkDuration: 10
+  idleDuration: 3
+  animationSpeed: 0.8
+  speedChangeRate: 1
 --- !u!195 &1401655367
 NavMeshAgent:
   m_ObjectHideFlags: 0

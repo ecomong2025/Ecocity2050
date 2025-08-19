@@ -45,7 +45,7 @@ public class GPTChatManager : MonoBehaviour
     [SerializeField] private string apiUrl = "https://api.openai.com/v1/chat/completions";
     [SerializeField] private string model = "gpt-3.5-turbo";
     [SerializeField] private float temperature = 0.7f;
-    [SerializeField] private int maxTokens = 500;
+    [SerializeField] private int maxTokens = 800; // 토큰 수를 늘려서 더 자세한 조언 가능
 
     // 채팅을 한 번 이상 했는지 확인하는 플래그
     private bool hasChatted = false;
@@ -88,26 +88,35 @@ public class GPTChatManager : MonoBehaviour
     {
         string gameState = GetCurrentGameState();
         string systemMessage = $@"
-당신은 도시 건설 게임의 조언자입니다. 플레이어에게 게임 내 상황에 맞는 구체적이고 실용적인 조언을 제공해주세요.
+당신은 도시 건설 게임의 전문 조언자입니다. 플레이어에게 현재 게임 상황을 종합적으로 분석하여 구체적이고 실용적인 조언을 제공해주세요.
 
 현재 게임 상황:
 - 예산: {GameManager.Instance.budget}원
 - CO2 배출량: {GameManager.Instance.co2}
 - 시민 만족도: {GameManager.Instance.GetSatisfactionLevel()}
 
-역할:
-1. 플레이어의 질문에 대해 현재 게임 상황을 고려한 구체적인 조언 제공
-2. CO2 배출량이 높을 때는 환경 개선 방안 제시 (공원, 친환경 건물 등)
-3. 예산이 부족할 때는 수익 창출 방안 제시
-4. 시민 만족도가 낮을 때는 개선 방안 제시
-5. 간결하고 이해하기 쉬운 답변 제공 (200자 내외)
+{GetBuildingStatus()}
+
+역할과 조언 방식:
+1. 현재 설치된 건물들을 분석하여 도시 발전 상태 평가
+2. 부족한 부분을 파악하고 우선순위별 개선 방안 제시
+3. 예산 대비 효율적인 건물 건설 순서 추천
+4. CO2와 수익의 균형을 고려한 전략적 조언
+5. 설치된 건물의 시너지 효과를 고려한 다음 건물 추천
+
+상황별 조언 기준:
+- 수익 건물 부족 시: 상업 건물이나 수익 시설 우선 추천
+- 환경 문제 심각 시: 공원, 친환경 건물 우선 추천
+- 건물 불균형 시: 균형 잡힌 도시 개발 방향 제시
+- 예산 부족 시: 저비용 고효율 건물 추천
 
 답변 규칙:
-- 답변에 이모지는 절대 맍마사용하지 마세요
+- 답변에 이모지는 절대 사용하지 마세요
 - 느낌표, 물음표 등의 일반적인 문장 부호는 사용 가능합니다
-- 텍스트만으로 친근하고 도움이 되는 조언자처럼 말해주세요
+- 구체적인 건물명과 수치를 포함하여 실용적인 조언 제공
+- 250자 내외로 간결하되 핵심적인 정보 포함
 
-답변 스타일: 친근하고 도움이 되는 조언자처럼 말해주세요.
+답변 스타일: 전문적이면서도 친근한 도시계획 전문가처럼 조언해주세요.
 ";
 
         GPTMessage systemMsg = new GPTMessage
@@ -125,6 +134,16 @@ public class GPTChatManager : MonoBehaviour
         return $"예산: {GameManager.Instance.budget}원, CO2: {GameManager.Instance.co2}, 만족도: {GameManager.Instance.GetSatisfactionLevel()}";
     }
 
+    private string GetBuildingStatus()
+    {
+        if (GameManager.Instance == null) return "";
+
+        string buildingsInfo = GameManager.Instance.GetBuildingsInfo();
+        string buildingAnalysis = GameManager.Instance.GetBuildingAnalysis();
+
+        return $"{buildingsInfo}\n\n{buildingAnalysis}";
+    }
+
     public void SendMessageToGPT(string userMessage, System.Action<string> onResponse)
     {
         if (string.IsNullOrEmpty(apiKey))
@@ -137,8 +156,17 @@ public class GPTChatManager : MonoBehaviour
         // 콘솔에 사용자 메시지 출력
         Debug.Log($"[사용자 메시지] {userMessage}");
 
-        // 현재 게임 상태를 포함한 메시지 생성
-        string contextMessage = $"[현재 상황] {GetCurrentGameState()}\n\n[질문] {userMessage}";
+        // 현재 게임 상태와 건물 정보를 포함한 메시지 생성
+        string gameState = GetCurrentGameState();
+        string buildingStatus = GetBuildingStatus();
+        string contextMessage = $@"[현재 도시 상황]
+{gameState}
+
+[건물 현황]
+{buildingStatus}
+
+[플레이어 질문]
+{userMessage}";
 
         GPTMessage userMsg = new GPTMessage
         {
@@ -148,10 +176,13 @@ public class GPTChatManager : MonoBehaviour
 
         conversationHistory.Add(userMsg);
 
-        // 최근 10개 메시지만 유지 (API 비용 절약)
-        if (conversationHistory.Count > 10)
+        // 최근 8개 메시지만 유지 (시스템 메시지 포함, API 비용 절약)
+        if (conversationHistory.Count > 8)
         {
-            conversationHistory.RemoveRange(1, conversationHistory.Count - 10); // 시스템 메시지는 유지
+            // 시스템 메시지는 유지하고 오래된 대화만 제거
+            var systemMsg = conversationHistory[0];
+            conversationHistory.RemoveRange(1, conversationHistory.Count - 8);
+            conversationHistory.Insert(0, systemMsg);
         }
 
         StartCoroutine(CallGPTAPI(onResponse));
@@ -205,7 +236,7 @@ public class GPTChatManager : MonoBehaviour
                     };
                     conversationHistory.Add(botMsg);
 
-                    //  첫 번째 성공적인 채팅 완료 시 퀘스트 완료
+                    // 첫 번째 성공적인 채팅 완료 시 퀘스트 완료
                     if (!hasChatted)
                     {
                         hasChatted = true;

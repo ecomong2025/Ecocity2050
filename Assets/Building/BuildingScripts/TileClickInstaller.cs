@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
@@ -145,7 +145,14 @@ public class TileClickInstaller : MonoBehaviour
 
     public void SetSelectedBuilding(GameObject prefab)
     {
+        // 이미 설치 프리뷰가 있다면 취소하고 새 건물 선택
+        if (previewInstance != null)
+        {
+            CancelInstall();
+        }
+
         selectedBuildingPrefab = prefab;
+        Debug.Log($"선택된 건물: {prefab.name}");
     }
 
     void RotatePreview()
@@ -207,6 +214,22 @@ public class TileClickInstaller : MonoBehaviour
                                     modelInstance.GetComponentInChildren<BuildingData>();
         if (buildingData == null) return;
 
+        // ✅ 건물에 "Building" 태그 추가 (시민 이동 AI용)
+        // 태그 설정 전에 안전하게 확인
+        if (previewInstance.tag != "Building")
+        {
+            try
+            {
+                previewInstance.tag = "Building";
+                Debug.Log($"건물에 'Building' 태그 설정 완료: {previewInstance.name}");
+            }
+            catch (UnityException e)
+            {
+                Debug.LogWarning($"[TileClickInstaller] 'Building' 태그 설정 실패: {e.Message}");
+                Debug.LogWarning("Unity 에디터에서 Edit > Project Settings > Tags and Layers에서 'Building' 태그를 추가해주세요.");
+            }
+        }
+
         // ✅ 대표 타일 1개만 부모로 (여러 번 SetParent 하던 문제 제거)
         previewInstance.transform.SetParent(currentTiles[0].transform, true);
 
@@ -220,7 +243,31 @@ public class TileClickInstaller : MonoBehaviour
             }
         }
 
-        // 비용/효과 적용
+        //  건물 정보를 GameManager에 추가 (GPT가 인식할 수 있도록)
+        int totalCO2Impact = buildingData.instantCO2Change;
+
+        // co2PerSecond가 0이 아닐 때만 추가 계산
+        if (buildingData.co2PerSecond != 0)
+        {
+            totalCO2Impact += buildingData.maxCO2Change;
+        }
+
+        int incomePerMinute = 0;
+        if (buildingData.incomePer5Minutes > 0)
+        {
+            incomePerMinute = buildingData.incomePer5Minutes / 5; // 5분당 -> 1분당 수입으로 변환
+        }
+
+        gameManager.AddBuilding(
+            selectedBuildingPrefab.name.Replace("Prefab", ""), // 건물 이름
+            buildingData.cost,
+            totalCO2Impact, // 수정된 CO2 영향 계산
+            incomePerMinute, // 수정된 수입 계산
+            previewInstance.transform.position,
+            previewInstance
+        );
+
+        // 비용/효과 적용 (기존 코드)
         gameManager.ApplyBuildingCost(
             buildingData.cost,
             buildingData.instantCO2Change,
@@ -231,11 +278,36 @@ public class TileClickInstaller : MonoBehaviour
             buildingData.maxIncomeAmount
         );
 
-        // ✅ 퀘스트 자동 체크 알림
+        //퀘스트 자동 체크 알림
         YearQuestManager.Instance?.OnBuildingInstalled(selectedBuildingPrefab, buildingData);
 
-        ClearPreviewAndPanel();
+        //시민들에게 새 건물 알림 (기존 시민들이 새 건물을 찾을 수 있도록)
+        NotifyCitizensOfNewBuilding();
 
+        //시민 컨트롤러에게 새 건물 설치 알림 (새 시민 생성을 위해)
+        CitizenGroupController citizenController = FindObjectOfType<CitizenGroupController>();
+        if (citizenController != null)
+        {
+            citizenController.OnBuildingInstalled(previewInstance.transform.position);
+            Debug.Log($"[TileClickInstaller] 시민 컨트롤러에 새 건물 알림 전송: {previewInstance.transform.position}");
+        }
+        else
+        {
+            Debug.LogWarning("[TileClickInstaller] CitizenGroupController를 찾을 수 없습니다!");
+        }
+
+        ClearPreviewAndPanel();
+    }
+
+    // 새 건물 설치 시 기존 시민들에게 알림
+    void NotifyCitizensOfNewBuilding()
+    {
+        CitizenWanderer[] allCitizens = FindObjectsOfType<CitizenWanderer>();
+        foreach (var citizen in allCitizens)
+        {
+            // 시민의 OnNewBuildingInstalled 메서드 호출 (다음에 추가할 예정)
+            citizen.OnNewBuildingInstalled();
+        }
     }
 
     void CancelInstall()
@@ -248,7 +320,7 @@ public class TileClickInstaller : MonoBehaviour
     {
         previewInstance = null;
         modelInstance = null;
-        selectedBuildingPrefab = null;
+        // selectedBuildingPrefab = null; // ✅ 이 라인을 제거하여 선택된 건물 정보 유지
         currentTiles = null;
         buildingInstallPanel.SetActive(false);
     }

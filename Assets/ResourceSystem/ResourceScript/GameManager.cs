@@ -1,7 +1,28 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
+[System.Serializable]
+public class BuildingInfo
+{
+    public string buildingName;
+    public int cost;
+    public int co2Impact;
+    public int incomePerMinute;
+    public Vector3 position;
+    public GameObject buildingObject;
+
+    public BuildingInfo(string name, int buildCost, int co2, int income, Vector3 pos, GameObject obj)
+    {
+        buildingName = name;
+        cost = buildCost;
+        co2Impact = co2;
+        incomePerMinute = income;
+        position = pos;
+        buildingObject = obj;
+    }
+}
 
 public class GameManager : MonoBehaviour
 {
@@ -28,6 +49,9 @@ public class GameManager : MonoBehaviour
     // 건물별 수입 코루틴 관리용 딕셔너리
     private Dictionary<Transform, Coroutine> incomeCoroutines = new Dictionary<Transform, Coroutine>();
 
+    // 건물 정보 추적용 리스트
+    private List<BuildingInfo> builtBuildings = new List<BuildingInfo>();
+
     private void Awake()
     {
         Instance = this;
@@ -36,6 +60,114 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         UpdateUI();
+    }
+
+    // 건물 정보를 추가하는 새로운 메서드
+    public void AddBuilding(string buildingName, int cost, int co2Impact, int incomePerMinute, Vector3 position, GameObject buildingObject)
+    {
+        BuildingInfo newBuilding = new BuildingInfo(buildingName, cost, co2Impact, incomePerMinute, position, buildingObject);
+        builtBuildings.Add(newBuilding);
+        Debug.Log($"[건물 추가] {buildingName} - 비용: {cost}, CO2: {co2Impact}, 수입: {incomePerMinute}/분");
+    }
+
+    // 건물 제거 시 리스트에서도 제거
+    public void RemoveBuilding(GameObject buildingObject)
+    {
+        BuildingInfo buildingToRemove = builtBuildings.Find(b => b.buildingObject == buildingObject);
+        if (buildingToRemove != null)
+        {
+            builtBuildings.Remove(buildingToRemove);
+            Debug.Log($"[건물 제거] {buildingToRemove.buildingName}");
+        }
+    }
+
+    // 건물 정보를 문자열로 반환하는 메서드
+    public string GetBuildingsInfo()
+    {
+        if (builtBuildings.Count == 0)
+        {
+            return "설치된 건물이 없습니다.";
+        }
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.AppendLine("설치된 건물 현황:");
+
+        // 건물 종류별로 개수 계산
+        Dictionary<string, int> buildingCounts = new Dictionary<string, int>();
+        Dictionary<string, int> totalCO2 = new Dictionary<string, int>();
+        Dictionary<string, int> totalIncome = new Dictionary<string, int>();
+
+        foreach (var building in builtBuildings)
+        {
+            if (building.buildingObject != null) // 건물이 파괴되지 않은 경우만
+            {
+                if (buildingCounts.ContainsKey(building.buildingName))
+                {
+                    buildingCounts[building.buildingName]++;
+                    totalCO2[building.buildingName] += building.co2Impact;
+                    totalIncome[building.buildingName] += building.incomePerMinute;
+                }
+                else
+                {
+                    buildingCounts[building.buildingName] = 1;
+                    totalCO2[building.buildingName] = building.co2Impact;
+                    totalIncome[building.buildingName] = building.incomePerMinute;
+                }
+            }
+        }
+
+        foreach (var kvp in buildingCounts)
+        {
+            string buildingName = kvp.Key;
+            int count = kvp.Value;
+            int co2 = totalCO2[buildingName];
+            int income = totalIncome[buildingName];
+
+            sb.AppendLine($"- {buildingName}: {count}개 (CO2: {co2}, 수입: {income}/분)");
+        }
+
+        return sb.ToString();
+    }
+
+    // 건물 분석 정보를 제공하는 메서드
+    public string GetBuildingAnalysis()
+    {
+        if (builtBuildings.Count == 0)
+        {
+            return "건물 분석: 아직 설치된 건물이 없습니다.";
+        }
+
+        int totalIncomeBuildings = 0;
+        int totalEnvironmentalBuildings = 0;
+        int totalIncome = 0;
+        int totalCO2FromBuildings = 0;
+
+        foreach (var building in builtBuildings)
+        {
+            if (building.buildingObject != null)
+            {
+                if (building.incomePerMinute > 0)
+                {
+                    totalIncomeBuildings++;
+                    totalIncome += building.incomePerMinute;
+                }
+
+                if (building.co2Impact < 0) // CO2 감소 효과가 있는 건물
+                {
+                    totalEnvironmentalBuildings++;
+                }
+
+                totalCO2FromBuildings += building.co2Impact;
+            }
+        }
+
+        System.Text.StringBuilder analysis = new System.Text.StringBuilder();
+        analysis.AppendLine("건물 분석:");
+        analysis.AppendLine($"- 수익 건물: {totalIncomeBuildings}개 (총 수입: {totalIncome}/분)");
+        analysis.AppendLine($"- 환경 건물: {totalEnvironmentalBuildings}개");
+        analysis.AppendLine($"- 건물로 인한 총 CO2 영향: {totalCO2FromBuildings}");
+
+        return analysis.ToString();
     }
 
     public void ApplyBuildingCost(
@@ -64,13 +196,19 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
-    // 건물 파괴 시 수입 코루틴 중지
+    // 건물 파괴 시 수입 코루틴 중지 및 리스트에서 제거
     public void StopIncomeForBuilding(Transform buildingTransform)
     {
         if (incomeCoroutines.ContainsKey(buildingTransform))
         {
             StopCoroutine(incomeCoroutines[buildingTransform]);
             incomeCoroutines.Remove(buildingTransform);
+        }
+
+        // 건물 리스트에서도 제거
+        if (buildingTransform != null)
+        {
+            RemoveBuilding(buildingTransform.gameObject);
         }
     }
 
@@ -201,6 +339,5 @@ public class GameManager : MonoBehaviour
     {
         gamePanel.SetActive(true);
         quizMainPanel.SetActive(false);
-
     }
 }

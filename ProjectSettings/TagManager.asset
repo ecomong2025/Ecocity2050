@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Tile
   - Factory
+  - Building
   layers:
   - Default
   - TransparentFX
