@@ -10,6 +10,7 @@ TagManager:
   - EcoPlant
   - EnergySaving
   - PublicTransport
+  - Building
   layers:
   - Default
   - TransparentFX
