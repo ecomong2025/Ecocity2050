@@ -45,9 +45,8 @@ public class GPTChatManager : MonoBehaviour
     [SerializeField] private string apiUrl = "https://api.openai.com/v1/chat/completions";
     [SerializeField] private string model = "gpt-3.5-turbo";
     [SerializeField] private float temperature = 0.7f;
-    [SerializeField] private int maxTokens = 800; // 토큰 수를 늘려서 더 자세한 조언 가능
+    [SerializeField] private int maxTokens = 800;
 
-    // 채팅을 한 번 이상 했는지 확인하는 플래그
     private bool hasChatted = false;
 
     private System.Collections.Generic.List<GPTMessage> conversationHistory =
@@ -86,16 +85,52 @@ public class GPTChatManager : MonoBehaviour
 
     private void SetupSystemMessage()
     {
-        string gameState = GetCurrentGameState();
+        int currentYear = YearQuestManager.Instance != null
+            ? YearQuestManager.Instance.GetCurrentYear()
+            : 2025;
+
         string systemMessage = $@"
-당신은 도시 건설 게임의 전문 조언자입니다. 플레이어에게 현재 게임 상황을 종합적으로 분석하여 구체적이고 실용적인 조언을 제공해주세요.
+당신은 도시 건설 게임의 전문 조언자입니다. 
+플레이어에게 현재 게임 상황과 연도({currentYear}년)에 맞춰 구체적이고 실용적인 조언을 제공해주세요.
 
-현재 게임 상황:
-- 예산: {GameManager.Instance.budget}원
-- CO2 배출량: {GameManager.Instance.co2}
-- 시민 만족도: {GameManager.Instance.GetSatisfactionLevel()}
+현재 연도: {currentYear}년
+- 연도가 바뀔 때마다 시대적 상황(기술, 건물, 환경, 교통 등)을 고려한 전략 조언 제공
+- 아래는 연도별 설치 가능한 건물 목록입니다.
 
-{GetBuildingStatus()}
+[2025]
+주거지: 주택 (예산 -50 / 탄소 +10/5초, 최대 +30)
+수입원: 공장 (예산 -150, 수익 +30/5분, 최대 +300 / 탄소 +10/5초, 최대 +300)
+친환경 공간: 공원 (예산 -100 / 즉시 -50, 이후 -10/5초, 최대 -200)
+나무: 기본 나무 (예산 -10 / 즉시 -20)
+교통수단: 일반 도로 (예산 -20 / 탄소 +10/5초, 최대 +30)
+
+[2030]
+주거지: 아파트 (예산 -80 / 탄소 +10/5초, 최대 +50)
+수입원: 병원 (예산 -120, 수익 +20/5분, 최대 +120 / 탄소 +5/5초, 최대 +50)
+친환경 공간: 재활용 센터 (예산 -120 / 즉시 -30, 이후 -10/5초, 최대 -100)
+나무: 덤불 (예산 -10 / 즉시 -10)
+교통수단: 자전거 도로 (예산 -20 / 즉시 -10)
+
+[2035]
+주거지: 에너지 절약형 주택 (예산 -70 / 탄소 +5/5초, 최대 +10)
+수입원: 회사 (예산 -130, 수익 +30/5분, 최대 +240 / 탄소 +10/5초, 최대 +100)
+친환경 공간: 공원2 (예산 -100 / 즉시 -50, 이후 -10/5초, 최대 -200)
+나무: 나무2 (예산 -10 / 즉시 -20)
+교통수단: 버스 정류장 (예산 -50 / 탄소 +2/5초, 최대 +10)
+
+[2040]
+주거지: 에너지 절약형 아파트 (예산 -100 / 탄소 +5/5초, 최대 +20)
+수입원: 스마트 팩토리 (예산 -180, 수익 +30/5분, 최대 +300 / 탄소 +10/5초, 최대 +150)
+친환경 공간: 태양광 발전소 (예산 -300 / 즉시 -50, 이후 -10/5초, 최대 -200)
+나무: 꽃 있는 덤불 (예산 -10 / 즉시 -15)
+교통수단: 지하철 입구 (예산 -80 / 탄소 +1/5초, 최대 +5)
+
+[2045]
+주거지: 에너지 절약형 아파트2 (예산 -110 / 탄소 +5/5초, 최대 +15)
+수입원: 학교 (예산 -200, 수익 없음 / 탄소 +5/5초, 최대 +50)
+친환경 공간: 풍력 발전소 (예산 -350 / 즉시 -50, 이후 -10/5초, 최대 -250)
+나무: 벚꽃 나무 (예산 -10 / 즉시 -20)
+교통수단: 전기차 충전소 (예산 -60 / 즉시 -20)
 
 역할과 조언 방식:
 1. 현재 설치된 건물들을 분석하여 도시 발전 상태 평가
@@ -104,17 +139,11 @@ public class GPTChatManager : MonoBehaviour
 4. CO2와 수익의 균형을 고려한 전략적 조언
 5. 설치된 건물의 시너지 효과를 고려한 다음 건물 추천
 
-상황별 조언 기준:
-- 수익 건물 부족 시: 상업 건물이나 수익 시설 우선 추천
-- 환경 문제 심각 시: 공원, 친환경 건물 우선 추천
-- 건물 불균형 시: 균형 잡힌 도시 개발 방향 제시
-- 예산 부족 시: 저비용 고효율 건물 추천
-
 답변 규칙:
 - 답변에 이모지는 절대 사용하지 마세요
-- 느낌표, 물음표 등의 일반적인 문장 부호는 사용 가능합니다
 - 구체적인 건물명과 수치를 포함하여 실용적인 조언 제공
 - 250자 내외로 간결하되 핵심적인 정보 포함
+- 느낌표, 물음표 등은 자유롭게 사용 가능
 
 답변 스타일: 전문적이면서도 친근한 도시계획 전문가처럼 조언해주세요.
 ";
@@ -125,13 +154,6 @@ public class GPTChatManager : MonoBehaviour
             content = systemMessage
         };
         conversationHistory.Add(systemMsg);
-    }
-
-    private string GetCurrentGameState()
-    {
-        if (GameManager.Instance == null) return "게임 데이터를 불러올 수 없습니다.";
-
-        return $"예산: {GameManager.Instance.budget}원, CO2: {GameManager.Instance.co2}, 만족도: {GameManager.Instance.GetSatisfactionLevel()}";
     }
 
     private string GetBuildingStatus()
@@ -153,12 +175,11 @@ public class GPTChatManager : MonoBehaviour
             return;
         }
 
-        // 콘솔에 사용자 메시지 출력
         Debug.Log($"[사용자 메시지] {userMessage}");
 
-        // 현재 게임 상태와 건물 정보를 포함한 메시지 생성
-        string gameState = GetCurrentGameState();
+        string gameState = $"예산: {GameManager.Instance.budget}원, CO2: {GameManager.Instance.co2}, 만족도: {GameManager.Instance.GetSatisfactionLevel()}";
         string buildingStatus = GetBuildingStatus();
+
         string contextMessage = $@"[현재 도시 상황]
 {gameState}
 
@@ -176,10 +197,8 @@ public class GPTChatManager : MonoBehaviour
 
         conversationHistory.Add(userMsg);
 
-        // 최근 8개 메시지만 유지 (시스템 메시지 포함, API 비용 절약)
         if (conversationHistory.Count > 8)
         {
-            // 시스템 메시지는 유지하고 오래된 대화만 제거
             var systemMsg = conversationHistory[0];
             conversationHistory.RemoveRange(1, conversationHistory.Count - 8);
             conversationHistory.Insert(0, systemMsg);
@@ -215,7 +234,6 @@ public class GPTChatManager : MonoBehaviour
             {
                 string errorMessage = "죄송합니다. 현재 조언을 제공할 수 없습니다. 잠시 후 다시 시도해주세요.";
                 Debug.LogError($"GPT API Error: {webRequest.error}");
-                Debug.Log($"[GPT 응답] {errorMessage}");
                 onResponse?.Invoke(errorMessage);
             }
             else
@@ -225,10 +243,8 @@ public class GPTChatManager : MonoBehaviour
                     GPTResponse response = JsonUtility.FromJson<GPTResponse>(webRequest.downloadHandler.text);
                     string botMessage = response.choices[0].message.content.Trim();
 
-                    // 콘솔에 GPT 응답 출력
                     Debug.Log($"[GPT 응답] {botMessage}");
 
-                    // 응답을 대화 기록에 추가
                     GPTMessage botMsg = new GPTMessage
                     {
                         role = "assistant",
@@ -236,14 +252,10 @@ public class GPTChatManager : MonoBehaviour
                     };
                     conversationHistory.Add(botMsg);
 
-                    // 첫 번째 성공적인 채팅 완료 시 퀘스트 완료
                     if (!hasChatted)
                     {
                         hasChatted = true;
-                        if (YearQuestManager.Instance != null)
-                        {
-                            YearQuestManager.Instance.OnChatCompleted();
-                        }
+                        YearQuestManager.Instance?.OnChatCompleted();
                     }
 
                     onResponse?.Invoke(botMessage);
@@ -252,7 +264,6 @@ public class GPTChatManager : MonoBehaviour
                 {
                     string parseErrorMessage = "응답을 처리하는 중 오류가 발생했습니다.";
                     Debug.LogError($"JSON Parse Error: {e.Message}");
-                    Debug.Log($"[GPT 응답] {parseErrorMessage}");
                     onResponse?.Invoke(parseErrorMessage);
                 }
             }
@@ -263,7 +274,6 @@ public class GPTChatManager : MonoBehaviour
     {
         conversationHistory.Clear();
         SetupSystemMessage();
-        // 대화 기록 초기화 시 채팅 플래그도 초기화 
         hasChatted = false;
         Debug.Log("[시스템] 대화 기록이 초기화되었습니다.");
     }
