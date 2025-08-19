@@ -55,20 +55,66 @@ public class GPTNewsGenerator : MonoBehaviour
 
     IEnumerator CheckSatisfactionRoutine()
     {
+        // 1) GameManager 준비될 때까지 대기 (빌드에서 중요)
+        while (GameManager.Instance == null)
+            yield return null;
+
+        // 2) API 키 준비될 때까지 잠깐 대기 (없으면 요청 실패)
+        int apiWait = 0;
+        while (string.IsNullOrEmpty(apiKey) && apiWait < 100) // 최대 ~10초 대기
+        {
+            yield return new WaitForSeconds(0.1f);
+            apiWait++;
+        }
+        if (string.IsNullOrEmpty(apiKey))
+            Debug.LogWarning("[뉴스] API 키가 비어 있습니다. Resources/api_key.* 가 빌드에 포함됐는지 확인하세요.");
+
+        // 3) 첫 실행 즉시 상태 확인 및 필요 시 트리거
+        string currentSatisfaction = SafeGetSatisfaction();
+        lastSatisfaction = ""; // 이전값 초기화
+        if (currentSatisfaction == "나쁨" || currentSatisfaction == "매우 나쁨")
+        {
+            lastSatisfaction = currentSatisfaction; // 중복 방지
+            yield return StartCoroutine(RequestNews(currentSatisfaction));
+            yield return StartCoroutine(AnimateNewsPanel());
+        }
+        else
+        {
+            lastSatisfaction = currentSatisfaction;
+        }
+
+        // 4) 이후 주기적 체크
         while (true)
         {
-            string currentSatisfaction = GameManager.Instance.GetSatisfactionLevel();
-            if ((currentSatisfaction == "나쁨" || currentSatisfaction == "매우 나쁨") && lastSatisfaction != currentSatisfaction)
+            currentSatisfaction = SafeGetSatisfaction();
+
+            if ((currentSatisfaction == "나쁨" || currentSatisfaction == "매우 나쁨")
+                && lastSatisfaction != currentSatisfaction)
             {
                 lastSatisfaction = currentSatisfaction;
                 yield return StartCoroutine(RequestNews(currentSatisfaction));
-                yield return StartCoroutine(AnimateNewsPanel()); // 애니메이션으로 뉴스 패널 표시
+                yield return StartCoroutine(AnimateNewsPanel());
             }
             else if (currentSatisfaction != "나쁨" && currentSatisfaction != "매우 나쁨")
             {
                 lastSatisfaction = currentSatisfaction;
             }
+
             yield return new WaitForSeconds(1f);
+        }
+    }
+
+    // NRE 방지용 안전 래퍼
+    private string SafeGetSatisfaction()
+    {
+        try
+        {
+            return GameManager.Instance != null ? GameManager.Instance.GetSatisfactionLevel() : "";
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[뉴스] 만족도 조회 실패: {e.Message}");
+            return "";
         }
     }
 
@@ -83,7 +129,7 @@ public class GPTNewsGenerator : MonoBehaviour
             $"재난 종류는 '{disasterType}'이고, 설치된 건물이 붕괴되었습니다." +
             "뉴스 제목은 18자 이내, 내용은 30자 이내로 작성하고, 두 줄로 출력하세요. " +
             "첫 줄은 제목, 둘째 줄은 내용입니다. " +
-            "내용 문장은 반드시 '~니다.'로 끝나야 합니다. " +
+            "내용 문장은 반드시 완전한 문장으로 작성하고, 종결어미는 '~습니다.' 또는 '~니다.'로 끝내세요. " +
             "예시:\n" +
             $"{disasterType} 발생!\n" +
             $"탄소배출량 증가로 인한 {disasterType} 발생으로 건물이 붕괴되었습니다.";
@@ -139,7 +185,7 @@ public class GPTNewsGenerator : MonoBehaviour
             $"탄소 배출량 증가로 시민 만족도가 '{satisfaction}'로 하락했습니다. " +
             "뉴스 제목은 18자 이내, 내용은 30자 이내로 작성하고, 두 줄로 출력하세요. " +
             "첫 줄은 제목, 둘째 줄은 내용입니다. " +
-            "내용 문장은 반드시 '~니다.'로 끝나야 합니다. " +
+            "내용 문장은 반드시 완전한 문장으로 작성하고, 종결어미는 '~습니다.' 또는 '~니다.'로 끝내세요. " +
             "예시:\n" +
             "탄소 배출 급증 시민 불만 증가\n" +
             "탄소배출량 증가로 시민 만족도가 하락했습니다.";
