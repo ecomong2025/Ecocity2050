@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;   // NavMesh 사용을 위해 필요
 using System.Collections;
 
 public class CitizenGroupController : MonoBehaviour
@@ -72,8 +73,22 @@ public class CitizenGroupController : MonoBehaviour
         {
             if (Citizens[i] != null && !Citizens[i].activeInHierarchy)
             {
-                // 시민을 건물 위치로 이동
-                Citizens[i].transform.position = buildingPosition + Vector3.up * 0.5f; // 건물 위에 약간 띄워서 배치
+                // NavMesh 위의 안전한 위치 찾기
+                NavMeshHit hit;
+                Vector3 spawnPos = buildingPosition;
+
+                if (NavMesh.SamplePosition(buildingPosition, out hit, 2.0f, NavMesh.AllAreas))
+                {
+                    spawnPos = hit.position + Vector3.up * 0.9f; // 살짝 띄워 배치
+                }
+                else
+                {
+                    Debug.LogWarning($"[CitizenGroupController] {buildingPosition} 근처에 NavMesh 없음 → 기본 위치 사용");
+                    spawnPos = buildingPosition + Vector3.up * 0.9f;
+                }
+
+                // 시민을 스폰 위치로 이동
+                Citizens[i].transform.position = spawnPos;
                 Citizens[i].SetActive(true);
 
                 currentVisibleCount++;
@@ -86,7 +101,7 @@ public class CitizenGroupController : MonoBehaviour
                     wanderer.OnNewBuildingInstalled();
                 }
 
-                Debug.Log($"[CitizenGroupController] 건물 위치에 시민 {i} 생성! 위치: {buildingPosition}");
+                Debug.Log($"[CitizenGroupController] 건물 위치에 시민 {i} 생성! 위치: {spawnPos}");
                 break;
             }
         }
@@ -132,16 +147,14 @@ public class CitizenGroupController : MonoBehaviour
             // 증가하는 경우와 감소하는 경우 구분
             if (targetVisibleCount > currentVisibleCount)
             {
-                // 만족도가 충분히 높을 때만 즉시 점진적 증가 시작
                 if (satisfaction >= minSatisfactionForGrowth)
                 {
                     isGraduallyChanging = true;
-                    lastUpdateTime = Time.time; // 즉시 시작할 수 있도록
+                    lastUpdateTime = Time.time;
                 }
             }
             else if (targetVisibleCount < currentVisibleCount)
             {
-                // 감소하는 경우 약간의 지연 후 시작
                 isGraduallyChanging = true;
                 lastUpdateTime = Time.time + maxSatisfactionDecayDelay;
             }
@@ -158,13 +171,11 @@ public class CitizenGroupController : MonoBehaviour
 
         if (targetVisibleCount > currentVisibleCount)
         {
-            // 시민 수 증가 (랜덤 위치에 생성)
             currentVisibleCount = Mathf.Min(currentVisibleCount + 1, targetVisibleCount);
             Debug.Log($"[CitizenGroupController] 시민 추가! 현재: {currentVisibleCount}/{Citizens.Length}");
         }
         else
         {
-            // 시민 수 감소
             currentVisibleCount = Mathf.Max(currentVisibleCount - 1, targetVisibleCount);
             Debug.Log($"[CitizenGroupController] 시민 감소. 현재: {currentVisibleCount}/{Citizens.Length}");
         }
@@ -172,7 +183,6 @@ public class CitizenGroupController : MonoBehaviour
         UpdateCitizenVisibility();
         lastUpdateTime = Time.time;
 
-        // 목표에 도달했으면 점진적 변화 중단
         if (currentVisibleCount == targetVisibleCount)
         {
             isGraduallyChanging = false;
@@ -188,12 +198,10 @@ public class CitizenGroupController : MonoBehaviour
             {
                 bool shouldActivate = i < currentVisibleCount;
 
-                // 새로 활성화되는 시민에게 알림
                 if (shouldActivate && !Citizens[i].activeInHierarchy)
                 {
                     Citizens[i].SetActive(true);
 
-                    // 새 건물이 생겼을 때 알림 (CitizenWanderer가 있다면)
                     CitizenWanderer wanderer = Citizens[i].GetComponent<CitizenWanderer>();
                     if (wanderer != null)
                     {
@@ -215,19 +223,16 @@ public class CitizenGroupController : MonoBehaviour
         }
     }
 
-    // 현재 활성화된 시민 수 반환
     public int GetActiveCitizenCount()
     {
         return currentVisibleCount;
     }
 
-    // 목표 시민 수 반환
     public int GetTargetCitizenCount()
     {
         return targetVisibleCount;
     }
 
-    // 즉시 모든 시민 활성화 (디버그용)
     [ContextMenu("Activate All Citizens")]
     public void ActivateAllCitizens()
     {
@@ -237,7 +242,6 @@ public class CitizenGroupController : MonoBehaviour
         UpdateCitizenVisibility();
     }
 
-    // 시민 수를 1명으로 리셋 (디버그용)
     [ContextMenu("Reset to One Citizen")]
     public void ResetToOneCitizen()
     {
