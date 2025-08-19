@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 public class DisasterManager : MonoBehaviour
 {
+    [Header("SFX")]
+    [SerializeField] private AudioClip collapseSfx;
+    [SerializeField, Range(0f, 1f)] private float collapseVolume = 1f;
+
     public float normalDisasterInterval = 300f;  // 나쁨 → 5분
     public float severeDisasterInterval = 180f;  // 매우 나쁨 → 3분
 
@@ -78,6 +82,9 @@ public class DisasterManager : MonoBehaviour
         // 뉴스 패널에 재난 뉴스 출력
         GPTNewsGenerator.Instance.ShowDisasterNews(selectedDisaster, buildingToDestroy.name);
 
+        // ✅ 효과음 재생
+        PlayCollapseSfx();
+
         StartCoroutine(BlinkAndDestroy(buildingToDestroy, 2f, 6));
     }
 
@@ -101,7 +108,24 @@ public class DisasterManager : MonoBehaviour
         Destroy(building);
     }
 
-    // 아래 메서드를 DisasterManager 클래스 내에 추가
+    void PlayCollapseSfx()
+    {
+        if (collapseSfx == null) return;
+
+        var sfxPlayer = GameObject.Find("SFXPlayer");
+        if (sfxPlayer != null)
+        {
+            var src = sfxPlayer.GetComponent<AudioSource>();
+            if (src != null) src.PlayOneShot(collapseSfx, collapseVolume);
+        }
+        else
+        {
+            // 폴백: 카메라 위치에서 재생
+            var cam = Camera.main;
+            AudioSource.PlayClipAtPoint(collapseSfx, cam ? cam.transform.position : Vector3.zero, collapseVolume);
+        }
+    }
+
     BuildingData FindBuildingDataInChildren(Transform parent)
     {
         foreach (Transform child in parent)

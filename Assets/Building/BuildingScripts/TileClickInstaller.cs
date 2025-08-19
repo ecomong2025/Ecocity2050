@@ -242,6 +242,9 @@ public class TileClickInstaller : MonoBehaviour
                 occ.transform.SetParent(tile.transform, false);
             }
         }
+        // ✅ 추가: 설치된 "실제 건물"에 풋프린트 기록
+        var footprint = buildingData.gameObject.AddComponent<BuildingFootprint>();
+        footprint.Init(currentTiles, occupiedMarkerName);
 
         //  건물 정보를 GameManager에 추가 (GPT가 인식할 수 있도록)
         int totalCO2Impact = buildingData.instantCO2Change;
@@ -274,7 +277,7 @@ public class TileClickInstaller : MonoBehaviour
             buildingData.co2PerSecond,
             buildingData.maxCO2Change,
             buildingData.incomePer5Minutes,
-            previewInstance.transform,
+            buildingData.transform,
             buildingData.maxIncomeAmount
         );
 

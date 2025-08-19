@@ -147,3 +147,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   incomeAmount: 100
+  clickSfx: {fileID: 8300000, guid: 33304332a1025164e970a33c8a261030, type: 3}
+  sfxVolume: 1
