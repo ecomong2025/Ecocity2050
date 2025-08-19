@@ -54457,6 +54457,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f86a413397f453aa7d79b8a33610fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collapseSfx: {fileID: 8300000, guid: c01bbab8442e45146be860df82582360, type: 3}
+  collapseVolume: 1
   normalDisasterInterval: 10
   severeDisasterInterval: 10
 --- !u!1 &2132139039
