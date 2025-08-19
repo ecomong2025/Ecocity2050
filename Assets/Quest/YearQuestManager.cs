@@ -50,6 +50,34 @@ public class YearQuestManager : MonoBehaviour
 
         if (isFactory) CompleteQuest(factoryQuestIndex);
         if (isZero) CompleteQuest(zeroEmissionQuestIndex);
+
+        // ✅ 2030년: 자전거 도로 설치 → 퀘스트 0번
+        if (prefab.CompareTag("BikeRoad") && currentYear == 2030)
+        {
+            CompleteQuest(0);
+            Debug.Log("[YearQuestManager] 2030년 자전거 도로 설치 → 퀘스트 0번 체크됨!");
+        }
+
+        // ✅ 2035년: 에너지절약형 건물 설치 → 퀘스트 0번
+        if (prefab.CompareTag("EnergySaving") && currentYear == 2035)
+        {
+            CompleteQuest(0);
+            Debug.Log("[YearQuestManager] 2035년 에너지절약형 건물 설치 → 퀘스트 0번 체크됨!");
+        }
+
+        // ✅ 2040년: 지하철 설치 → 퀘스트 0번
+        if (prefab.CompareTag("PublicTransport") && currentYear == 2040)
+        {
+            CompleteQuest(0);
+            Debug.Log("[YearQuestManager] 2040년 지하철 설치 → 퀘스트 0번 체크됨!");
+        }
+
+        // ✅ 2045년: 친환경 발전소 설치 → 퀘스트 0번
+        if ((prefab.CompareTag("EcoPlant") || prefab.name.Contains("발전소")) && currentYear == 2045)
+        {
+            CompleteQuest(0);
+            Debug.Log("[YearQuestManager] 2045년 친환경 발전소 설치 → 퀘스트 0번 체크됨!");
+        }
     }
 
     public void OnChatCompleted()
@@ -82,6 +110,11 @@ public class YearQuestManager : MonoBehaviour
 
     [Header("Predefined Sets")]
     [SerializeField] private YearQuests[] yearSets;
+
+    public YearQuests[] GetYearSets()
+    {
+        return yearSets;
+    }
 
     [Header("UI")]
     [SerializeField] private QuestUITemplate questUI;
