@@ -12806,7 +12806,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[3].questTexts.Array.data[0]'
-      value: "\uC9C0\uD558\uCCA0 \uC124\uCE58"
+      value: "\uB300\uC911\uAD50\uD1B5 \uC124\uCE58"
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[3].questTexts.Array.data[1]'

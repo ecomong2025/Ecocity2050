@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Tile
   - Factory
+  - BikeRoad
+  - EcoPlant
+  - EnergySaving
+  - PublicTransport
   layers:
   - Default
   - TransparentFX

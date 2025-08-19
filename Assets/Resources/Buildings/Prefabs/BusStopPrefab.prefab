@@ -874,7 +874,7 @@ GameObject:
   - component: {fileID: 6899740537510715839}
   m_Layer: 0
   m_Name: BusStopPrefab
-  m_TagString: Untagged
+  m_TagString: PublicTransport
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -793,7 +793,7 @@ GameObject:
   - component: {fileID: 2252477825036796659}
   m_Layer: 0
   m_Name: SubwayPrefab
-  m_TagString: Untagged
+  m_TagString: PublicTransport
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
