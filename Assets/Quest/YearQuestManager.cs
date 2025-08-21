@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;     
+using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
-// YearQuestManager.cs 안, public static YearQuestManager Instance; 아래나 아무 public 메서드 자리
 
 [System.Serializable]
 public class YearQuests
@@ -23,16 +22,81 @@ public class YearGaugePiece
 
 public class YearQuestManager : MonoBehaviour
 {
+    public static YearQuestManager Instance;
     public static event System.Action<int> OnYearChanged;
 
-    public bool[] GetCompletedSnapshot()
+    // ─────────────────────────────────────────────────────────────────────────────
+    //  Overlay: NextYearCanvas / NextYearPannel (항상 켜진 오버레이에 배치)
+    // ─────────────────────────────────────────────────────────────────────────────
+    [Header("Next Year Popup (Overlay)")]
+    [SerializeField] private GameObject nextYearPanel;            // NextYearPannel
+    [SerializeField] private TextMeshProUGUI nextYearTextTMP;     // 자식: Year (TMP)
+    [SerializeField] private TextMeshProUGUI announceTextTMP;     // 자식: Announce (TMP)
+    [SerializeField] private float popupSeconds = 1.8f;           // 표시 시간
+    [SerializeField] private bool fadeWithCanvasGroup = true;     // 페이드 여부
+    private bool advancing = false;                               // 중복 방지
+
+    private IEnumerator ShowNextYearAndAdvance(int nextYear)
     {
-        // 외부에서 completed 배열을 수정하지 못하게 복사본 반환
-        return (bool[])completed.Clone();
+        // 텍스트 세팅
+        if (nextYearTextTMP) nextYearTextTMP.text = nextYear.ToString();
+        if (announceTextTMP) announceTextTMP.text = $"{nextYear}년도에 도달했어요!";
+
+        // 패널 On
+        if (nextYearPanel) nextYearPanel.SetActive(true);
+
+        // 페이드 인
+        CanvasGroup cg = null;
+        if (fadeWithCanvasGroup && nextYearPanel)
+        {
+            cg = nextYearPanel.GetComponent<CanvasGroup>() ?? nextYearPanel.AddComponent<CanvasGroup>();
+            cg.blocksRaycasts = false; // 오버레이지만 입력 막지 않음
+            cg.interactable   = false;
+            cg.alpha = 0f;
+            float t = 0f;
+            while (t < 0.15f)
+            {
+                t += Time.unscaledDeltaTime;
+                cg.alpha = Mathf.SmoothStep(0f, 1f, t / 0.15f);
+                yield return null;
+            }
+        }
+
+        // 대기
+        float timer = 0f;
+        while (timer < popupSeconds)
+        {
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        // 페이드 아웃
+        if (fadeWithCanvasGroup && cg)
+        {
+            float t = 0f;
+            while (t < 0.2f)
+            {
+                t += Time.unscaledDeltaTime;
+                cg.alpha = Mathf.SmoothStep(1f, 0f, t / 0.2f);
+                yield return null;
+            }
+        }
+
+        // 패널 Off
+        if (nextYearPanel) nextYearPanel.SetActive(false);
+
+        // 실제 연도 갱신 + 로드
+        currentYear = nextYear;
+        LoadYear(currentYear);
+        advancing = false;
     }
-    // ★ UI 준비 전 들어오는 체크 이벤트 임시 저장
-    private bool uiReady = false;
-    private readonly Queue<int> pendingChecks = new Queue<int>();
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // 내부 상태
+    // ─────────────────────────────────────────────────────────────────────────────
+    public bool[] GetCompletedSnapshot() => (bool[])completed.Clone(); // 방어적 복사
+    private bool uiReady = false;                      // UI 바인딩 전 잠금
+    private readonly Queue<int> pendingChecks = new(); // UI 준비 전 체크 대기
 
     [Header("Auto-complete Rules")]
     [SerializeField][Range(0, 3)] private int factoryQuestIndex = 0;
@@ -46,104 +110,50 @@ public class YearQuestManager : MonoBehaviour
         bool isFactory = IsFactory(prefab, data);
         bool isZero = IsZeroEmission(data);
 
-        Debug.Log($"[YearQuestManager] Installed: {prefab.name}, isFactory={isFactory}, zero={isZero}");
-
         if (isFactory) CompleteQuest(factoryQuestIndex);
         if (isZero) CompleteQuest(zeroEmissionQuestIndex);
 
-        //  2030년: 자전거 도로 설치 → 퀘스트 0번
-        if (prefab.CompareTag("BikeRoad") && currentYear == 2030)
-        {
-            CompleteQuest(0);
-            Debug.Log("[YearQuestManager] 2030년 자전거 도로 설치 → 퀘스트 0번 체크됨!");
-        }
+        // 2030: 자전거 도로
+        if (prefab.CompareTag("BikeRoad") && currentYear == 2030) CompleteQuest(0);
+        // 2035: 에너지 절약형
+        if (prefab.CompareTag("EnergySaving") && currentYear == 2035) CompleteQuest(0);
+        // 2040: 지하철
+        if (prefab.CompareTag("PublicTransport") && currentYear == 2040) CompleteQuest(0);
+        // 2045: 친환경 발전소
+        if ((prefab.CompareTag("EcoPlant") || prefab.name.Contains("발전소")) && currentYear == 2045) CompleteQuest(0);
 
-        //  2035년: 에너지절약형 건물 설치 → 퀘스트 0번
-        if (prefab.CompareTag("EnergySaving") && currentYear == 2035)
-        {
-            CompleteQuest(0);
-            Debug.Log("[YearQuestManager] 2035년 에너지절약형 건물 설치 → 퀘스트 0번 체크됨!");
-        }
+        // 2040: 조언 기반
+        if (currentYear == 2040) CheckAdviceBasedQuest(prefab, data);
 
-        //  2040년: 지하철 설치 → 퀘스트 0번
-        if (prefab.CompareTag("PublicTransport") && currentYear == 2040)
-        {
-            CompleteQuest(0);
-            Debug.Log("[YearQuestManager] 2040년 지하철 설치 → 퀘스트 0번 체크됨!");
-        }
-
-        //  2045년: 친환경 발전소 설치 → 퀘스트 0번
-        if ((prefab.CompareTag("EcoPlant") || prefab.name.Contains("발전소")) && currentYear == 2045)
-        {
-            CompleteQuest(0);
-            Debug.Log("[YearQuestManager] 2045년 친환경 발전소 설치 → 퀘스트 0번 체크됨!");
-        }
-
-        //  2040년 추가: 봇이 추천한 건물 설치 시 퀘스트 완료 (조언 기반 퀘스트)
-        if (currentYear == 2040)
-        {
-            CheckAdviceBasedQuest(prefab, data);
-        }
-
-        //  2045년 추가: 수익성 건물 설치 시 예산 관리 퀘스트와 연계
-        if (currentYear == 2045 && data.incomePer5Minutes > 0)
-        {
-            CheckBudgetQuestBuilding();
-        }
+        // 2045: 예산 연계
+        if (currentYear == 2045 && data.incomePer5Minutes > 0) CheckBudgetQuestBuilding();
     }
 
-    // 2040년: 조언 기반 건물 설치 체크
     private void CheckAdviceBasedQuest(GameObject prefab, BuildingData data)
     {
-        // 봇의 최근 조언과 설치된 건물이 매치되는지 확인
-        // 간단한 구현: 친환경 건물, 공원, 상업 시설 등
-        bool isAdviceBuilding = false;
+        bool ok = false;
+        var n = prefab.name.ToLower();
+        if (n.Contains("공원") || n.Contains("park")) ok = true;
+        else if (IsZeroEmission(data)) ok = true;
+        else if (data.incomePer5Minutes > 0) ok = true;
 
-        if (prefab.name.ToLower().Contains("공원") || prefab.name.ToLower().Contains("park"))
-        {
-            isAdviceBuilding = true;
-            Debug.Log("[YearQuestManager] 2040년 - 봇이 추천한 공원 설치!");
-        }
-        else if (IsZeroEmission(data))
-        {
-            isAdviceBuilding = true;
-            Debug.Log("[YearQuestManager] 2040년 - 봇이 추천한 친환경 건물 설치!");
-        }
-        else if (data.incomePer5Minutes > 0)
-        {
-            isAdviceBuilding = true;
-            Debug.Log("[YearQuestManager] 2040년 - 봇이 추천한 상업 시설 설치!");
-        }
-
-        if (isAdviceBuilding)
-        {
-            CompleteQuest(2); // 2040년 퀘스트 인덱스 2번으로 가정
-        }
+        if (ok) CompleteQuest(2); // 가정: 2040년 퀘스트 인덱스 2
     }
 
-    // 2045년: 예산 관리와 연계된 건물 설치 체크
     private void CheckBudgetQuestBuilding()
     {
-        // GPTChatManager에서 예산 관련 대화가 완료되었는지 확인
         var gptManager = FindObjectOfType<GPTChatManager>();
         if (gptManager != null && gptManager.IsChatCompletedForYear(2045))
-        {
-            CompleteQuest(2); // 2045년 퀘스트 인덱스 2번으로 가정
-            Debug.Log("[YearQuestManager] 2045년 - 예산 상담 후 수익 건물 설치 완료!");
-        }
+            CompleteQuest(2); // 가정: 2045년 퀘스트 인덱스 2
     }
 
-    public void OnChatCompleted()
-    {
-        Debug.Log($"[YearQuestManager] Chat quest completed for year {currentYear}!");
-        CompleteQuest(chatQuestIndex);
-    }
+    public void OnChatCompleted() => CompleteQuest(chatQuestIndex);
 
     private bool IsFactory(GameObject prefab, BuildingData data)
     {
         if (prefab != null && prefab.CompareTag("Factory")) return true;
         string n = prefab != null ? prefab.name.ToLower() : "";
-        return n.Contains("factory") || n.Contains("plant"); // 필요 시 "공장"도 추가
+        return n.Contains("factory") || n.Contains("plant");
     }
 
     private bool IsZeroEmission(BuildingData data)
@@ -153,8 +163,9 @@ public class YearQuestManager : MonoBehaviour
             && data.maxCO2Change <= 0f;
     }
 
-    public static YearQuestManager Instance;
-
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Year / UI
+    // ─────────────────────────────────────────────────────────────────────────────
     [Header("Year Settings")]
     [SerializeField] private int currentYear = 2025;
     [SerializeField] private int minYear = 2025;
@@ -163,11 +174,7 @@ public class YearQuestManager : MonoBehaviour
 
     [Header("Predefined Sets")]
     [SerializeField] private YearQuests[] yearSets;
-
-    public YearQuests[] GetYearSets()
-    {
-        return yearSets;
-    }
+    public YearQuests[] GetYearSets() => yearSets;
 
     [Header("UI")]
     [SerializeField] private QuestUITemplate questUI;
@@ -180,12 +187,14 @@ public class YearQuestManager : MonoBehaviour
 
     private bool[] completed = new bool[4];
 
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Lifecycle
+    // ─────────────────────────────────────────────────────────────────────────────
     void Awake()
     {
         if (Instance == null) Instance = this;
         else { Destroy(gameObject); return; }
 
-        // ★ 비활성 포함 탐색 (가능하면 인스펙터 드래그로 고정 권장)
 #if UNITY_2022_2_OR_NEWER
         if (questUI == null)
             questUI = FindFirstObjectByType<QuestUITemplate>(FindObjectsInactive.Include);
@@ -200,6 +209,9 @@ public class YearQuestManager : MonoBehaviour
 
     void Start()
     {
+        // 오버레이 패널은 기본 꺼두기
+        if (nextYearPanel) nextYearPanel.SetActive(false);
+
         if (questUI == null)
             questUI = FindObjectOfType<QuestUITemplate>(true);
 
@@ -208,7 +220,7 @@ public class YearQuestManager : MonoBehaviour
 
     private void LoadYear(int year)
     {
-        uiReady = false;  // ★ 바인딩 전 잠금
+        uiReady = false;
 
         var set = yearSets.FirstOrDefault(s => s.year == year);
         string[] texts = (set == null || set.questTexts == null || set.questTexts.Length != 4)
@@ -223,20 +235,14 @@ public class YearQuestManager : MonoBehaviour
 
         FindObjectOfType<QuizManager>()?.ResetQuizCorrectCount();
 
-        // GPTChatManager에게 연도 변경 알림
         var gptManager = FindObjectOfType<GPTChatManager>();
-        if (gptManager != null)
-        {
-            gptManager.OnYearChanged(year);
-        }
+        if (gptManager != null) gptManager.OnYearChanged(year);
 
-        uiReady = true;   // ★ 바인딩 완료
+        uiReady = true;
 
-        // ★ 바인딩 중 도착한 체크 처리
         while (pendingChecks.Count > 0)
             CompleteQuest_Internal(pendingChecks.Dequeue());
 
-        // 연도 변경 이벤트 발생
         OnYearChanged?.Invoke(year);
     }
 
@@ -256,30 +262,25 @@ public class YearQuestManager : MonoBehaviour
             yearTextUI.text = currentYear.ToString();
     }
 
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Quest Control
+    // ─────────────────────────────────────────────────────────────────────────────
     public void CompleteQuest(int index)
     {
         if (index < 0 || index > 3) return;
-        Debug.Log($"[YQM] CompleteQuest request index={index} ui={(questUI ? questUI.name : "NULL")}");
-
-        if (!uiReady)
-        {
-            pendingChecks.Enqueue(index); // ★ UI 준비 전이면 큐에만 넣고 끝
-            return;
-        }
-
-        CompleteQuest_Internal(index);    // ★ 실제 처리는 내부에서만
+        if (!uiReady) { pendingChecks.Enqueue(index); return; }
+        CompleteQuest_Internal(index);
     }
 
-    // ★ 실제 처리 단일 경로
     private void CompleteQuest_Internal(int index)
     {
         if (index < 0 || index > 3) return;
-        if (completed[index]) { Debug.Log($"[YQM] Already completed idx={index}"); return; }
+        if (completed[index]) return;
 
         completed[index] = true;
         questUI?.UpdateCheck(index, true);
 
-        // 모두 완료 시 다음 단계
+        // 모두 완료 시 → 오버레이 팝업 띄우고 그 다음 연도로 로드
         if (completed.All(x => x))
         {
             var tms = FindObjectOfType<TileManagerSequential>(true);
@@ -288,11 +289,17 @@ public class YearQuestManager : MonoBehaviour
             int next = Mathf.Clamp(currentYear + step, minYear, maxYear);
             if (next == currentYear) { Debug.Log("[YQM] 마지막 연도"); return; }
 
-            currentYear = next;
-            LoadYear(currentYear);
+            if (!advancing)
+            {
+                advancing = true;
+                StartCoroutine(ShowNextYearAndAdvance(next)); // 오버레이라 어디서나 보임
+            }
         }
     }
 
+    // ─────────────────────────────────────────────────────────────────────────────
+    // External
+    // ─────────────────────────────────────────────────────────────────────────────
     public void ResetCurrent() => LoadYear(currentYear);
     public int GetCurrentYear() => currentYear;
 }
