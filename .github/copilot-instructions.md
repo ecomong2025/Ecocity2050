@@ -4,11 +4,11 @@
 - Active scene:
   - Name: GameScene
   - Tags:
-    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Tile, Factory
+    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Tile, Factory, BikeRoad, EcoPlant, EnergySaving, PublicTransport, Building
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI
 - Active game object:
-  - Name: DisasterManager
+  - Name: NextYearPannel
   - Tag: Untagged
-  - Layer: Default
+  - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

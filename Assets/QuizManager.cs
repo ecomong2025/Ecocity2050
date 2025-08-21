@@ -70,6 +70,15 @@ public class QuizManager : MonoBehaviour
     // 이미 푼 퀴즈 인덱스
     private HashSet<int> usedQuizIndices = new HashSet<int>();
 
+    private Dictionary<int, int> yearCorrectThreshold = new Dictionary<int, int>
+{
+    {2025, 2},
+    {2030, 3},
+    {2035, 4},
+    {2040, 5},
+    {2045, 6},
+    {2050, 7}
+};
 
     void Start()
     {
@@ -81,6 +90,7 @@ public class QuizManager : MonoBehaviour
         quizResultPanel.SetActive(false);
 
         LoadQuizData();
+        UpdateYearQuiz(2025);
         FilterQuizByYear(2025);
 
         LoadDailyQuizData();
@@ -95,6 +105,16 @@ public class QuizManager : MonoBehaviour
         }
 
         quizTimer.OnTimeout = HandleTimeout;
+    }
+
+    public void UpdateYearQuiz(int year)
+    {
+        FilterQuizByYear(year);
+        ResetQuizCorrectCount(); // 정답 카운트 초기화
+        if (yearCorrectThreshold.ContainsKey(year))
+            completeThreshold = yearCorrectThreshold[year];
+        else
+            completeThreshold = 2; // 기본값
     }
 
     // 하루 제한 불러오기
@@ -284,15 +304,13 @@ public class QuizManager : MonoBehaviour
 
             quizCorrectCount++;  // 맞춘 개수 증가
 
+            // 연도에 맞는 퀴스트 완료
+            int year = YearQuestManager.Instance.GetCurrentYear();
             if (quizCorrectCount >= completeThreshold)
             {
                 if (YearQuestManager.Instance != null)
                 {
                     YearQuestManager.Instance.CompleteQuest(quizQuestIndex);
-                }
-                else
-                {
-                    Debug.LogError("YearQuestManager.Instance is NULL!");
                 }
             }
         }
