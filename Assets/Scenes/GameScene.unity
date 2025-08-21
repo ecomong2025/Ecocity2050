@@ -12835,6 +12835,10 @@ PrefabInstance:
       value: "\uC790\uC804\uAC70 \uB3C4\uB85C \uC124\uCE58"
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[1].questTexts.Array.data[2]'
+      value: "\uD034\uC988 3\uAC1C \uC774\uC0C1 \uD480\uAE30"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[2].questTexts.Array.data[0]'
       value: "\uC5D0\uB108\uC9C0 \uC808\uC57D\uD615 \uAC74\uBB3C \uC124\uCE58"
       objectReference: {fileID: 0}
@@ -12844,7 +12848,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[2].questTexts.Array.data[2]'
-      value: "\uD034\uC988 \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      value: "\uD034\uC988 4\uAC1C \uC774\uC0C1 \uD480\uAE30"
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[2].questTexts.Array.data[3]'
@@ -12860,7 +12864,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[3].questTexts.Array.data[2]'
-      value: "\uD034\uC988 \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      value: "\uD034\uC988 5\uAC1C \uC774\uC0C1 \uD480\uAE30"
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[3].questTexts.Array.data[3]'
@@ -12876,7 +12880,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[2]'
-      value: "\uD034\uC988 \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      value: "\uD034\uC988 6\uAC1C \uC774\uC0C1 \uD480\uAE30 "
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[3]'

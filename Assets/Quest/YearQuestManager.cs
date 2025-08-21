@@ -36,6 +36,8 @@ public class YearQuestManager : MonoBehaviour
     [SerializeField] private bool fadeWithCanvasGroup = true;     // 페이드 여부
     private bool advancing = false;                               // 중복 방지
 
+    public QuizManager quizManager;
+
     private IEnumerator ShowNextYearAndAdvance(int nextYear)
     {
         // 텍스트 세팅
@@ -209,6 +211,7 @@ public class YearQuestManager : MonoBehaviour
 
     void Start()
     {
+        YearQuestManager.OnYearChanged += HandleYearChanged;
         // 오버레이 패널은 기본 꺼두기
         if (nextYearPanel) nextYearPanel.SetActive(false);
 
@@ -216,6 +219,11 @@ public class YearQuestManager : MonoBehaviour
             questUI = FindObjectOfType<QuestUITemplate>(true);
 
         LoadYear(currentYear);
+    }
+
+    void HandleYearChanged(int year)
+    {
+        quizManager.UpdateYearQuiz(year); // 연도별 퀴즈 필터링 및 정답 카운트 초기화
     }
 
     private void LoadYear(int year)
