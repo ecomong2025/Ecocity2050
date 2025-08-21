@@ -4,72 +4,84 @@ using System.Collections;
 
 public class TalkBubbleController : MonoBehaviour
 {
-    [Header("ì”¬ì— ë°°ì¹˜ëœ ë§í’ì„  UI ì˜¤ë¸Œì íŠ¸ (Prefab ì•„ë‹˜!)")]
-    public GameObject talkBubblePrefab;
-    private TMP_Text textComponent;
+    public GameObject talkBubble; // Panel
+    public TMP_Text bubbleText;
 
-    private GameManager gameManager;
-
-    // CO2 ë ˆë²¨ë³„ ë…¸ì¶œ ìƒíƒœ
-    private bool shown900 = false;
-    private bool shown800 = false;
-    private bool shown700 = false;
-    private bool shown500 = false;
-    private bool shown200 = false;
+    public float showTime = 5f;
+    private int currentRange = -1;
+    private Coroutine bubbleCoroutine;
 
     void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
+        if (talkBubble != null)
+            talkBubble.SetActive(false); // ½ÃÀÛ ½Ã ºñÈ°¼ºÈ­
+        currentRange = -1;
+    }
 
-        if (talkBubblePrefab != null)
+    public void ShowBubble(float co2Value)
+    {
+        int newRange = GetRange(co2Value);
+
+        // °°Àº ¹üÀ§¸é ¾Æ¹«°Íµµ ÇÏÁö ¾ÊÀ½
+        if (newRange == currentRange)
+            return;
+
+        currentRange = newRange;
+
+        // ¹üÀ§ ¹ş¾î³ª¸é ¸»Ç³¼± ¼û±â±â
+        if (newRange == -1)
         {
-            textComponent = talkBubblePrefab.GetComponentInChildren<TMP_Text>();
-            talkBubblePrefab.SetActive(false); // ì‹œì‘ ì‹œ ë¹„í™œì„±í™”
+            if (talkBubble.activeSelf)
+                talkBubble.SetActive(false);
+            return;
         }
-        else
+
+        bubbleText.text = GetTextForRange(newRange);
+
+        // ±âÁ¸ ÄÚ·çÆ¾ ÁßÁö ÈÄ »õ·Î ½ÃÀÛ
+        if (bubbleCoroutine != null)
+            StopCoroutine(bubbleCoroutine);
+
+        bubbleCoroutine = StartCoroutine(ShowBubbleCoroutine());
+    }
+
+    private IEnumerator ShowBubbleCoroutine()
+    {
+        talkBubble.SetActive(true); // Panel Ç¥½Ã
+        yield return new WaitForSeconds(showTime);
+        talkBubble.SetActive(false); // 5ÃÊ µÚ Panel°ú Text ¸ğµÎ ¼û±è
+        bubbleCoroutine = null;
+    }
+
+    private int GetRange(float co2)
+    {
+        if (co2 >= 100 && co2 <= 300) return 0;
+        else if (co2 >= 301 && co2 <= 450) return 1;
+        else if (co2 >= 451 && co2 <= 650) return 2;
+        else if (co2 >= 651 && co2 <= 750) return 3;
+        else if (co2 >= 751 && co2 <= 850) return 4;
+        else if (co2 >= 851) return 5;
+        else return -1; // ¹üÀ§ ¹ÛÀÌ¸é ¸»Ç³¼± ¾È ¶ä
+    }
+
+    private string GetTextForRange(int range)
+    {
+        switch (range)
         {
-            Debug.LogError("âš  talkBubblePrefabì´ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤! Inspectorì—ì„œ UI ì˜¤ë¸Œì íŠ¸ë¥¼ ì—°ê²°í•˜ì„¸ìš”.");
+            case 0: return "¿äÁò °ø±â°¡ ³Ê¹« ÁÁ¾Æ¿ä!\nÀÌ µµ½Ã°¡ ÀÚ¶û½º·¯¿ö¿ä.";
+            case 1: return "ÀÌ Á¤µµ¸é ²Ï ÁÁÀº µµ½Ã±º¿ä.\n¾ÕÀ¸·Îµµ Àß À¯ÁöÇØÁÖ¼¼¿ä!";
+            case 2: return "ÀÌ´ë·Î ±¦ÂúÀº °É±î¿ä?\n´ëÃ¥ÀÌ ÇÊ¿äÇØ¿ä.";
+            case 3: return "¿äÁò ¸Ó¸®°¡ ¾ÆÆÄ¿ä¡¦\n°ø±â ¶§¹®ÀÏ±î¿ä?";
+            case 4: return "°ø±â°¡ Á¡Á¡ Å¹ÇØÁö´Â °Í °°¾Æ¿ä.\nÈ¯°æÀÌ ³ªºüÁö°í ÀÖ¾î¿ä.";
+            case 5: return "ÀÌ´ë·Î¸é ¼û ½¬±âµµ Èûµé°Ú¾î¿ä¡¦\n¾ÆÀÌµé °Ç°­ÀÌ °ÆÁ¤µÅ¿ä.";
+            default: return "";
         }
     }
 
-    void Update()
+
+
+    public void ResetRange()
     {
-        if (talkBubblePrefab == null || textComponent == null) return;
-
-        int co2 = gameManager.co2;
-        Debug.Log("Current CO2: " + co2); // ê°’ í™•ì¸ìš©
-
-        // êµ¬ê°„ ë²—ì–´ë‚˜ë©´ shown ì´ˆê¸°í™”
-        if (!(co2 >= 900)) shown900 = false;
-        if (!(co2 >= 800 && co2 < 900)) shown800 = false;
-        if (!(co2 >= 700 && co2 < 800)) shown700 = false;
-        if (!(co2 >= 500 && co2 < 700)) shown500 = false;
-        if (!(co2 >= 200 && co2 < 500)) shown200 = false;
-
-        // ì¡°ê±´ ì¶©ì¡± ì‹œ ë§í’ì„  ë³´ì—¬ì£¼ê¸°
-        if (co2 >= 900 && !shown900) { shown900 = true; ShowBubble("ì´ëŒ€ë¡œë©´ ìˆ¨ ì‰¬ê¸°ë„ í˜ë“¤ê² ì–´ìš”.. ì•„ì´ë“¤ ê±´ê°•ì´ ê±±ì •ë¼ìš”."); }
-        else if (co2 >= 800 && co2 < 900 && !shown800) { shown800 = true; ShowBubble("ê³µê¸°ê°€ ì ì  íƒí•´ì§€ëŠ” ê²ƒ ê°™ì•„ìš”. í™˜ê²½ì´ ë‚˜ë¹ ì§€ê³  ìˆì–´ìš”"); }
-        else if (co2 >= 700 && co2 < 800 && !shown700) { shown700 = true; ShowBubble("ìš”ì¦˜ ë¨¸ë¦¬ê°€ ì•„íŒŒìš”.. ê³µê¸° ë•Œë¬¸ì¼ê¹Œìš”?"); }
-        else if (co2 >= 500 && co2 < 700 && !shown500) { shown500 = true; ShowBubble("ì´ëŒ€ë¡œ ê´œì°®ì€ ê±¸ê¹Œìš”? ëŒ€ì±…ì´ í•„ìš”í•´ìš”."); }
-        else if (co2 >= 200 && co2 < 500 && !shown200) { shown200 = true; ShowBubble("ìš”ì¦˜ ê³µê¸°ê°€ ë„ˆë¬´ ì¢‹ì•„ìš”! ì´ ë„ì‹œê°€ ìë‘ìŠ¤ëŸ¬ì›Œìš”."); }
-    }
-
-    void ShowBubble(string message)
-    {
-        // ë§ˆì¹¨í‘œ ë’¤ì— ì¤„ë°”ê¿ˆ ìë™ ì¶”ê°€
-        string processedMessage = message.Replace(".", ".\n");
-
-        textComponent.text = processedMessage;
-        talkBubblePrefab.SetActive(true);
-
-        // ì¤‘ë³µ ì½”ë£¨í‹´ ë°©ì§€
-        StopAllCoroutines();
-        StartCoroutine(HideBubbleAfterSeconds(10f));
-    }
-
-    IEnumerator HideBubbleAfterSeconds(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        talkBubblePrefab.SetActive(false);
+        currentRange = -1;
     }
 }

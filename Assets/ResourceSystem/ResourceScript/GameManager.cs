@@ -13,6 +13,7 @@ public class BuildingInfo
     public Vector3 position;
     public GameObject buildingObject;
 
+
     public BuildingInfo(string name, int buildCost, int co2, int income, Vector3 pos, GameObject obj)
     {
         buildingName = name;
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
     public CitizenGroupController citizenGroupController;
 
     public QuizManager quizManager;
+    public TalkBubbleController bubbleController; 
 
     // 건물별 수입 코루틴 관리용 딕셔너리
     private Dictionary<Transform, Coroutine> incomeCoroutines = new Dictionary<Transform, Coroutine>();
@@ -186,6 +188,12 @@ public class GameManager : MonoBehaviour
         if (co2PerSecond > 0 && maxCO2Change > 0)
             StartCoroutine(IncreaseCO2OverTime(co2PerSecond, maxCO2Change));
 
+        if (bubbleController != null)
+            bubbleController.ShowBubble(co2);
+
+        if (co2PerSecond > 0 && maxCO2Change > 0)
+            StartCoroutine(IncreaseCO2OverTime(co2PerSecond, maxCO2Change));
+
         // 수입 코루틴을 관리
         if (incomePer5Min > 0 && buildingTransform != null)
         {
@@ -307,6 +315,8 @@ public class GameManager : MonoBehaviour
         {
             citizenGroupController.UpdateSatisfaction(GetSatisfactionValue());
         }
+        if (bubbleController != null)
+            bubbleController.ShowBubble(co2);
     }
 
     public string GetSatisfactionLevel()
