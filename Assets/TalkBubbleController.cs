@@ -14,7 +14,7 @@ public class TalkBubbleController : MonoBehaviour
     void Start()
     {
         if (talkBubble != null)
-            talkBubble.SetActive(false); // ½ÃÀÛ ½Ã ºñÈ°¼ºÈ­
+            talkBubble.SetActive(false); // ì‹œì‘ ì‹œ ë¹„í™œì„±í™”
         currentRange = -1;
     }
 
@@ -22,13 +22,13 @@ public class TalkBubbleController : MonoBehaviour
     {
         int newRange = GetRange(co2Value);
 
-        // °°Àº ¹üÀ§¸é ¾Æ¹«°Íµµ ÇÏÁö ¾ÊÀ½
+        // ê°™ì€ ë²”ìœ„ë©´ ì•„ë¬´ê²ƒë„ í•˜ì§€ ì•ŠìŒ
         if (newRange == currentRange)
             return;
 
         currentRange = newRange;
 
-        // ¹üÀ§ ¹ş¾î³ª¸é ¸»Ç³¼± ¼û±â±â
+        // ë²”ìœ„ ë²—ì–´ë‚˜ë©´ ë§í’ì„  ìˆ¨ê¸°ê¸°
         if (newRange == -1)
         {
             if (talkBubble.activeSelf)
@@ -38,7 +38,7 @@ public class TalkBubbleController : MonoBehaviour
 
         bubbleText.text = GetTextForRange(newRange);
 
-        // ±âÁ¸ ÄÚ·çÆ¾ ÁßÁö ÈÄ »õ·Î ½ÃÀÛ
+        // ê¸°ì¡´ ì½”ë£¨í‹´ ì¤‘ì§€ í›„ ìƒˆë¡œ ì‹œì‘
         if (bubbleCoroutine != null)
             StopCoroutine(bubbleCoroutine);
 
@@ -47,9 +47,9 @@ public class TalkBubbleController : MonoBehaviour
 
     private IEnumerator ShowBubbleCoroutine()
     {
-        talkBubble.SetActive(true); // Panel Ç¥½Ã
+        talkBubble.SetActive(true); // Panel í‘œì‹œ
         yield return new WaitForSeconds(showTime);
-        talkBubble.SetActive(false); // 5ÃÊ µÚ Panel°ú Text ¸ğµÎ ¼û±è
+        talkBubble.SetActive(false); // 5ì´ˆ ë’¤ Panelê³¼ Text ëª¨ë‘ ìˆ¨ê¹€
         bubbleCoroutine = null;
     }
 
@@ -61,19 +61,19 @@ public class TalkBubbleController : MonoBehaviour
         else if (co2 >= 651 && co2 <= 750) return 3;
         else if (co2 >= 751 && co2 <= 850) return 4;
         else if (co2 >= 851) return 5;
-        else return -1; // ¹üÀ§ ¹ÛÀÌ¸é ¸»Ç³¼± ¾È ¶ä
+        else return -1; // ë²”ìœ„ ë°–ì´ë©´ ë§í’ì„  ì•ˆ ëœ¸
     }
 
     private string GetTextForRange(int range)
     {
         switch (range)
         {
-            case 0: return "¿äÁò °ø±â°¡ ³Ê¹« ÁÁ¾Æ¿ä!\nÀÌ µµ½Ã°¡ ÀÚ¶û½º·¯¿ö¿ä.";
-            case 1: return "ÀÌ Á¤µµ¸é ²Ï ÁÁÀº µµ½Ã±º¿ä.\n¾ÕÀ¸·Îµµ Àß À¯ÁöÇØÁÖ¼¼¿ä!";
-            case 2: return "ÀÌ´ë·Î ±¦ÂúÀº °É±î¿ä?\n´ëÃ¥ÀÌ ÇÊ¿äÇØ¿ä.";
-            case 3: return "¿äÁò ¸Ó¸®°¡ ¾ÆÆÄ¿ä¡¦\n°ø±â ¶§¹®ÀÏ±î¿ä?";
-            case 4: return "°ø±â°¡ Á¡Á¡ Å¹ÇØÁö´Â °Í °°¾Æ¿ä.\nÈ¯°æÀÌ ³ªºüÁö°í ÀÖ¾î¿ä.";
-            case 5: return "ÀÌ´ë·Î¸é ¼û ½¬±âµµ Èûµé°Ú¾î¿ä¡¦\n¾ÆÀÌµé °Ç°­ÀÌ °ÆÁ¤µÅ¿ä.";
+            case 0: return "ìš”ì¦˜ ê³µê¸°ê°€ ë„ˆë¬´ ì¢‹ì•„ìš”!\nì´ ë„ì‹œê°€ ìë‘ìŠ¤ëŸ¬ì›Œìš”.";
+            case 1: return "ì´ ì •ë„ë©´ ê½¤ ì¢‹ì€ ë„ì‹œêµ°ìš”.\nì•ìœ¼ë¡œë„ ì˜ ìœ ì§€í•´ì£¼ì„¸ìš”!";
+            case 2: return "ì´ëŒ€ë¡œ ê´œì°®ì€ ê±¸ê¹Œìš”?\nëŒ€ì±…ì´ í•„ìš”í•´ìš”.";
+            case 3: return "ìš”ì¦˜ ë¨¸ë¦¬ê°€ ì•„íŒŒìš”â€¦\nê³µê¸° ë•Œë¬¸ì¼ê¹Œìš”?";
+            case 4: return "ê³µê¸°ê°€ ì ì  íƒí•´ì§€ëŠ” ê²ƒ ê°™ì•„ìš”.\ní™˜ê²½ì´ ë‚˜ë¹ ì§€ê³  ìˆì–´ìš”.";
+            case 5: return "ì´ëŒ€ë¡œë©´ ìˆ¨ ì‰¬ê¸°ë„ í˜ë“¤ê² ì–´ìš”â€¦\nì•„ì´ë“¤ ê±´ê°•ì´ ê±±ì •ë¼ìš”.";
             default: return "";
         }
     }
