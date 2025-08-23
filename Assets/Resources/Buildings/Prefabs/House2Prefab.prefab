@@ -360,7 +360,7 @@ GameObject:
   - component: {fileID: 413195416128167036}
   m_Layer: 0
   m_Name: House2Prefab
-  m_TagString: Untagged
+  m_TagString: EnergySaving
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
