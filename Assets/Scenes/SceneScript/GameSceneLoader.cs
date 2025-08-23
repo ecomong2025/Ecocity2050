@@ -37,7 +37,7 @@ public class GameSceneLoader : MonoBehaviour
     // Start 버튼 클릭 시 실행
     public void OnStartGame()
     {
-        SceneManager.LoadScene("GameScene"); // 씬 이름 맞춰 수정
+        SceneManager.LoadScene("TutorialScene"); // 씬 이름 맞춰 수정
     }
 
     public void OnExit()
