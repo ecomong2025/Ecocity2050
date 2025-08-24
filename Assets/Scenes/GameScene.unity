@@ -13440,6 +13440,10 @@ PrefabInstance:
       value: "\uD034\uC988 3\uAC1C \uC774\uC0C1 \uD480\uAE30"
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+      propertyPath: 'yearSets.Array.data[1].questTexts.Array.data[3]'
+      value: "\uD658\uACBD \uC815\uCC45 \uC0C1\uB2F4\uD558\uAE30"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[2].questTexts.Array.data[0]'
       value: "\uC5D0\uB108\uC9C0 \uC808\uC57D\uD615 \uAC74\uBB3C \uC124\uCE58"
       objectReference: {fileID: 0}
@@ -13453,7 +13457,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[2].questTexts.Array.data[3]'
-      value: "\uC2DC\uBBFC \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      value: "\uB3C4\uC2DC \uD655\uC7A5 \uACC4\uD68D \uB17C\uC758\uD558\uAE30"
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[3].questTexts.Array.data[0]'
@@ -13469,7 +13473,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[3].questTexts.Array.data[3]'
-      value: "\uC2DC\uBBFC \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      value: "\uC2DC\uBBFC\uCC57\uBD07\uC758 \uC870\uC5B8 \uB530\uB77C \uAC74\uBB3C
+        \uC124\uCE58\uD558\uAE30"
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[0]'
@@ -13486,7 +13491,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[3]'
-      value: "\uC2DC\uBBFC \uAD00\uB828 \uD018\uC2A4\uD2B8"
+      value: "\uC608\uC0B0 \uAD00\uB9AC \uC0C1\uB2F4\uD558\uACE0 \uC218\uC775\uC131
+        \uAC74\uBB3C \uC124\uCE58 \uD558\uAE30"
       objectReference: {fileID: 0}
     - target: {fileID: 7788278118185516103, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: m_LocalPosition.x
