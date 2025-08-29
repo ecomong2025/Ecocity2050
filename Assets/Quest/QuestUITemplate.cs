@@ -17,7 +17,7 @@ public class QuestUITemplate : MonoBehaviour
     [SerializeField] private GameObject nextYearPanel;
     [SerializeField] private TextMeshProUGUI nextYearTextTMP;
     [SerializeField] private TextMeshProUGUI announceTextTMP;
-    [SerializeField] private float popupSeconds = 1.8f;
+    [SerializeField] private float popupSeconds = 3f;
     [SerializeField] private bool fadeWithCanvasGroup = true;
 
     // 내부 캐시
