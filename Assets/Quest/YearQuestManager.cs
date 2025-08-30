@@ -157,11 +157,12 @@ public class YearQuestManager : MonoBehaviour
     private IEnumerator AdvanceAfterPopup(int nextYear)
     {
         if (questUI != null)
-            yield return StartCoroutine(questUI.PlayNextYearPopup(nextYear));
+            questUI.EnqueueNextYearPopup(nextYear);
 
         currentYear = nextYear;
         LoadYear(currentYear);
         advancing = false;
+        yield break;
     }
 
     // ====== 퀴즈 연동 ======

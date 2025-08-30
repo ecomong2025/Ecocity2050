@@ -758,7 +758,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2c24fb69a6acb47998bec8594786f639, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2c24fb69a6acb47998bec8594786f639, type: 3}
       propertyPath: m_TagString
@@ -869,7 +869,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &34975930
 Transform:
   m_ObjectHideFlags: 0
@@ -1622,7 +1622,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &79657936
 Transform:
   m_ObjectHideFlags: 0
@@ -13701,7 +13701,7 @@ PrefabInstance:
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: questUI
       value: 
-      objectReference: {fileID: 1519767001}
+      objectReference: {fileID: 971473410}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: yearTextUI
       value: 
@@ -25676,15 +25676,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   yearValue: {fileID: 1562654231}
+  gaugeYearText: {fileID: 322516968}
   gaugePieces:
   - year: 2030
-    imageObj: {fileID: 760440582}
+    imageObj: {fileID: 1654296546}
   - year: 2035
-    imageObj: {fileID: 1742814318}
+    imageObj: {fileID: 2056852974}
   - year: 2040
-    imageObj: {fileID: 386327555}
+    imageObj: {fileID: 1116936921}
   - year: 2045
-    imageObj: {fileID: 1252824778}
+    imageObj: {fileID: 45324763}
+  - year: 2050
+    imageObj: {fileID: 123525762}
   questTexts:
   - {fileID: 1362033004}
   - {fileID: 1038005084}
@@ -33269,6 +33272,7 @@ GameObject:
   - component: {fileID: 1242852572}
   - component: {fileID: 1242852571}
   - component: {fileID: 1242852570}
+  - component: {fileID: 1242852574}
   m_Layer: 5
   m_Name: NextYearCanvas
   m_TagString: Untagged
@@ -33306,7 +33310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 1
-  m_ReferencePixelsPerUnit: 100
+  m_ReferencePixelsPerUnit: 500
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
@@ -33359,6 +33363,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!225 &1242852574
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242852569}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &1247353971
 GameObject:
   m_ObjectHideFlags: 0
@@ -41435,7 +41451,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   yearValue: {fileID: 1562654231}
-  gaugePieces: []
+  gaugeYearText: {fileID: 322516968}
+  gaugePieces:
+  - year: 2030
+    imageObj: {fileID: 1654296546}
+  - year: 2035
+    imageObj: {fileID: 2056852974}
+  - year: 2040
+    imageObj: {fileID: 1116936921}
+  - year: 2045
+    imageObj: {fileID: 45324763}
+  - year: 2050
+    imageObj: {fileID: 123525762}
   questTexts:
   - {fileID: 1362033004}
   - {fileID: 1038005084}

@@ -2,16 +2,18 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic; // 🔧 for Queue
 
 public class QuestUITemplate : MonoBehaviour
 {
     [Header("Year & Gauge UI")]
-    [SerializeField] private TextMeshProUGUI yearValue;          // 중앙 연도 TMP
-    [SerializeField] private YearGaugePiece[] gaugePieces;       // 연도 게이지 조각
+    [SerializeField] private TextMeshProUGUI yearValue;          
+    [SerializeField] private TextMeshProUGUI gaugeYearText;      
+    [SerializeField] private YearGaugePiece[] gaugePieces;       
 
     [Header("Quest UI")]
-    [SerializeField] private TextMeshProUGUI[] questTexts = new TextMeshProUGUI[4]; // Quest1~4 텍스트
-    [SerializeField] private Image[] checkMarks = new Image[4];                     // 동그라미 안 체크 이미지
+    [SerializeField] private TextMeshProUGUI[] questTexts = new TextMeshProUGUI[4];
+    [SerializeField] private Image[] checkMarks = new Image[4];
 
     [Header("Next Year Popup (Overlay) — UI 전담")]
     [SerializeField] private GameObject nextYearPanel;
@@ -20,18 +22,26 @@ public class QuestUITemplate : MonoBehaviour
     [SerializeField] private float popupSeconds = 3f;
     [SerializeField] private bool fadeWithCanvasGroup = true;
 
+    // 🔧 팝업 블로킹 패널(다 꺼졌을 때만 팝업 재생)
+    [Header("Popup Blocking Panels")]
+    [SerializeField] private GameObject quizPanel;     // 퀴즈 패널 루트
+    [SerializeField] private GameObject chatPanel;     // 채팅 패널 루트
+
     // 내부 캐시
     private int _cachedYear = -1;
     private readonly string[] _cachedTexts = new string[4];
     private readonly bool[] _cachedCompleted = new bool[4];
 
+    // 🔧 팝업 큐 & 러너 상태
+    private readonly Queue<int> _pendingPopupYears = new Queue<int>();
+    private Coroutine _popupRunner;
+    private bool _isPopupPlaying = false;
+
     void Awake()
     {
-        // 게이지 조각 정렬(연도 오름차순)
         if (gaugePieces != null && gaugePieces.Length > 0)
             System.Array.Sort(gaugePieces, (a, b) => a.year.CompareTo(b.year));
 
-        // 체크 전부 끔
         for (int i = 0; i < checkMarks.Length; i++)
             if (checkMarks[i] != null) checkMarks[i].gameObject.SetActive(false);
 
@@ -40,7 +50,6 @@ public class QuestUITemplate : MonoBehaviour
 
     void OnEnable()
     {
-        // UI가 다시 Enable될 때 캐시 기준으로 표시 복구
         if (_cachedYear > 0)
         {
             ApplyYearText(_cachedYear);
@@ -57,11 +66,68 @@ public class QuestUITemplate : MonoBehaviour
     }
 
     /// <summary>
+    /// 🔧 외부에서 호출: 팝업을 "즉시 재생"하지 않고 큐에 넣는다.
+    /// (YearQuestManager: questUI.EnqueueNextYearPopup(nextYear); 로 바꾸기)
+    /// </summary>
+    public void EnqueueNextYearPopup(int nextYear)
+    {
+        _pendingPopupYears.Enqueue(nextYear);
+        // 러너가 없으면 시작
+        if (_popupRunner == null)
+            _popupRunner = StartCoroutine(PopupRunner());
+    }
+
+    /// <summary>
+    /// 🔧 팝업 러너: 블로킹 패널이 모두 닫힐 때까지 기다렸다가 차례로 팝업 재생
+    /// </summary>
+    private IEnumerator PopupRunner()
+    {
+        while (_pendingPopupYears.Count > 0)
+        {
+            // 패널 다 닫힐 때까지 대기
+            while (AnyBlockingPanelOpen() || _isPopupPlaying)
+                yield return null;
+
+            int year = _pendingPopupYears.Peek();
+            _isPopupPlaying = true;
+            // 기존 팝업 코루틴 재생
+            yield return StartCoroutine(PlayNextYearPopup(year));
+            _isPopupPlaying = false;
+
+            _pendingPopupYears.Dequeue();
+        }
+        _popupRunner = null;
+    }
+
+    /// <summary>
+    /// 🔧 하나라도 열려 있으면 true
+    /// - activeInHierarchy가 true이면 "열림"으로 간주
+    /// - CanvasGroup이 있으면 alpha>~0일 때 열림으로 간주(페이드 중 대비)
+    /// 프로젝트 상황에 맞게 기준을 조절할 수 있음.
+    /// </summary>
+    private bool AnyBlockingPanelOpen()
+    {
+        return IsPanelOpen(quizPanel) || IsPanelOpen(chatPanel);
+    }
+
+    private bool IsPanelOpen(GameObject panel)
+    {
+        if (!panel) return false;
+        if (!panel.activeInHierarchy) return false;
+
+        // CanvasGroup이 있으면 alpha로 가시성 체크
+        var cg = panel.GetComponentInParent<CanvasGroup>();
+        if (cg != null) return cg.alpha > 0.01f;
+
+        // active면 열린 것으로 간주
+        return true;
+    }
+
+    /// <summary>
     /// 연도/퀘스트 세트/완료 상태 바인딩 (YearQuestManager가 호출)
     /// </summary>
     public void BindYear(int year, string[] texts, bool[] completed)
     {
-        // 캐시 저장
         _cachedYear = year;
         for (int i = 0; i < 4; i++)
         {
@@ -70,7 +136,6 @@ public class QuestUITemplate : MonoBehaviour
             _cachedCompleted[i] = (completed != null && i < completed.Length) && completed[i];
         }
 
-        // 화면 반영
         ApplyYearText(year);
         ApplyGauge(year);
 
@@ -84,14 +149,10 @@ public class QuestUITemplate : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// i번째 퀘스트의 체크 이미지 상태 변경 (YearQuestManager가 완료 시 호출)
-    /// </summary>
     public void UpdateCheck(int index, bool on)
     {
         if (index < 0 || index >= checkMarks.Length) return;
 
-        // 캐시 갱신
         if (index < _cachedCompleted.Length)
             _cachedCompleted[index] = on;
 
@@ -106,7 +167,10 @@ public class QuestUITemplate : MonoBehaviour
 
         if (on)
         {
-            // 강제 가시화(가려짐/알파/정렬 문제 방지)
+            var parent = img.transform.parent;
+            if (parent && !parent.gameObject.activeSelf) parent.gameObject.SetActive(true);
+
+            img.gameObject.SetActive(true);
             img.enabled = true;
             var c = img.color; c.a = 1f; img.color = c;
             img.transform.SetAsLastSibling();
@@ -118,14 +182,11 @@ public class QuestUITemplate : MonoBehaviour
             if (rt.rect.width < 4f || rt.rect.height < 4f)
                 rt.sizeDelta = new Vector2(32, 32);
         }
-
-        Debug.Log($"[QuestUI:{name}] UpdateCheck idx={index} on={on} " +
-                  $"active={img.gameObject.activeInHierarchy} alpha={img.color.a} " +
-                  $"sprite={(img.sprite ? img.sprite.name : "NULL")} canvas={(img.canvas ? img.canvas.name : "NULL")}");
     }
 
     /// <summary>
-    /// 다음 해 팝업을 재생하고 끝날 때까지 yield. (매니저에서 StartCoroutine으로 호출)
+    /// 🔧 이제 내부에서만 사용하도록 권장 (public 유지해도 외부에서는 Enqueue 호출)
+    /// 다음 해 팝업을 재생하고 끝날 때까지 yield.
     /// </summary>
     public IEnumerator PlayNextYearPopup(int nextYear)
     {
@@ -174,8 +235,8 @@ public class QuestUITemplate : MonoBehaviour
     // ====== 내부: 연도/게이지 표시 반영 ======
     private void ApplyYearText(int year)
     {
-        if (yearValue != null)
-            yearValue.text = year.ToString();
+        if (yearValue != null) yearValue.text = year.ToString();
+        if (gaugeYearText) gaugeYearText.text = year.ToString();
     }
 
     private void ApplyGauge(int currentYear)
