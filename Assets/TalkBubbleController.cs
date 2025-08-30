@@ -16,7 +16,9 @@ public class TalkBubbleController : MonoBehaviour
     [Tooltip("빌딩 배치/상세 UI 루트 패널 (열려있으면 말풍선 숨김)")]
     [SerializeField] private GameObject buildingPanel;
     [Tooltip("빌딩 설치 패널 (열려있으면 말풍선 숨김)")]
-    [SerializeField] private GameObject buildingInstallPanel;   // ✅ 추가
+    [SerializeField] private GameObject buildingInstallPanel;
+    [Tooltip("채팅/대화 패널 (열려있으면 말풍선 숨김)")]
+    [SerializeField] private GameObject chatPanel;
     
 
     public float showTime = 5f;
@@ -108,11 +110,12 @@ public class TalkBubbleController : MonoBehaviour
         bool quizOpen     = quizPanel     != null && quizPanel.activeInHierarchy;
         bool buildingOpen = buildingPanel != null && buildingPanel.activeInHierarchy;
         bool installOpen  = buildingInstallPanel != null && buildingInstallPanel.activeInHierarchy;
+        bool chatOpen     = chatPanel     != null && chatPanel.activeInHierarchy;
 
         // ✅ 설치중이면(패널이 아직 안 떠도) 말풍선 차단
         bool placing = GameManager.Instance != null && GameManager.Instance.IsPlacingBuilding;
 
-        return questOpen || quizOpen || buildingOpen || installOpen || placing;
+        return questOpen || quizOpen || buildingOpen || installOpen || chatOpen || placing;
     }
 
     private int GetRange(float co2)

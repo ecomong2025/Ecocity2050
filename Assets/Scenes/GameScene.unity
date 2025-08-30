@@ -4893,6 +4893,7 @@ MonoBehaviour:
   quizPanel: {fileID: 1891359380}
   buildingPanel: {fileID: 370156117}
   buildingInstallPanel: {fileID: 1247353971}
+  chatPanel: {fileID: 849468537}
   showTime: 5
 --- !u!1 &152723554
 GameObject:
