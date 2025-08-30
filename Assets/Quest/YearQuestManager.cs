@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -23,14 +23,13 @@ public class YearGaugePiece
 public class YearQuestManager : MonoBehaviour
 {
     public static YearQuestManager Instance;
-    public static event System.Action<int> OnYearChanged;
+    public static event Action<int> OnYearChanged;
 
     [Header("External Managers")]
     public QuizManager quizManager;
-    [SerializeField] private QuestAutoCompleter questAutoCompleter; // 규칙 전담자
-    [SerializeField] private QuestUITemplate questUI;               // UI 전담자
+    [SerializeField] private QuestAutoCompleter questAutoCompleter;
+    [SerializeField] private QuestUITemplate questUI;
 
-    // UI 준비 전 들어온 완료 신호를 보관
     private bool uiReady = false;
     private readonly Queue<int> pendingChecks = new();
 
@@ -53,33 +52,14 @@ public class YearQuestManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else { Destroy(gameObject); return; }
 
-#if UNITY_2022_2_OR_NEWER
-        if (questUI == null)
-            questUI = FindFirstObjectByType<QuestUITemplate>(FindObjectsInactive.Include);
-#else
         if (questUI == null)
             questUI = Resources.FindObjectsOfTypeAll<QuestUITemplate>().FirstOrDefault();
-#endif
 
-        // quizManager 자동 바인딩
         if (quizManager == null)
-        {
-#if UNITY_2022_2_OR_NEWER
-            quizManager = FindFirstObjectByType<QuizManager>(FindObjectsInactive.Include);
-#else
             quizManager = FindObjectOfType<QuizManager>(true);
-#endif
-        }
 
-        // 규칙 전담자 자동 바인딩
         if (questAutoCompleter == null)
-        {
-#if UNITY_2022_2_OR_NEWER
-            questAutoCompleter = FindFirstObjectByType<QuestAutoCompleter>(FindObjectsInactive.Include);
-#else
             questAutoCompleter = FindObjectOfType<QuestAutoCompleter>(true);
-#endif
-        }
     }
 
     void OnEnable()
@@ -94,10 +74,10 @@ public class YearQuestManager : MonoBehaviour
 
     void Start()
     {
-        LoadYear(currentYear); // 내부에서 OnYearChanged(currentYear)까지 호출됨
+        LoadYear(currentYear);
     }
 
-    // ====== 외부 이벤트 진입점 (규칙은 분리된 스크립트로 위임) ======
+    // ====== 외부 이벤트 진입점 ======
     public void OnBuildingInstalled(GameObject prefab, BuildingData data)
     {
         questAutoCompleter?.HandleBuildingInstalled(prefab, data, currentYear);
@@ -108,7 +88,6 @@ public class YearQuestManager : MonoBehaviour
         questAutoCompleter?.HandleChatCompleted(currentYear);
     }
 
-    /// <summary>퀴즈에서 정답을 맞힐 때 QuizManager가 호출</summary>
     public void ReportQuizCorrect()
     {
         questAutoCompleter?.HandleQuizCorrect(currentYear);
@@ -126,36 +105,24 @@ public class YearQuestManager : MonoBehaviour
 
         completed = new bool[4] { false, false, false, false };
 
-        // UI 전담자에게 바인딩 위임 (연도표시/게이지까지 내부에서 처리)
         questUI?.BindYear(year, texts, completed);
 
-        // 퀴즈 초기화
-        if (quizManager == null)
-        {
-#if UNITY_2022_2_OR_NEWER
-            quizManager = FindFirstObjectByType<QuizManager>(FindObjectsInactive.Include);
-#else
-            quizManager = FindObjectOfType<QuizManager>(true);
-#endif
-        }
         quizManager?.ResetQuizCorrectCount();
 
         var gptManager = FindObjectOfType<GPTChatManager>();
-        if (gptManager != null) gptManager.OnYearChanged(year);
+        gptManager?.OnYearChanged(year);
 
-        // 규칙 모듈에 "올해 시작" 알림(퀴즈 카운터 등 내부 초기화)
         questAutoCompleter?.OnYearLoaded(year);
 
         uiReady = true;
 
-        // UI 바인딩 이전에 들어온 완료 신호 처리
         while (pendingChecks.Count > 0)
             CompleteQuest_Internal(pendingChecks.Dequeue());
 
         OnYearChanged?.Invoke(year);
     }
 
-    // ====== 퀘스트 완료 처리(공용) ======
+    // ====== 퀘스트 완료 처리 ======
     public void CompleteQuest(int index)
     {
         if (index < 0 || index > 3) return;
@@ -171,14 +138,13 @@ public class YearQuestManager : MonoBehaviour
         completed[index] = true;
         questUI?.UpdateCheck(index, true);
 
-        // 4개 모두 완료되면 타일 언락 + 다음 해 팝업(코루틴은 UI가, 연도 갱신은 매니저가)
         if (completed.All(x => x))
         {
             var tms = FindObjectOfType<TileManagerSequential>(true);
-            if (tms != null) tms.UnlockTileForYear(currentYear);
+            tms?.UnlockTileForYear(currentYear);
 
             int next = Mathf.Clamp(currentYear + step, minYear, maxYear);
-            if (next == currentYear) { Debug.Log("[YQM] 마지막 연도"); return; }
+            if (next == currentYear) return;
 
             if (!advancing)
             {
@@ -188,9 +154,6 @@ public class YearQuestManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 다음 해 팝업(UI에서 재생) 끝난 후 실제로 연도 증가 → 로드
-    /// </summary>
     private IEnumerator AdvanceAfterPopup(int nextYear)
     {
         if (questUI != null)
@@ -204,36 +167,9 @@ public class YearQuestManager : MonoBehaviour
     // ====== 퀴즈 연동 ======
     private void HandleYearChanged(int year)
     {
-        if (quizManager == null)
-        {
-#if UNITY_2022_2_OR_NEWER
-            quizManager = FindFirstObjectByType<QuizManager>(FindObjectsInactive.Include);
-#else
-            quizManager = FindObjectOfType<QuizManager>(true);
-#endif
-            if (quizManager == null)
-            {
-                Debug.LogWarning("[YQM] QuizManager가 씬에 없습니다. 퀴즈 갱신 생략.");
-                return;
-            }
-        }
-
-        if (!quizManager.IsReady)
-        {
-            StartCoroutine(DelayUpdateQuizOnce(year)); // 한 프레임 뒤 1회 재시도
-            return;
-        }
+        if (quizManager == null || !quizManager.IsReady) return;
 
         quizManager.UpdateYearQuiz(year);
-    }
-
-    private IEnumerator DelayUpdateQuizOnce(int year)
-    {
-        yield return null;
-        if (quizManager != null && quizManager.IsReady)
-            quizManager.UpdateYearQuiz(year);
-        else
-            Debug.LogWarning("[YQM] QuizManager가 아직 준비되지 않았습니다(재시도 후).");
     }
 
     // ====== 유틸 ======
