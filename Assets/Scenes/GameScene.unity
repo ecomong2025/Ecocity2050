@@ -25703,6 +25703,11 @@ MonoBehaviour:
   announceTextTMP: {fileID: 1489187119}
   popupSeconds: 3
   fadeWithCanvasGroup: 1
+  sfxSource: {fileID: 113856243}
+  popupOpenSfx: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
+  sfxVolume: 0.5
+  quizPanel: {fileID: 1891359380}
+  chatPanel: {fileID: 849468537}
 --- !u!1 &972832412
 GameObject:
   m_ObjectHideFlags: 0
@@ -41473,11 +41478,16 @@ MonoBehaviour:
   - {fileID: 1742814320}
   - {fileID: 386327557}
   - {fileID: 1252824780}
-  nextYearPanel: {fileID: 1242852569}
+  nextYearPanel: {fileID: 1425803276}
   nextYearTextTMP: {fileID: 804936636}
   announceTextTMP: {fileID: 1489187119}
   popupSeconds: 3
   fadeWithCanvasGroup: 1
+  sfxSource: {fileID: 113856243}
+  popupOpenSfx: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
+  sfxVolume: 0.5
+  quizPanel: {fileID: 0}
+  chatPanel: {fileID: 0}
 --- !u!1 &1519927008
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,6 +21,10 @@ public class QuestUITemplate : MonoBehaviour
     [SerializeField] private TextMeshProUGUI announceTextTMP;
     [SerializeField] private float popupSeconds = 3f;
     [SerializeField] private bool fadeWithCanvasGroup = true;
+    // QuestUITemplate 상단 필드 근처에 추가
+    [SerializeField] private AudioSource sfxSource;        // 비워두면 자동으로 붙여줌
+    [SerializeField] private AudioClip popupOpenSfx;       // 팝업 켤 때
+    [SerializeField, Range(0f, 1f)] private float sfxVolume = 1f;
 
     // 🔧 팝업 블로킹 패널(다 꺼졌을 때만 팝업 재생)
     [Header("Popup Blocking Panels")]
@@ -46,6 +50,15 @@ public class QuestUITemplate : MonoBehaviour
             if (checkMarks[i] != null) checkMarks[i].gameObject.SetActive(false);
 
         if (nextYearPanel) nextYearPanel.SetActive(false);
+
+        // === SFX 초기화 ===
+        if (sfxSource == null)
+        {
+            sfxSource = gameObject.AddComponent<AudioSource>();
+            sfxSource.playOnAwake = false;
+            sfxSource.spatialBlend = 0f;      // UI 사운드: 2D
+            sfxSource.loop = false;
+        }
     }
 
     void OnEnable()
@@ -194,6 +207,9 @@ public class QuestUITemplate : MonoBehaviour
         if (announceTextTMP) announceTextTMP.text = $"{nextYear}년도에 도달했어요!";
 
         if (nextYearPanel) nextYearPanel.SetActive(true);
+        // 🔊 팝업 열림 SFX
+        if (sfxSource && popupOpenSfx) sfxSource.PlayOneShot(popupOpenSfx, sfxVolume);
+
 
         CanvasGroup cg = null;
         if (fadeWithCanvasGroup && nextYearPanel)
