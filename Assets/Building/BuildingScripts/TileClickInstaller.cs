@@ -153,6 +153,7 @@ public class TileClickInstaller : MonoBehaviour
 
         selectedBuildingPrefab = prefab;
         Debug.Log($"선택된 건물: {prefab.name}");
+        GameManager.Instance?.StartPlacing();
     }
 
     void RotatePreview()
@@ -299,6 +300,9 @@ public class TileClickInstaller : MonoBehaviour
             Debug.LogWarning("[TileClickInstaller] CitizenGroupController를 찾을 수 없습니다!");
         }
 
+        // ✅ 설치 완료 → 설치중 해제 (CancelPlacing() 말고 CompletePlacing())
+        GameManager.Instance?.CompletePlacing();
+
         ClearPreviewAndPanel();
     }
 
@@ -316,6 +320,8 @@ public class TileClickInstaller : MonoBehaviour
     void CancelInstall()
     {
         if (previewInstance != null) Destroy(previewInstance);
+        // ✅ 설치 취소 → 설치중 해제
+        GameManager.Instance?.CancelPlacing();
         ClearPreviewAndPanel();
     }
 
@@ -326,6 +332,14 @@ public class TileClickInstaller : MonoBehaviour
         // selectedBuildingPrefab = null; // ✅ 이 라인을 제거하여 선택된 건물 정보 유지
         currentTiles = null;
         buildingInstallPanel.SetActive(false);
+    }
+
+    public void ClearSelection()
+    {
+        // 선택만 해제(프리뷰/패널 정리)
+        if (previewInstance != null) Destroy(previewInstance);
+        selectedBuildingPrefab = null;
+        ClearPreviewAndPanel();
     }
 
     Vector2Int GetRotatedSize(int width, int height, float rotation)

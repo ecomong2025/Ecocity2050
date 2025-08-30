@@ -4,7 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public class QuizRequirement
 {
-    [Range(2025, 2050)] public int year = 2025;
+    [Range(2025, 2045)] public int year = 2025;
     [Range(1, 10)] public int requiredCorrect = 2; // 이 해에 필요한 정답 수
 }
 
