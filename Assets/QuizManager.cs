@@ -71,6 +71,8 @@ public class QuizManager : MonoBehaviour
     private HashSet<int> usedQuizIndices = new HashSet<int>();
 
     private int defaultYear = 2025;
+
+    public QuizlimitController quizLimitController; //기회소진 안내 매니저
     public bool IsReady { get; private set; } = false;
 
     private Dictionary<int, int> yearCorrectThreshold = new Dictionary<int, int>
@@ -239,6 +241,8 @@ public class QuizManager : MonoBehaviour
         if (dailyQuizCount >= dailyLimit)
         {
             Debug.Log("오늘은 더 이상 퀴즈를 풀 수 없습니다!");
+            quizMainPanel.SetActive(false);
+            quizLimitController.ShowLimitPanel();
             return;
         }
 
