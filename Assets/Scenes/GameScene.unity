@@ -20574,6 +20574,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   endingSceneName: EndingScene
+  budgetValueText: {fileID: 305414313}
+  co2ValueText: {fileID: 273048955}
+  satisfactionText: {fileID: 134240652}
+  payload: {fileID: 11400000, guid: ab32fbbb451ca934abf441f9d60a9748, type: 2}
 --- !u!1 &760440582
 GameObject:
   m_ObjectHideFlags: 0
