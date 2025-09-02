@@ -36,14 +36,21 @@ namespace Ecocity.News
 
     public class NewsOverlayManager : MonoBehaviour
     {
-        [Header("Refs")]
-        public GameObject root;         // NewsOverlayCanvas
-        public CanvasGroup canvasGroup; // CanvasGroup
-        public RawImage newsImage;      // 결과 표시
+        [Header("Overlay (screen space)")]
+        public GameObject overlayRoot;         // NewsOverlayCanvas
+        public CanvasGroup overlayGroup;       // NewsOverlayCanvas의 CanvasGroup
+        public RawImage overlayImage;          // 화면 팝업에 보여줄 RawImage
 
-        [Header("Display")]
+        [Header("Billboard (world space)")]
+        public GameObject billboardRoot;       // NewsBillboardCanvas
+        public RawImage billboardImage;        // 전광판 앞 RawImage (World Space)
+
+        [Header("Toggles")]
+        public bool showOverlay = true;        // 큰 팝업 띄우기
+        public bool showBillboard = true;      // 전광판에도 출력하기
+
         public float holdSeconds = 4f;
-        public float fadeSeconds = 0.3f;
+        public float fadeSeconds = 0.35f;
 
         string _openaiKey;
         string _naverId, _naverSecret;
@@ -68,32 +75,52 @@ namespace Ecocity.News
             StartCoroutine(Flow());
         }
 
+        // Flow 내부 표시 구간만 수정
         IEnumerator Flow()
         {
-            // 1) 실제 기사(네이버) 우선 → 실패 시 GPT 생성 폴백
+            // (1) 뉴스 텍스트 데이터 가져오기
             NewsPayload payload = null;
-            yield return StartCoroutine(FetchFromNaver(p => payload = p));
-            if (payload == null)
-                yield return StartCoroutine(FetchFromGPT(p => payload = p));
-            if (payload == null) yield break;
+            bool gotNews = false;
 
-            // 2) 이미지 생성
+            // 네이버 뉴스 우선, 실패 시 GPT 폴백
+            yield return StartCoroutine(FetchFromNaver(p => { payload = p; gotNews = true; }));
+            if (!gotNews || payload == null)
+            {
+                yield return StartCoroutine(FetchFromGPT(p => { payload = p; }));
+                if (payload == null) yield break;
+            }
+
+            // (2) 이미지 생성
             Texture2D tex = null;
             yield return StartCoroutine(GenerateNewsImage(payload, t => tex = t));
             if (tex == null) yield break;
 
-            // 3) 오버레이 노출
-            root.SetActive(true);
-            canvasGroup.alpha = 0f;
-            newsImage.texture = tex;
+            // ---- Billboard: 월드 캔버스에 즉시 적용 (페이드 없음) ----
+            if (showBillboard && billboardRoot != null && billboardImage != null)
+            {
+                if (!billboardRoot.activeSelf) billboardRoot.SetActive(true);
+                billboardImage.texture = tex;  // 전광판에 계속 유지할 거면 아래 Destroy 금지
+            }
 
-            yield return StartCoroutine(Fade(true, fadeSeconds));
-            yield return new WaitForSeconds(holdSeconds);
-            yield return StartCoroutine(Fade(false, fadeSeconds));
+            // ---- Overlay: 화면 팝업 페이드 인/아웃 ----
+            if (showOverlay && overlayRoot != null && overlayGroup != null && overlayImage != null)
+            {
+                if (!overlayRoot.activeSelf) overlayRoot.SetActive(true);
+                overlayGroup.alpha = 0f;
+                overlayImage.texture = tex;
 
-            root.SetActive(false);
-            Destroy(tex);
+                yield return StartCoroutine(Fade(true, fadeSeconds, overlayGroup));
+                yield return new WaitForSeconds(holdSeconds);
+                yield return StartCoroutine(Fade(false, fadeSeconds, overlayGroup));
+                overlayRoot.SetActive(false);
+            }
+
+            // 전광판에도 쓰고 있으면 텍스처 파괴하지 않음
+            if (!(showBillboard && billboardImage != null))
+                Destroy(tex);
         }
+
+
 
         // -------------------- (A) 네이버 뉴스 --------------------
         IEnumerator FetchFromNaver(Action<NewsPayload> done)
@@ -241,11 +268,12 @@ $@"{{
         }
 
         // -------------------- 공통 --------------------
-        IEnumerator Fade(bool show, float sec)
+        // CanvasGroup을 파라미터로 받도록 변경
+        IEnumerator Fade(bool show, float sec, CanvasGroup group)
         {
-            float t = 0f, from = canvasGroup.alpha, to = show ? 1f : 0f;
-            while (t < sec) { t += Time.deltaTime; canvasGroup.alpha = Mathf.Lerp(from, to, t / sec); yield return null; }
-            canvasGroup.alpha = to;
+            float t = 0f, from = group.alpha, to = show ? 1f : 0f;
+            while (t < sec) { t += Time.deltaTime; group.alpha = Mathf.Lerp(from, to, t / sec); yield return null; }
+            group.alpha = to;
         }
 
         static string JsonEscape(string s) => "\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n") + "\"";
