@@ -1,16 +1,17 @@
 using UnityEngine;
-using Ecocity.News;   // ✅ 이거 추가
+using Ecocity.News;
 
 [RequireComponent(typeof(Collider))]
 public class BillboardClick : MonoBehaviour
 {
-    public NewsOverlayManager manager; // 연결해둘 매니저
+    public NewsOverlayManager manager;
 
     void OnMouseDown()
     {
-        if (manager != null)
+        // lastBillboardTexture가 있으면 overlay 표시
+        if (manager != null && manager.lastBillboardTexture != null)
         {
-            manager.RequestAndShowNews();
+            manager.ShowOverlayWithBillboardImage();
         }
     }
 }

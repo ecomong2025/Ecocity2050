@@ -40,6 +40,7 @@ namespace Ecocity.News
         public GameObject overlayRoot;         // NewsOverlayCanvas
         public CanvasGroup overlayGroup;       // NewsOverlayCanvas의 CanvasGroup
         public RawImage overlayImage;          // 화면 팝업에 보여줄 RawImage
+        public TMPro.TMP_Text overlaySummaryText; // 뉴스 요약 텍스트 추가
 
         [Header("Billboard (world space)")]
         public GameObject billboardRoot;       // NewsBillboardCanvas
@@ -55,6 +56,13 @@ namespace Ecocity.News
         string _openaiKey;
         string _naverId, _naverSecret;
 
+        public Texture2D lastBillboardTexture; // 마지막 생성된 이미지 저장
+        public bool isImageReady = false;      // 이미지 준비 상태
+
+        // 주제 키워드 리스트와 인덱스 추가
+        readonly string[] newsKeywords = { "탄소중립", "재생에너지", "온실가스", "지구온난화", "기후재난" };
+        int keywordIndex = 0;
+
         void Awake()
         {
             var ta = Resources.Load<TextAsset>("api_key");
@@ -68,6 +76,21 @@ namespace Ecocity.News
             if (string.IsNullOrEmpty(_openaiKey)) Debug.LogError("[News] OpenAI 키 누락");
         }
 
+        void Start()
+        {
+            StartCoroutine(PeriodicNewsRoutine());
+        }
+
+        // 5분마다 뉴스 이미지 생성
+        IEnumerator PeriodicNewsRoutine()
+        {
+            while (true)
+            {
+                yield return StartCoroutine(Flow()); // 이미지 생성 및 billboard 갱신
+                yield return new WaitForSeconds(60f); // 1분 대기
+            }
+        }
+
         public void RequestAndShowNews()
         {
             if (string.IsNullOrEmpty(_openaiKey)) return;
@@ -75,14 +98,20 @@ namespace Ecocity.News
             StartCoroutine(Flow());
         }
 
-        // Flow 내부 표시 구간만 수정
+        // Flow: 이미지 생성 및 billboard 갱신
+        NewsPayload lastNewsPayload; // 마지막 뉴스 데이터 저장
+
         IEnumerator Flow()
         {
+            // 이전 이미지 백업
+            Texture2D prevTexture = lastBillboardTexture;
+
+            isImageReady = false;
+
             // (1) 뉴스 텍스트 데이터 가져오기
             NewsPayload payload = null;
             bool gotNews = false;
 
-            // 네이버 뉴스 우선, 실패 시 GPT 폴백
             yield return StartCoroutine(FetchFromNaver(p => { payload = p; gotNews = true; }));
             if (!gotNews || payload == null)
             {
@@ -90,37 +119,60 @@ namespace Ecocity.News
                 if (payload == null) yield break;
             }
 
+            lastNewsPayload = payload; // 마지막 뉴스 데이터 저장
+
             // (2) 이미지 생성
             Texture2D tex = null;
             yield return StartCoroutine(GenerateNewsImage(payload, t => tex = t));
             if (tex == null) yield break;
 
-            // ---- Billboard: 월드 캔버스에 즉시 적용 (페이드 없음) ----
+            // ---- Billboard: 월드 캔버스에 즉시 적용 ----
             if (showBillboard && billboardRoot != null && billboardImage != null)
             {
                 if (!billboardRoot.activeSelf) billboardRoot.SetActive(true);
-                billboardImage.texture = tex;  // 전광판에 계속 유지할 거면 아래 Destroy 금지
+                billboardImage.texture = tex;
+                lastBillboardTexture = tex;
+                isImageReady = true;
             }
 
-            // ---- Overlay: 화면 팝업 페이드 인/아웃 ----
+            // ---- Overlay: 자동으로 띄우지 않음 (클릭 시만 표시) ----
+
+            // 전광판에도 쓰고 있으면 텍스처 파괴하지 않음
+            if (!(showBillboard && billboardImage != null))
+                Destroy(tex);
+
+            // 이전 이미지가 있으면 prevTexture를 해제
+            if (prevTexture != null && prevTexture != tex)
+                Destroy(prevTexture);
+        }
+
+        // 전광판 클릭 시 호출: 기존 이미지만 overlay로 보여줌
+        public void ShowOverlayWithBillboardImage()
+        {
+            Texture2D showTexture = lastBillboardTexture;
+            if (showTexture == null) return;
+
+            overlayImage.texture = showTexture;
+            // 뉴스 요약(블럽) 1줄로 표시
+            if (overlaySummaryText != null && lastNewsPayload != null)
+                overlaySummaryText.text = lastNewsPayload.blurb;
+            StartCoroutine(ShowOverlayRoutine());
+        }
+
+        IEnumerator ShowOverlayRoutine()
+        {
             if (showOverlay && overlayRoot != null && overlayGroup != null && overlayImage != null)
             {
                 if (!overlayRoot.activeSelf) overlayRoot.SetActive(true);
                 overlayGroup.alpha = 0f;
-                overlayImage.texture = tex;
+                overlayImage.texture = lastBillboardTexture;
 
                 yield return StartCoroutine(Fade(true, fadeSeconds, overlayGroup));
                 yield return new WaitForSeconds(holdSeconds);
                 yield return StartCoroutine(Fade(false, fadeSeconds, overlayGroup));
                 overlayRoot.SetActive(false);
             }
-
-            // 전광판에도 쓰고 있으면 텍스처 파괴하지 않음
-            if (!(showBillboard && billboardImage != null))
-                Destroy(tex);
         }
-
-
 
         // -------------------- (A) 네이버 뉴스 --------------------
         IEnumerator FetchFromNaver(Action<NewsPayload> done)
@@ -128,9 +180,12 @@ namespace Ecocity.News
             if (string.IsNullOrEmpty(_naverId) || string.IsNullOrEmpty(_naverSecret))
             { done(null); yield break; }
 
-            // 검색어 수정: OR 조건 추가
-            string q = UnityWebRequest.EscapeURL("탄소중립 OR 재생에너지 OR 온실가스 OR 지구온난화 OR 기후재난");
-            string url = $"https://openapi.naver.com/v1/search/news.json?query={q}&display=1&sort=date";
+            // 이번에 사용할 키워드 선택 및 인덱스 순환
+            string keyword = newsKeywords[keywordIndex];
+            keywordIndex = (keywordIndex + 1) % newsKeywords.Length;
+
+            string q = UnityWebRequest.EscapeURL(keyword);
+            string url = $"https://openapi.naver.com/v1/search/news.json?query={q}&display=20&sort=date";
             var req = UnityWebRequest.Get(url);
             req.SetRequestHeader("X-Naver-Client-Id", _naverId);
             req.SetRequestHeader("X-Naver-Client-Secret", _naverSecret);
@@ -144,10 +199,30 @@ namespace Ecocity.News
                 var resp = JsonUtility.FromJson<NaverNewsResp>(req.downloadHandler.text);
                 if (resp?.items == null || resp.items.Count == 0) { done(null); yield break; }
 
-                var it = resp.items[0];
-                string title = CleanHtml(it.title);
-                string desc  = CleanHtml(it.description);
-                string src   = TryExtractHost(it.link);
+                // 일주일 이내 기사만 필터링
+                var weekAgo = DateTime.Now.AddDays(-7);
+                var validItems = new List<NaverItem>();
+                foreach (var it in resp.items)
+                {
+                    DateTime pub;
+                    if (DateTime.TryParse(it.pubDate, out pub) && pub >= weekAgo)
+                        validItems.Add(it);
+                }
+                if (validItems.Count == 0) { done(null); yield break; }
+
+                // 기사 리스트 섞기
+                for (int i = validItems.Count - 1; i > 0; i--)
+                {
+                    int j = UnityEngine.Random.Range(0, i + 1);
+                    var temp = validItems[i];
+                    validItems[i] = validItems[j];
+                    validItems[j] = temp;
+                }
+                var selected = validItems[0];
+
+                string title = CleanHtml(selected.title);
+                string desc  = CleanHtml(selected.description);
+                string src   = TryExtractHost(selected.link);
 
                 done(new NewsPayload {
                     headline = title,
