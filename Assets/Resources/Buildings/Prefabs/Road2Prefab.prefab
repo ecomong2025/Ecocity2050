@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Road2Prefab
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 53744418447713e44b2b8f24a4cf1d92, type: 3}
+      propertyPath: m_TagString
+      value: road
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

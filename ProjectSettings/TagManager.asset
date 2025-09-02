@@ -10,7 +10,17 @@ TagManager:
   - EcoPlant
   - EnergySaving
   - PublicTransport
-  - Building
+  - tree
+  - bush
+  - school
+  - road
+  - house
+  - apartment
+  - company
+  - hospital
+  - park
+  - EVcharger
+  - RecycleHub
   layers:
   - Default
   - TransparentFX
