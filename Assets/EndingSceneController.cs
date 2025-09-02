@@ -1,17 +1,23 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 
 public class EndingSceneController : MonoBehaviour
 {
     public ScenePayload payload;
 
-    [Header("UI ÂüÁ¶")]
-    public TMP_Text co2Text;           // CO©ü Ãâ·Â¿ë
-    public TMP_Text satisfactionText;  // ½Ã¹Î ¸¸Á·µµ Ãâ·Â¿ë
+    [Header("UI ì°¸ì¡°")]
+    public TMP_Text co2Text;           // COâ‚‚ ì¶œë ¥ìš©
+    public TMP_Text satisfactionText;  // ì‹œë¯¼ ë§Œì¡±ë„ ì¶œë ¥ìš©
+    public TMP_Text cityNameText;      // AI ë„ì‹œ ì´ë¦„ ì¶œë ¥ìš©  ğŸ‘ˆ ì¶”ê°€
 
     void Start()
     {
-        co2Text.text = $"ÃÖÁ¾ CO©ü: {payload.co2Tons:0.0}";
-        satisfactionText.text = $"½Ã¹Î ¸¸Á·µµ: {payload.citizenSatisfactionLabel}";
+        co2Text.text = $"ìµœì¢… COâ‚‚: {payload.co2Tons:0.0}";
+        satisfactionText.text = $"ì‹œë¯¼ ë§Œì¡±ë„: {payload.citizenSatisfactionLabel}";
+
+        // ë„ì‹œ ì´ë¦„ì´ ë¹„ì–´ìˆìœ¼ë©´ "ìƒì„± ì¤‘..." í‘œì‹œ
+        cityNameText.text = string.IsNullOrEmpty(payload.aiCityName)
+            ? "ë„ì‹œ ì´ë¦„ ìƒì„± ì¤‘..."
+            : $"AI ë„ì‹œ ì´ë¦„: {payload.aiCityName}";
     }
 }

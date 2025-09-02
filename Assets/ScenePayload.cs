@@ -1,16 +1,15 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 [CreateAssetMenu(menuName = "Game/ScenePayload")]
 public class ScenePayload : ScriptableObject
 {
     public float co2Tons;
-
-    // ½Ã¹Î ¸¸Á·µµ ¶óº§ ("¸Å¿ì ÁÁÀ½" °°Àº ¹®ÀÚ¿­ ÀúÀå¿ë)
     public string citizenSatisfactionLabel;
-
-    // ¼±ÅÃ: ¶óº§À» ¼ıÀÚ·Î º¯È¯ÇÑ °ª (0~100)
     public float citizenSatisfaction;
+    public int budget;
 
-    // GPT API·Î ¸¸µç µµ½Ã ÀÌ¸§
+    // ğŸ”½ ì—¬ê¸°ì— ì¶”ê°€
+    public string[] topTags; // ë„ì‹œì˜ ì£¼ìš” ê±´ë¬¼ íƒœê·¸ (ì˜ˆ: Factory, EcoPlant ë“±)
+
     public string aiCityName;
 }

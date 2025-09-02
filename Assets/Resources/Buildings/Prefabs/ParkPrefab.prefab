@@ -359,7 +359,7 @@ GameObject:
   - component: {fileID: 1850241215554972047}
   m_Layer: 0
   m_Name: ParkPrefab
-  m_TagString: Untagged
+  m_TagString: park
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
