@@ -7,12 +7,14 @@ public class GameSceneLoader : MonoBehaviour
     public Slider loadingBar;      // 로딩바
     public GameObject startButton; // Start 버튼 오브젝트
     public float fakeLoadTime = 3f;
+    public GameObject kakaoButton;
 
     private float timer = 0f;
     private bool isLoading = true;
 
     void Start()
     {
+        kakaoButton.SetActive(false); //카카오버튼 숨김
         startButton.SetActive(false); // 처음엔 버튼 숨김
         loadingBar.value = 0f;        // 로딩바 초기화
     }
@@ -29,11 +31,22 @@ public class GameSceneLoader : MonoBehaviour
                 isLoading = false;
                 loadingBar.value = 1f;      // 꽉 채우기
                 loadingBar.gameObject.SetActive(false); // 로딩바 숨김
-                startButton.SetActive(true); // 버튼 보이기
+                kakaoButton.SetActive(true); //카카오 버튼 보이기
             }
         }
     }
 
+    //카카오 버튼 클릭 시 실행
+    public void OnKakaoLogin()
+    {
+        KakaoStartManager.Instance.TryLogin();
+    }
+
+    public void OnKakaoLoginSuccess()
+    {
+        kakaoButton.SetActive(false);
+        startButton.SetActive(true);
+    }
     // Start 버튼 클릭 시 실행
     public void OnStartGame()
     {
