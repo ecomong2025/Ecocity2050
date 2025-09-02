@@ -1,11 +1,11 @@
-using UnityEngine;
+癤퓎sing UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameSceneLoader : MonoBehaviour
 {
-    public Slider loadingBar;      // 로딩바
-    public GameObject startButton; // Start 버튼 오브젝트
+    public Slider loadingBar;
+    public GameObject startButton;
     public float fakeLoadTime = 3f;
     public GameObject kakaoButton;
 
@@ -14,9 +14,9 @@ public class GameSceneLoader : MonoBehaviour
 
     void Start()
     {
-        kakaoButton.SetActive(false); //카카오버튼 숨김
-        startButton.SetActive(false); // 처음엔 버튼 숨김
-        loadingBar.value = 0f;        // 로딩바 초기화
+        kakaoButton.SetActive(false);
+        startButton.SetActive(false);
+        loadingBar.value = 0f;
     }
 
     void Update()
@@ -29,14 +29,13 @@ public class GameSceneLoader : MonoBehaviour
             if (timer >= fakeLoadTime)
             {
                 isLoading = false;
-                loadingBar.value = 1f;      // 꽉 채우기
-                loadingBar.gameObject.SetActive(false); // 로딩바 숨김
-                kakaoButton.SetActive(true); //카카오 버튼 보이기
+                loadingBar.value = 1f;
+                loadingBar.gameObject.SetActive(false);
+                kakaoButton.SetActive(true);
             }
         }
     }
 
-    //카카오 버튼 클릭 시 실행
     public void OnKakaoLogin()
     {
         KakaoStartManager.Instance.TryLogin();
@@ -47,10 +46,10 @@ public class GameSceneLoader : MonoBehaviour
         kakaoButton.SetActive(false);
         startButton.SetActive(true);
     }
-    // Start 버튼 클릭 시 실행
+
     public void OnStartGame()
     {
-        SceneManager.LoadScene("TutorialScene"); // 씬 이름 맞춰 수정
+        SceneManager.LoadScene("TutorialScene");
     }
 
     public void OnExit()
