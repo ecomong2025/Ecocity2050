@@ -21,6 +21,7 @@ TagManager:
   - park
   - EVcharger
   - RecycleHub
+  - Building
   layers:
   - Default
   - TransparentFX

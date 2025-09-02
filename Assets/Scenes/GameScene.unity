@@ -35680,8 +35680,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfbff6bf3d00c9d40befc8774644593a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildingPanelButton: {fileID: 0}
-  buildingPanel: {fileID: 0}
+  buildingPanelButton: {fileID: 2104845067}
+  buildingPanel: {fileID: 370156117}
 --- !u!1 &1333244260
 GameObject:
   m_ObjectHideFlags: 0
@@ -35925,7 +35925,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1338715403
 Transform:
   m_ObjectHideFlags: 0
@@ -57996,6 +57996,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6337012003544499062, guid: adaa4a040c11d414c948362349441105, type: 3}
   m_PrefabInstance: {fileID: 1450672104}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2104845067 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7722790511566355210, guid: adaa4a040c11d414c948362349441105, type: 3}
+  m_PrefabInstance: {fileID: 1450672104}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401119986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c645a687879a2124a95915c7e5bd035f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2111731712
 GameObject:
   m_ObjectHideFlags: 0
