@@ -41,9 +41,8 @@ public class TileClickInstaller : MonoBehaviour
         if (confirmInstallButton != null) confirmInstallButton.onClick.AddListener(ConfirmInstall);
         if (cancelInstallButton != null) cancelInstallButton.onClick.AddListener(CancelInstall);
         if (rotateButton != null) rotateButton.onClick.AddListener(RotatePreview);
-
-        buildingInstallPanel.SetActive(false);
     }
+
 
     void Update()
     {
@@ -145,16 +144,22 @@ public class TileClickInstaller : MonoBehaviour
 
     public void SetSelectedBuilding(GameObject prefab)
     {
-        // 이미 설치 프리뷰가 있다면 취소하고 새 건물 선택
-        if (previewInstance != null)
-        {
-            CancelInstall();
-        }
+        if (previewInstance != null) CancelInstall();
 
         selectedBuildingPrefab = prefab;
         Debug.Log($"선택된 건물: {prefab.name}");
+
+        // 👉 선택 즉시 패널 켜기
+        buildingInstallPanel.SetActive(true);
+
+        // 버튼은 기본 켜두기 (설치 누르면 타일 검사에서 걸러짐)
+        if (confirmInstallButton) confirmInstallButton.interactable = true;
+        if (rotateButton) rotateButton.interactable = true;
+
         GameManager.Instance?.StartPlacing();
     }
+
+
 
     void RotatePreview()
     {
@@ -329,7 +334,7 @@ public class TileClickInstaller : MonoBehaviour
     {
         previewInstance = null;
         modelInstance = null;
-        // selectedBuildingPrefab = null; // ✅ 이 라인을 제거하여 선택된 건물 정보 유지
+        selectedBuildingPrefab = null; // ✅ 이 라인을 제거하여 선택된 건물 정보 유지
         currentTiles = null;
         buildingInstallPanel.SetActive(false);
     }
