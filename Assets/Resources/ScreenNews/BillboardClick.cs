@@ -8,10 +8,23 @@ public class BillboardClick : MonoBehaviour
 
     void OnMouseDown()
     {
-        // lastBillboardTexture가 있으면 overlay 표시
+        // 특정 UI가 열려있으면 클릭 무시
+        if (IsPanelActive("BuildingPanel") ||
+            IsPanelActive("BuildingInstallPanel") ||
+            IsPanelActive("ChatPanel") ||
+            IsPanelActive("QuestUI") ||
+            IsPanelActive("NewsOverlayCanvas"))
+            return;
+
         if (manager != null && manager.lastBillboardTexture != null)
         {
             manager.ShowOverlayWithBillboardImage();
         }
+    }
+
+    bool IsPanelActive(string panelName)
+    {
+        var go = GameObject.Find(panelName);
+        return go != null && go.activeInHierarchy;
     }
 }
