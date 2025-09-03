@@ -253,7 +253,7 @@ $@"{{
   ""temperature"": 0.7,
   ""messages"": [
     {{""role"": ""system"", ""content"": ""You are a Korean climate news editor. Output ONLY JSON with keys: headline, blurb."" }},
-    {{""role"": ""user"", ""content"": ""탄소중립·재생에너지·온실가스 감축 주제로 한국 언론 톤의 헤드라인(26자 내외)과 보조문장(30자 내외)을 JSON으로 작성해줘."" }}
+    {{""role"": ""user"", ""content"": ""탄소중립, 재생에너지, 온실가스, 지구온난화, 기후재난 등 환경 주제로 한국 언론 톤의 헤드라인(26자 내외)과, 기사 전체 내용을 중학생도 이해할 수 있도록 한 문장으로 자연스럽게 끝맺으며 요약해줘. 요약에는 이 기사가 왜 환경과 관련있는지 꼭 드러나게 써줘. 예시: 국내 상반기 미세먼지가 작년보다 15% 줄었습니다. 전기차 보급과 석탄발전 축소 덕분이지만, 폭염으로 대기질 악화 우려가 남아 있습니다."" }}
   ],
   ""response_format"": {{""type"": ""json_object""}}
 }}";
