@@ -4,11 +4,11 @@
 - Active scene:
   - Name: GameScene
   - Tags:
-    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Tile, Factory, BikeRoad, EcoPlant, EnergySaving, PublicTransport, Building
+    - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Tile, Factory, BikeRoad, EcoPlant, EnergySaving, PublicTransport, tree, bush, school, road, house, apartment, company, hospital, park, EVcharger, RecycleHub, Building
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Water, UI
 - Active game object:
-  - Name: BubbleManager
+  - Name: UserMessagePrefab
   - Tag: Untagged
-  - Layer: UI
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

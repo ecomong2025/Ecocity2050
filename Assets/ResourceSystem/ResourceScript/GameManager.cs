@@ -64,6 +64,15 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public bool IsPlacingBuilding { get; private set; } // 건물 배치 모드 여부
+    public void StartPlacing()  => IsPlacingBuilding = true;   // 선택 직후
+    public void CompletePlacing()=> IsPlacingBuilding = false;  // 설치 완료
+    public void CancelPlacing()
+    {
+        IsPlacingBuilding = false;
+        TileClickInstaller.Instance?.ClearSelection(); // 선택 해제용(아래 함수 추가)
+    }
+
     // 건물 정보를 추가하는 새로운 메서드
     public void AddBuilding(string buildingName, int cost, int co2Impact, int incomePerMinute, Vector3 position, GameObject buildingObject)
     {

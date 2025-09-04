@@ -4,22 +4,59 @@ using System.Collections;
 
 public class TalkBubbleController : MonoBehaviour
 {
+    [Header("Bubble UI")]
     public GameObject talkBubble; // Panel
     public TMP_Text bubbleText;
 
+    [Header("Block When These Panels Are Open")]
+    [Tooltip("퀘스트 UI 루트 패널 (열려있으면 말풍선 숨김)")]
+    [SerializeField] private GameObject questPanel;
+    [Tooltip("퀴즈 UI 루트 패널 (열려있으면 말풍선 숨김)")]
+    [SerializeField] private GameObject quizPanel;
+    [Tooltip("빌딩 배치/상세 UI 루트 패널 (열려있으면 말풍선 숨김)")]
+    [SerializeField] private GameObject buildingPanel;
+    [Tooltip("빌딩 설치 패널 (열려있으면 말풍선 숨김)")]
+    [SerializeField] private GameObject buildingInstallPanel;
+    [Tooltip("채팅/대화 패널 (열려있으면 말풍선 숨김)")]
+    [SerializeField] private GameObject chatPanel;
+    
+
     public float showTime = 5f;
+
     private int currentRange = -1;
     private Coroutine bubbleCoroutine;
 
     void Start()
     {
+        // GameManager에 퀴즈 패널 참조가 있다면 자동 바인딩(인스펙터 비워둬도 OK)
+        if (quizPanel == null && GameManager.Instance != null)
+            quizPanel = GameManager.Instance.quizMainPanel;
+
         if (talkBubble != null)
             talkBubble.SetActive(false); // 시작 시 비활성화
         currentRange = -1;
     }
 
+    void Update()
+    {
+        // 패널이 열리면 떠 있는 말풍선 즉시 숨김
+        if (talkBubble != null && talkBubble.activeSelf && IsBlockedByAnyPanel())
+        {
+            if (bubbleCoroutine != null)
+            {
+                StopCoroutine(bubbleCoroutine);
+                bubbleCoroutine = null;
+            }
+            talkBubble.SetActive(false);
+        }
+    }
+
     public void ShowBubble(float co2Value)
     {
+        // 패널이 열려 있으면 아예 처리하지 않음
+        if (IsBlockedByAnyPanel())
+            return;
+
         int newRange = GetRange(co2Value);
 
         // 같은 범위면 아무것도 하지 않음
@@ -28,15 +65,16 @@ public class TalkBubbleController : MonoBehaviour
 
         currentRange = newRange;
 
-        // 범위 벗어나면 말풍선 숨기기
+        // 범위 밖이면 말풍선 숨김
         if (newRange == -1)
         {
-            if (talkBubble.activeSelf)
+            if (talkBubble != null && talkBubble.activeSelf)
                 talkBubble.SetActive(false);
             return;
         }
 
-        bubbleText.text = GetTextForRange(newRange);
+        if (bubbleText != null)
+            bubbleText.text = GetTextForRange(newRange);
 
         // 기존 코루틴 중지 후 새로 시작
         if (bubbleCoroutine != null)
@@ -47,10 +85,37 @@ public class TalkBubbleController : MonoBehaviour
 
     private IEnumerator ShowBubbleCoroutine()
     {
-        talkBubble.SetActive(true); // Panel 표시
-        yield return new WaitForSeconds(showTime);
-        talkBubble.SetActive(false); // 5초 뒤 Panel과 Text 모두 숨김
+        if (talkBubble != null)
+            talkBubble.SetActive(true); // Panel 표시
+
+        float t = 0f;
+        while (t < showTime)
+        {
+            // 중간에 패널이 열리면 즉시 종료
+            if (IsBlockedByAnyPanel())
+                break;
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        if (talkBubble != null)
+            talkBubble.SetActive(false); // 숨김
         bubbleCoroutine = null;
+    }
+
+    private bool IsBlockedByAnyPanel()
+    {
+        bool questOpen    = questPanel    != null && questPanel.activeInHierarchy;
+        bool quizOpen     = quizPanel     != null && quizPanel.activeInHierarchy;
+        bool buildingOpen = buildingPanel != null && buildingPanel.activeInHierarchy;
+        bool installOpen  = buildingInstallPanel != null && buildingInstallPanel.activeInHierarchy;
+        bool chatOpen     = chatPanel     != null && chatPanel.activeInHierarchy;
+
+        // ✅ 설치중이면(패널이 아직 안 떠도) 말풍선 차단
+        bool placing = GameManager.Instance != null && GameManager.Instance.IsPlacingBuilding;
+
+        return questOpen || quizOpen || buildingOpen || installOpen || chatOpen || placing;
     }
 
     private int GetRange(float co2)
@@ -77,8 +142,6 @@ public class TalkBubbleController : MonoBehaviour
             default: return "";
         }
     }
-
-
 
     public void ResetRange()
     {

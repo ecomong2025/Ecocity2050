@@ -4,13 +4,11 @@ public class CoinUIController : MonoBehaviour
 {
     public int incomeAmount = 100;
 
-    // ▼ 추가: 클릭 사운드
     [SerializeField] private AudioClip clickSfx;
     [SerializeField, Range(0f, 1f)] private float sfxVolume = 1f;
 
     void Start()
     {
-        // Collider 보정 (그대로 유지)
         if (!TryGetComponent(out Collider _))
         {
             BoxCollider collider = gameObject.AddComponent<BoxCollider>();
@@ -29,7 +27,14 @@ public class CoinUIController : MonoBehaviour
 
     void OnMouseDown()
     {
-        // 효과음 재생
+        // 특정 UI가 열려있으면 클릭 무시
+        if (IsPanelActive("BuildingPanel") ||
+            IsPanelActive("BuildingInstallPanel") ||
+            IsPanelActive("ChatPanel") ||
+            IsPanelActive("QuestUI") ||
+            IsPanelActive("NewsOverlayCanvas"))
+            return;
+
         var sfxPlayer = GameObject.Find("SFXPlayer");
         if (sfxPlayer != null && clickSfx != null)
         {
@@ -39,6 +44,12 @@ public class CoinUIController : MonoBehaviour
 
         GameManager.Instance.AddBudget(incomeAmount);
         Destroy(gameObject);
+    }
+
+    bool IsPanelActive(string panelName)
+    {
+        var go = GameObject.Find(panelName);
+        return go != null && go.activeInHierarchy;
     }
 
     public void SetWorldPosition(Vector3 worldPosition) => transform.position = worldPosition;

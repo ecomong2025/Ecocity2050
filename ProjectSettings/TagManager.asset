@@ -10,6 +10,17 @@ TagManager:
   - EcoPlant
   - EnergySaving
   - PublicTransport
+  - tree
+  - bush
+  - school
+  - road
+  - house
+  - apartment
+  - company
+  - hospital
+  - park
+  - EVcharger
+  - RecycleHub
   - Building
   layers:
   - Default
