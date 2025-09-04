@@ -72,6 +72,7 @@ public class QuestUITemplate : MonoBehaviour
                 if (questTexts[i] != null)
                     questTexts[i].text = !string.IsNullOrEmpty(_cachedTexts[i]) ? _cachedTexts[i] : $"Quest{i + 1}";
 
+            // 캐시된 완료 상태를 항상 반영
             for (int i = 0; i < checkMarks.Length; i++)
                 if (checkMarks[i] != null)
                     checkMarks[i].gameObject.SetActive(i < _cachedCompleted.Length && _cachedCompleted[i]);
@@ -166,6 +167,7 @@ public class QuestUITemplate : MonoBehaviour
     {
         if (index < 0 || index >= checkMarks.Length) return;
 
+        // 캐시에도 반영
         if (index < _cachedCompleted.Length)
             _cachedCompleted[index] = on;
 
@@ -176,25 +178,28 @@ public class QuestUITemplate : MonoBehaviour
             return;
         }
 
-        img.gameObject.SetActive(on);
+        // 체크 이미지 부모 오브젝트가 비활성화되어 있으면 활성화
+        var parent = img.transform.parent;
+        if (parent && !parent.gameObject.activeSelf)
+            parent.gameObject.SetActive(true);
 
-        if (on)
-        {
-            var parent = img.transform.parent;
-            if (parent && !parent.gameObject.activeSelf) parent.gameObject.SetActive(true);
-
+        // 체크 이미지가 비활성화되어 있으면 활성화
+        if (!img.gameObject.activeSelf)
             img.gameObject.SetActive(true);
-            img.enabled = true;
-            var c = img.color; c.a = 1f; img.color = c;
-            img.transform.SetAsLastSibling();
 
-            var cg = img.GetComponentInParent<CanvasGroup>();
-            if (cg && cg.alpha < 1f) cg.alpha = 1f;
+        img.enabled = true;
+        var c = img.color; c.a = 1f; img.color = c;
+        img.transform.SetAsLastSibling();
 
-            var rt = img.rectTransform;
-            if (rt.rect.width < 4f || rt.rect.height < 4f)
-                rt.sizeDelta = new Vector2(32, 32);
-        }
+        var cg = img.GetComponentInParent<CanvasGroup>();
+        if (cg && cg.alpha < 1f) cg.alpha = 1f;
+
+        var rt = img.rectTransform;
+        if (rt.rect.width < 4f || rt.rect.height < 4f)
+            rt.sizeDelta = new Vector2(32, 32);
+
+        // 체크 표시 상태 반영
+        img.gameObject.SetActive(on);
     }
 
     /// <summary>
