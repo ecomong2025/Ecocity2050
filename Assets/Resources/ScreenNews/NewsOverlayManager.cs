@@ -87,7 +87,7 @@ namespace Ecocity.News
             while (true)
             {
                 yield return StartCoroutine(Flow()); // 이미지 생성 및 billboard 갱신
-                yield return new WaitForSeconds(60f); // 1분 대기
+                yield return new WaitForSeconds(300f); // 5분 대기
             }
         }
 
@@ -251,6 +251,7 @@ namespace Ecocity.News
 $@"{{
   ""model"": ""gpt-4o-mini"",
   ""temperature"": 0.7,
+  ""max_tokens"": 256,
   ""messages"": [
     {{""role"": ""system"", ""content"": ""You are a Korean climate news editor. Output ONLY JSON with keys: headline, blurb."" }},
     {{""role"": ""user"", ""content"": ""탄소중립, 재생에너지, 온실가스, 지구온난화, 기후재난 등 환경 주제로 한국 언론 톤의 헤드라인(26자 내외)과, 기사 전체 내용을 중학생도 이해할 수 있도록 한 문장으로 자연스럽게 끝맺으며 요약해줘. 요약에는 이 기사가 왜 환경과 관련있는지 꼭 드러나게 써줘. 예시: 국내 상반기 미세먼지가 작년보다 15% 줄었습니다. 전기차 보급과 석탄발전 축소 덕분이지만, 폭염으로 대기질 악화 우려가 남아 있습니다."" }}

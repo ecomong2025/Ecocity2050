@@ -3,12 +3,34 @@ using UnityEngine;
 public class CustomCursor : MonoBehaviour
 {
     public Texture2D cursorTexture;
-
-    // È­»ìÇ¥ ³¡³ª´Â ÁöÁ¡ ÁÂÇ¥(px, ÁÂÃø »ó´ÜÀÌ (0,0))
     public Vector2 hotspot = new Vector2(10, 10);
+    public int cursorSize = 32; // ì›í•˜ëŠ” í¬ê¸°(px)
 
     void Start()
     {
-        Cursor.SetCursor(cursorTexture, hotspot, CursorMode.Auto);
+        if (cursorTexture != null)
+        {
+            Texture2D scaled = ScaleTexture(cursorTexture, cursorSize, cursorSize);
+            Cursor.SetCursor(scaled, hotspot, CursorMode.Auto);
+        }
+    }
+
+    Texture2D ScaleTexture(Texture2D source, int targetWidth, int targetHeight)
+    {
+        // ìž„ì‹œ RenderTexture ìƒì„±
+        RenderTexture rt = RenderTexture.GetTemporary(targetWidth, targetHeight);
+        Graphics.Blit(source, rt);
+
+        // RenderTexture -> Texture2D ë³€í™˜
+        RenderTexture.active = rt;
+        Texture2D result = new Texture2D(targetWidth, targetHeight, TextureFormat.ARGB32, false);
+        result.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), 0, 0);
+        result.Apply();
+
+        // ì •ë¦¬
+        RenderTexture.active = null;
+        RenderTexture.ReleaseTemporary(rt);
+
+        return result;
     }
 }
