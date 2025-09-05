@@ -8,6 +8,7 @@ public class ProfileUIController : MonoBehaviour
     // Profile 버튼 클릭 → QuestUI 보이기, 나머지 숨기기
     public void OnProfileClicked()
     {
+        SFXPlayer.Instance.PlayClick();
         questUI.SetActive(true);
         foreach (GameObject ui in otherUIs)
         {
@@ -19,6 +20,7 @@ public class ProfileUIController : MonoBehaviour
     // X 버튼 클릭 → QuestUI 숨기고, 나머지 다시 보이기
     public void OnCloseQuestUI()
     {
+        SFXPlayer.Instance.PlayClick();
         questUI.SetActive(false);
         foreach (GameObject ui in otherUIs)
         {

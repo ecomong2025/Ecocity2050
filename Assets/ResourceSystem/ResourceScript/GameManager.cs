@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
     public void AddBuilding(string buildingName, int cost, int co2Impact, int incomePerMinute, Vector3 position, GameObject buildingObject)
     {
         BuildingInfo newBuilding = new BuildingInfo(buildingName, cost, co2Impact, incomePerMinute, position, buildingObject);
-        builtBuildings.Add(newBuilding);
+        builtBuildings.Add(newBuilding);;
         Debug.Log($"[건물 추가] {buildingName} - 비용: {cost}, CO2: {co2Impact}, 수입: {incomePerMinute}/분");
     }
 
@@ -349,6 +349,7 @@ public class GameManager : MonoBehaviour
     //퀴즈 관련 버튼 연결 
     public void OpenQuiz()
     {
+        SFXPlayer.Instance.PlayClick();
         gamePanel.SetActive(false);
         quizManager.ResetQuizUI();
         quizMainPanel.SetActive(true);

@@ -75,7 +75,11 @@ public class ClickToCycleImage : MonoBehaviour
                        (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
         if (!pressed) return false;
 
-        if (clickAnywhere) return true;
+        if (clickAnywhere)
+        {
+            SFXPlayer.Instance.PlayClick();  // 클릭 효과음 실행
+            return true;                      // 그다음 함수 종료
+        }
 
         // 특정 대상만 클릭해야 하는 경우
         // 1) UI(Image)일 때: 이 오브젝트의 RectTransform 영역 안인지 확인

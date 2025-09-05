@@ -13,6 +13,7 @@ public class BuildingUI: MonoBehaviour
 
     void OnButtonPressed()
     {
+        SFXPlayer.Instance.PlayClick();
         if (buildingPanel != null)
         {
             buildingPanel.SetActive(true);

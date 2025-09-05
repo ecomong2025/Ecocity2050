@@ -3742,7 +3742,6 @@ GameObject:
   m_Component:
   - component: {fileID: 113856242}
   - component: {fileID: 113856243}
-  - component: {fileID: 113856244}
   m_Layer: 0
   m_Name: SFXPlayer
   m_TagString: Untagged
@@ -3778,7 +3777,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -3862,19 +3861,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &113856244
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 113856241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d9f1ac499e1e8746a2b0ede29370abe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clickSound: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
 --- !u!1 &114541224
 GameObject:
   m_ObjectHideFlags: 0
@@ -4351,7 +4337,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -5058,7 +5044,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -5773,19 +5759,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 166840433}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 113856244}
-        m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
-        m_MethodName: PlayClickSound
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &168485179
 GameObject:
   m_ObjectHideFlags: 0
@@ -6000,7 +5974,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -6515,7 +6489,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -6987,7 +6961,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -7940,7 +7914,7 @@ PrefabInstance:
     - target: {fileID: 1492275175957375880, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 113856244}
+      objectReference: {fileID: 0}
     - target: {fileID: 1492275175957375880, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -8016,7 +7990,7 @@ PrefabInstance:
     - target: {fileID: 3567514780440101006, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 113856244}
+      objectReference: {fileID: 0}
     - target: {fileID: 3567514780440101006, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -8048,7 +8022,7 @@ PrefabInstance:
     - target: {fileID: 5278610419540146590, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 113856244}
+      objectReference: {fileID: 0}
     - target: {fileID: 5278610419540146590, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -8076,7 +8050,7 @@ PrefabInstance:
     - target: {fileID: 5606627400161733579, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 113856244}
+      objectReference: {fileID: 0}
     - target: {fileID: 5606627400161733579, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -8248,7 +8222,7 @@ PrefabInstance:
     - target: {fileID: 7839871758441801277, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 113856244}
+      objectReference: {fileID: 0}
     - target: {fileID: 7839871758441801277, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -9767,7 +9741,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -10196,7 +10170,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -11322,7 +11296,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -11924,7 +11898,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -12263,18 +12237,6 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 113856244}
-        m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
-        m_MethodName: PlayClickSound
-        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -15805,7 +15767,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -18133,7 +18095,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -18908,7 +18870,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -19206,7 +19168,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -19779,7 +19741,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -20389,7 +20351,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -20872,7 +20834,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -23203,7 +23165,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -23786,7 +23748,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -27513,18 +27475,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
-        m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
-        m_MethodName: PlayClickSound
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
 --- !u!114 &935393780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28077,7 +28027,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -30433,7 +30383,6 @@ MonoBehaviour:
   fadeSeconds: 0.35
   lastBillboardTexture: {fileID: 0}
   isImageReady: 0
-  buttonSFX: {fileID: 113856244}
 --- !u!1 &1049630623
 GameObject:
   m_ObjectHideFlags: 0
@@ -30822,7 +30771,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -34337,7 +34286,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -35701,7 +35650,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -36438,6 +36387,9 @@ MonoBehaviour:
   reasonText: {fileID: 1845678289}
   quizTimer: {fileID: 1085956850}
   quizLimitController: {fileID: 1333244265}
+  audioSource: {fileID: 0}
+  correctClip: {fileID: 0}
+  incorrectClip: {fileID: 0}
 --- !u!1 &1252824778
 GameObject:
   m_ObjectHideFlags: 0
@@ -37133,7 +37085,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -37371,7 +37323,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -39639,7 +39591,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -39987,7 +39939,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -40557,7 +40509,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -41189,7 +41141,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -42173,7 +42125,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -43065,7 +43017,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -43348,7 +43300,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -43687,7 +43639,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: ec3d30765f9ce074ab916999a6197d7b, type: 3}
     - target: {fileID: 7722790511566355210, guid: adaa4a040c11d414c948362349441105, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7722790511566355210, guid: adaa4a040c11d414c948362349441105, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -43760,7 +43712,7 @@ PrefabInstance:
     - target: {fileID: 7722790511566355210, guid: adaa4a040c11d414c948362349441105, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[8].m_Target
       value: 
-      objectReference: {fileID: 113856244}
+      objectReference: {fileID: 0}
     - target: {fileID: 7722790511566355210, guid: adaa4a040c11d414c948362349441105, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -45217,7 +45169,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -45555,7 +45507,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -45843,7 +45795,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -46153,7 +46105,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -46451,7 +46403,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -49048,7 +49000,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -49987,7 +49939,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -50342,7 +50294,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -54108,7 +54060,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -55005,7 +54957,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -56278,18 +56230,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
-        m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
-        m_MethodName: PlayClickSound
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &1860195659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56692,7 +56632,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -57376,7 +57316,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -58151,7 +58091,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -61358,19 +61298,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2064277870}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 113856244}
-        m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
-        m_MethodName: PlayClickSound
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!222 &2064277869
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -63428,7 +63356,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 113856244}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1

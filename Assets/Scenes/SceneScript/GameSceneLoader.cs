@@ -64,6 +64,7 @@ public class GameSceneLoader : MonoBehaviour
 
     public void OnKakaoLogin()
     {
+        SFXPlayer.Instance.PlayClick();
         KakaoStartManager.Instance.TryLogin();
     }
 
@@ -77,22 +78,19 @@ public class GameSceneLoader : MonoBehaviour
 
     public void OnStartGame()
     {
+        SFXPlayer.Instance.PlayClick();
         SceneManager.LoadScene("GameScene");
     }
 
     public void OnStartTutorial()
     {
+        SFXPlayer.Instance.PlayClick();
         SceneManager.LoadScene("TutorialScene");
     }
     public void OnContinue()
     {
+        SFXPlayer.Instance.PlayClick();
         nullInfo.SetActive(true);
-        
-    }
-
-    public void OnStartbtn()
-    {
-        SceneManager.LoadScene("GameScene");
     }
 
     public void OnExit()

@@ -23,6 +23,7 @@ public class QuizlimitController : MonoBehaviour
 
     private void OnOkClicked()
     {
+        SFXPlayer.Instance.PlayClick();
         quizLimitPanel.SetActive(false);
         gamePanel.SetActive(true);
     }

@@ -59,8 +59,6 @@ namespace Ecocity.News
         public Texture2D lastBillboardTexture; // 마지막 생성된 이미지 저장
         public bool isImageReady = false;      // 이미지 준비 상태
 
-        public BtnSFX buttonSFX;
-
 
         // 주제 키워드 리스트와 인덱스 추가
         readonly string[] newsKeywords = { "탄소중립", "재생에너지", "온실가스", "지구온난화", "기후재난" };
@@ -152,8 +150,7 @@ namespace Ecocity.News
         // 전광판 클릭 시 호출: 기존 이미지만 overlay로 보여줌
         public void ShowOverlayWithBillboardImage()
         {
-            if (buttonSFX != null) buttonSFX.PlayClickSound(); //효과음
-
+            SFXPlayer.Instance.PlayClick();
             Texture2D showTexture = lastBillboardTexture;
             if (showTexture == null) return;
 

@@ -35,16 +35,19 @@ public class ChatUIManager : MonoBehaviour
     }
     public void OpenChat()
     {
+        SFXPlayer.Instance.PlayClick();
         chatPanel.SetActive(true);
         inputField.Select();
         inputField.ActivateInputField();
     }
     public void CloseChat()
     {
+        SFXPlayer.Instance.PlayClick();
         chatPanel.SetActive(false);
     }
     public void SendMessage()
     {
+        SFXPlayer.Instance.PlayClick(); 
         string message = inputField.text.Trim();
         if (string.IsNullOrEmpty(message)) return;
         // 사용자 메시지 추가

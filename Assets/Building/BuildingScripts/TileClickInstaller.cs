@@ -140,6 +140,7 @@ public class TileClickInstaller : MonoBehaviour
     public void CloseWarningPanel()
     {
         if (warningPanel != null) warningPanel.SetActive(false);
+        SFXPlayer.Instance.PlayClick();
     }
 
     public void SetSelectedBuilding(GameObject prefab)
@@ -157,12 +158,14 @@ public class TileClickInstaller : MonoBehaviour
         if (rotateButton) rotateButton.interactable = true;
 
         GameManager.Instance?.StartPlacing();
+        SFXPlayer.Instance.PlayClick();
     }
 
 
 
     void RotatePreview()
     {
+        SFXPlayer.Instance.PlayClick();
         if (previewInstance == null || modelInstance == null || currentTiles == null) return;
 
         float newRotation = (previewRotation + 90f) % 360f;
@@ -211,6 +214,7 @@ public class TileClickInstaller : MonoBehaviour
 
     void ConfirmInstall()
     {
+        
         if (previewInstance == null || currentTiles == null) return;
 
         GameManager gameManager = FindObjectOfType<GameManager>();
@@ -309,6 +313,7 @@ public class TileClickInstaller : MonoBehaviour
         GameManager.Instance?.CompletePlacing();
 
         ClearPreviewAndPanel();
+        SFXPlayer.Instance.PlayClick();
     }
 
     // 새 건물 설치 시 기존 시민들에게 알림
@@ -327,6 +332,7 @@ public class TileClickInstaller : MonoBehaviour
         if (previewInstance != null) Destroy(previewInstance);
         // ✅ 설치 취소 → 설치중 해제
         GameManager.Instance?.CancelPlacing();
+        SFXPlayer.Instance.PlayClick();
         ClearPreviewAndPanel();
     }
 
