@@ -49,8 +49,6 @@ namespace Ecocity.News
         [Header("Toggles")]
         public bool showOverlay = true;        // 큰 팝업 띄우기
         public bool showBillboard = true;      // 전광판에도 출력하기
-
-        public float holdSeconds = 4f;
         public float fadeSeconds = 0.35f;
 
         string _openaiKey;
@@ -156,22 +154,30 @@ namespace Ecocity.News
             // 뉴스 요약(블럽) 1줄로 표시
             if (overlaySummaryText != null && lastNewsPayload != null)
                 overlaySummaryText.text = lastNewsPayload.blurb;
-            StartCoroutine(ShowOverlayRoutine());
+            ShowOverlay(); // 코루틴 대신 즉시 표시
         }
 
-        IEnumerator ShowOverlayRoutine()
+        public void ShowOverlay()
         {
-            if (showOverlay && overlayRoot != null && overlayGroup != null && overlayImage != null)
+            if (overlayRoot != null && overlayGroup != null)
             {
-                if (!overlayRoot.activeSelf) overlayRoot.SetActive(true);
-                overlayGroup.alpha = 0f;
-                overlayImage.texture = lastBillboardTexture;
-
-                yield return StartCoroutine(Fade(true, fadeSeconds, overlayGroup));
-                yield return new WaitForSeconds(holdSeconds);
-                yield return StartCoroutine(Fade(false, fadeSeconds, overlayGroup));
-                overlayRoot.SetActive(false);
+                overlayRoot.SetActive(true);
+                StartCoroutine(Fade(true, fadeSeconds, overlayGroup));
             }
+        }
+
+        public void CloseNewsOverlay()
+        {
+            if (overlayRoot != null && overlayGroup != null)
+            {
+                StartCoroutine(FadeOutAndDeactivate());
+            }
+        }
+
+        private IEnumerator FadeOutAndDeactivate()
+        {
+            yield return StartCoroutine(Fade(false, fadeSeconds, overlayGroup));
+            overlayRoot.SetActive(false);
         }
 
         // -------------------- (A) 네이버 뉴스 --------------------
