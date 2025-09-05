@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -7,27 +7,27 @@ using System.Collections;
 
 public class ClickToCycleImage : MonoBehaviour
 {
-    [Header("Target (µÑ Áß ÇÏ³ª¸¸ ÁöÁ¤)")]
-    [SerializeField] private Image uiImage;                 // UGUI¿ë
-    [SerializeField] private SpriteRenderer spriteRenderer; // 2D Sprite¿ë
+    [Header("Target (ë‘˜ ì¤‘ í•˜ë‚˜ë§Œ ì§€ì •)")]
+    [SerializeField] private Image uiImage;                 // UGUIìš©
+    [SerializeField] private SpriteRenderer spriteRenderer; // 2D Spriteìš©
 
     [Header("Sprites")]
     [SerializeField] private Sprite[] sprites;
 
     [Header("Options")]
-    [SerializeField] private bool loop = true;                     // ¸¶Áö¸· ´ÙÀ½¿¡ Ã³À½À¸·Î
-    [SerializeField, Range(0f, 2f)] private float fadeDuration = 0f; // 0ÀÌ¸é Áï½Ã º¯°æ
-    [SerializeField] private bool clickAnywhere = true;            // È­¸é ¾Æ¹«µ¥³ª Å¬¸¯
+    [SerializeField] private bool loop = true;                     // ë§ˆì§€ë§‰ ë‹¤ìŒì— ì²˜ìŒìœ¼ë¡œ
+    [SerializeField, Range(0f, 2f)] private float fadeDuration = 0f; // 0ì´ë©´ ì¦‰ì‹œ ë³€ê²½
+    [SerializeField] private bool clickAnywhere = true;            // í™”ë©´ ì•„ë¬´ë°ë‚˜ í´ë¦­
 
-    [Header("Finish Action (loop=falseÀÏ ¶§¸¸ »ç¿ë)")]
-    [SerializeField] private UnityEvent onFinished;                // ³¡³µÀ» ¶§ ½ÇÇà(¼±ÅÃ)
-    [SerializeField] private string nextSceneName = "";            // ¾À ÀÌ¸§ ºñ¿ì¸é ¹Ì»ç¿ë
-    [SerializeField, Range(0f, 3f)] private float sceneDelay = 0f; // ¾À ÀüÈ¯ Áö¿¬
+    [Header("Finish Action (loop=falseì¼ ë•Œë§Œ ì‚¬ìš©)")]
+    [SerializeField] private UnityEvent onFinished;                // ëë‚¬ì„ ë•Œ ì‹¤í–‰(ì„ íƒ)
+    [SerializeField] private string nextSceneName = "";            // ì”¬ ì´ë¦„ ë¹„ìš°ë©´ ë¯¸ì‚¬ìš©
+    [SerializeField, Range(0f, 3f)] private float sceneDelay = 0f; // ì”¬ ì „í™˜ ì§€ì—°
 
     private int index = 0;
     private bool isFading = false;
 
-    // Ä³½Ã
+    // ìºì‹œ
     private RectTransform uiRect;
     private Camera mainCam;
     private Color uiBaseColor = Color.white;
@@ -35,19 +35,19 @@ public class ClickToCycleImage : MonoBehaviour
 
     void Awake()
     {
-        // Å¸°Ù À¯È¿¼º °Ë»ç
+        // íƒ€ê²Ÿ ìœ íš¨ì„± ê²€ì‚¬
         if ((uiImage == null && spriteRenderer == null) || (uiImage != null && spriteRenderer != null))
         {
-            Debug.LogWarning("[ClickToCycleImage] uiImage ¶Ç´Â spriteRenderer Áß µü ÇÏ³ª¸¸ ÁöÁ¤ÇÏ¼¼¿ä.");
+            Debug.LogWarning("[ClickToCycleImage] uiImage ë˜ëŠ” spriteRenderer ì¤‘ ë”± í•˜ë‚˜ë§Œ ì§€ì •í•˜ì„¸ìš”.");
         }
 
         if (sprites == null || sprites.Length == 0)
         {
-            Debug.LogWarning("[ClickToCycleImage] sprites°¡ ºñ¾îÀÖ½À´Ï´Ù.");
+            Debug.LogWarning("[ClickToCycleImage] spritesê°€ ë¹„ì–´ìˆìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // ½ÃÀÛ ½ºÇÁ¶óÀÌÆ® ¼¼ÆÃ
+        // ì‹œì‘ ìŠ¤í”„ë¼ì´íŠ¸ ì„¸íŒ…
         ApplySprite(sprites[0], instant: true);
 
         uiRect = uiImage ? uiImage.rectTransform : null;
@@ -67,25 +67,25 @@ public class ClickToCycleImage : MonoBehaviour
         }
     }
 
-    /// <summary>Å¬¸¯ ÀÔ·Â ÆÇ´Ü</summary>
+    /// <summary>í´ë¦­ ì…ë ¥ íŒë‹¨</summary>
     private bool GetClickedThisFrame()
     {
-        // ÅÍÄ¡/¸¶¿ì½º ´Ù¿î °øÅë
+        // í„°ì¹˜/ë§ˆìš°ìŠ¤ ë‹¤ìš´ ê³µí†µ
         bool pressed = Input.GetMouseButtonDown(0) ||
                        (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
         if (!pressed) return false;
 
         if (clickAnywhere) return true;
 
-        // Æ¯Á¤ ´ë»ó¸¸ Å¬¸¯ÇØ¾ß ÇÏ´Â °æ¿ì
-        // 1) UI(Image)ÀÏ ¶§: ÀÌ ¿ÀºêÁ§Æ®ÀÇ RectTransform ¿µ¿ª ¾ÈÀÎÁö È®ÀÎ
+        // íŠ¹ì • ëŒ€ìƒë§Œ í´ë¦­í•´ì•¼ í•˜ëŠ” ê²½ìš°
+        // 1) UI(Image)ì¼ ë•Œ: ì´ ì˜¤ë¸Œì íŠ¸ì˜ RectTransform ì˜ì—­ ì•ˆì¸ì§€ í™•ì¸
         if (uiRect)
         {
             Vector2 screenPos = (Input.touchCount > 0) ? (Vector2)Input.GetTouch(0).position : (Vector2)Input.mousePosition;
             return RectTransformUtility.RectangleContainsScreenPoint(uiRect, screenPos, mainCam);
         }
 
-        // 2) ½ºÇÁ¶óÀÌÆ®(¿ùµå)ÀÏ ¶§: ·¹ÀÌÄ³½ºÆ®·Î ÀÌ ¿ÀºêÁ§Æ®ÀÇ Äİ¶óÀÌ´õ¸¦ ¸ÂÃè´ÂÁö °Ë»ç
+        // 2) ìŠ¤í”„ë¼ì´íŠ¸(ì›”ë“œ)ì¼ ë•Œ: ë ˆì´ìºìŠ¤íŠ¸ë¡œ ì´ ì˜¤ë¸Œì íŠ¸ì˜ ì½œë¼ì´ë”ë¥¼ ë§ì·„ëŠ”ì§€ ê²€ì‚¬
         if (mainCam == null) mainCam = Camera.main;
         Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit3D))
@@ -104,18 +104,22 @@ public class ClickToCycleImage : MonoBehaviour
 
         int next = index + 1;
 
-        // ¸¶Áö¸· ´ÙÀ½
+        // ë§ˆì§€ë§‰ ë‹¤ìŒ
         if (next >= sprites.Length)
         {
             if (!loop)
             {
-                // ¿Ï·á Ã³¸®
+                // ì™„ë£Œ ì²˜ë¦¬
                 onFinished?.Invoke();
 
                 if (!string.IsNullOrEmpty(nextSceneName))
+                {
+                    PlayerPrefs.SetInt("FromTutorial", 1); // âœ… íŠœí† ë¦¬ì–¼ì—ì„œ ë„˜ì–´ê°„ë‹¤ëŠ” í‘œì‹œ
+                    PlayerPrefs.Save();
                     StartCoroutine(LoadSceneAfterDelay(nextSceneName, sceneDelay));
+                }
 
-                return; // ´õ ÀÌ»ó ÁøÇà X
+                return; // ë” ì´ìƒ ì§„í–‰ X
             }
             next = 0;
         }
@@ -152,7 +156,7 @@ public class ClickToCycleImage : MonoBehaviour
 
         if (uiImage != null)
         {
-            // ÆäÀÌµå ¾Æ¿ô
+            // í˜ì´ë“œ ì•„ì›ƒ
             float t = 0f;
             while (t < half)
             {
@@ -164,7 +168,7 @@ public class ClickToCycleImage : MonoBehaviour
 
             uiImage.sprite = target;
 
-            // ÆäÀÌµå ÀÎ
+            // í˜ì´ë“œ ì¸
             t = 0f;
             while (t < half)
             {
@@ -199,6 +203,7 @@ public class ClickToCycleImage : MonoBehaviour
 
         isFading = false;
     }
+
 
     private IEnumerator LoadSceneAfterDelay(string sceneName, float delay)
     {
