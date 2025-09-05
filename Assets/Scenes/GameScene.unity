@@ -3742,6 +3742,7 @@ GameObject:
   m_Component:
   - component: {fileID: 113856242}
   - component: {fileID: 113856243}
+  - component: {fileID: 113856244}
   m_Layer: 0
   m_Name: SFXPlayer
   m_TagString: Untagged
@@ -3861,6 +3862,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &113856244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113856241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d9f1ac499e1e8746a2b0ede29370abe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickClip: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
+  correctClip: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
+  incorrectClip: {fileID: 8300000, guid: a1b7382d1e471f9479f571cf1d2891c9, type: 3}
 --- !u!1 &114541224
 GameObject:
   m_ObjectHideFlags: 0
