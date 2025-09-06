@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+
 public class ChatUIManager : MonoBehaviour
 {
     [Header("UI References")]
@@ -20,68 +21,97 @@ public class ChatUIManager : MonoBehaviour
     public float messageSpacing = 10f;
     private List<GameObject> messages = new List<GameObject>();
     private GPTChatManager gptManager;
+
+    [Header("Animation")]
+    public float animDuration = 0.25f;
+    private Coroutine animCoroutine;
+    private Vector3 panelOriginalScale = Vector3.one;
+
     void Start()
     {
-        // GPT 매니저 참조
         gptManager = GetComponent<GPTChatManager>();
-        // 초기 설정
         chatPanel.SetActive(false);
-        // 이벤트 연결
+        panelOriginalScale = chatPanel.transform.localScale; // 원래 크기 저장
         chatButton.onClick.AddListener(OpenChat);
         closeButton.onClick.AddListener(CloseChat);
         sendButton.onClick.AddListener(SendMessage);
-        // 엔터키로 전송
         inputField.onSubmit.AddListener(delegate { SendMessage(); });
     }
+
     public void OpenChat()
     {
+        if (animCoroutine != null) StopCoroutine(animCoroutine);
         chatPanel.SetActive(true);
+        chatPanel.transform.localScale = Vector3.zero;
+        animCoroutine = StartCoroutine(ScalePanel(chatPanel.transform, panelOriginalScale, animDuration));
         inputField.Select();
         inputField.ActivateInputField();
     }
+
     public void CloseChat()
     {
-        chatPanel.SetActive(false);
+        if (animCoroutine != null) StopCoroutine(animCoroutine);
+        animCoroutine = StartCoroutine(CloseWithAnim());
     }
+
+    IEnumerator CloseWithAnim()
+    {
+        yield return StartCoroutine(ScalePanel(chatPanel.transform, Vector3.zero, animDuration));
+        chatPanel.SetActive(false);
+        chatPanel.transform.localScale = panelOriginalScale; // 다시 원래 크기로 복구
+    }
+
+    IEnumerator ScalePanel(Transform panel, Vector3 target, float duration)
+    {
+        Vector3 start = panel.localScale;
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            panel.localScale = Vector3.Lerp(start, target, t / duration);
+            yield return null;
+        }
+        panel.localScale = target;
+    }
+
     public void SendMessage()
     {
         string message = inputField.text.Trim();
         if (string.IsNullOrEmpty(message)) return;
-        // 사용자 메시지 추가
         AddMessage(message, true);
-        // 입력창 클리어
         inputField.text = "";
         inputField.Select();
         inputField.ActivateInputField();
-        // GPT API 호출
         if (gptManager != null)
         {
             gptManager.SendMessageToGPT(message, OnGPTResponse);
         }
     }
+
     public void AddMessage(string message, bool isUser)
     {
         GameObject prefab = isUser ? userMessagePrefab : botMessagePrefab;
         GameObject messageObj = Instantiate(prefab, contentParent);
-        // 메시지 텍스트 설정
         TMP_Text messageText = messageObj.GetComponentInChildren<TMP_Text>();
         if (messageText != null)
         {
             messageText.text = message;
         }
         messages.Add(messageObj);
-        // 스크롤을 맨 아래로
         StartCoroutine(ScrollToBottom());
     }
+
     private void OnGPTResponse(string response)
     {
         AddMessage(response, false);
     }
+
     IEnumerator ScrollToBottom()
     {
         yield return new WaitForEndOfFrame();
         scrollRect.verticalNormalizedPosition = 0f;
     }
+
     public void ClearChat()
     {
         foreach (GameObject message in messages)
