@@ -23,10 +23,9 @@ public class OpenBuildingPanel : MonoBehaviour
     public void Open()
     {
         if (targetPanel != null)
-        SFXPlayer.Instance.PlayClick();
-        
-        if (buildingPanel != null)
         {
+            SFXPlayer.Instance.PlayClick();
+        
             if (animCoroutine != null) StopCoroutine(animCoroutine);
 
             targetPanel.SetActive(true);                 // 먼저 켜주고

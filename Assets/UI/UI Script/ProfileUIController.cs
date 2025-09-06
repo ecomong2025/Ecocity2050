@@ -20,12 +20,11 @@ public class ProfileUIController : MonoBehaviour
     // Profile 버튼 클릭 → QuestUI 보이기, 나머지 숨기기 + 커지는 애니메이션
     public void OnProfileClicked()
     {
+        SFXPlayer.Instance.PlayClick();
+
         // ProfileUI 오브젝트가 비활성화되어 있으면 먼저 활성화
         if (!gameObject.activeSelf)
             gameObject.SetActive(true);
-
-        SFXPlayer.Instance.PlayClick();
-        questUI.SetActive(true);
         
         foreach (GameObject ui in otherUIs)
         {
