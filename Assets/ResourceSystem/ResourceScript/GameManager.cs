@@ -349,6 +349,7 @@ public class GameManager : MonoBehaviour
     //퀴즈 관련 버튼 연결 
     public void OpenQuiz()
     {
+        SFXPlayer.Instance.PlayClick();
         gamePanel.SetActive(false);
         quizManager.ResetQuizUI();
         quizMainPanel.SetActive(true);

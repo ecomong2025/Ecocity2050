@@ -25,11 +25,15 @@ public class BuildingButton : MonoBehaviour
         if (confirmButton != null)
         {
             confirmButton.onClick.RemoveAllListeners();
-            confirmButton.onClick.AddListener(() => warningPanel.SetActive(false));
+            confirmButton.onClick.AddListener(() =>
+            {
+                SFXPlayer.Instance.PlayClick();  // 효과음 추가
+                warningPanel.SetActive(false);
+            });
         }
 
-        // 시작은 숨김(선택)
-        if (warningPanel != null) warningPanel.SetActive(false);
+            // 시작은 숨김(선택)
+            if (warningPanel != null) warningPanel.SetActive(false);
     }
 
     void Start()
@@ -46,18 +50,14 @@ public class BuildingButton : MonoBehaviour
             return;
         }
 
+        GetComponent<Button>().onClick.RemoveAllListeners();
         GetComponent<Button>().onClick.AddListener(OnButtonClick);
-
-        // 확인 버튼 이벤트 연결
-        if (confirmButton != null)
-            confirmButton.onClick.AddListener(() => warningPanel.SetActive(false));
-        
-        if (warningPanel != null)
-            warningPanel.SetActive(false);
     }
 
     void OnButtonClick()
     {
+        SFXPlayer.Instance.PlayClick();
+
         BuildingData data = buildingPrefab.GetComponent<BuildingData>();
         GameManager gameManager = FindFirstObjectByType<GameManager>();
 
@@ -73,7 +73,7 @@ public class BuildingButton : MonoBehaviour
         }
 
         if (TileClickInstaller.Instance != null)
-        {
+        { 
             TileClickInstaller.Instance.SetSelectedBuilding(buildingPrefab);
             Debug.Log($"✅ {buildingPrefab.name} 선택됨");
         }

@@ -41,6 +41,7 @@ public class ChatUIManager : MonoBehaviour
     public void OpenChat()
     {
         if (animCoroutine != null) StopCoroutine(animCoroutine);
+        SFXPlayer.Instance.PlayClick();
         chatPanel.SetActive(true);
         chatPanel.transform.localScale = Vector3.zero;
         animCoroutine = StartCoroutine(ScalePanel(chatPanel.transform, panelOriginalScale, animDuration));
@@ -50,8 +51,8 @@ public class ChatUIManager : MonoBehaviour
 
     public void CloseChat()
     {
-        if (animCoroutine != null) StopCoroutine(animCoroutine);
-        animCoroutine = StartCoroutine(CloseWithAnim());
+        SFXPlayer.Instance.PlayClick();
+        chatPanel.SetActive(false);
     }
 
     IEnumerator CloseWithAnim()
@@ -76,6 +77,7 @@ public class ChatUIManager : MonoBehaviour
 
     public void SendMessage()
     {
+        SFXPlayer.Instance.PlayClick(); 
         string message = inputField.text.Trim();
         if (string.IsNullOrEmpty(message)) return;
         AddMessage(message, true);

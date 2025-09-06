@@ -24,6 +24,9 @@ public class ProfileUIController : MonoBehaviour
         if (!gameObject.activeSelf)
             gameObject.SetActive(true);
 
+        SFXPlayer.Instance.PlayClick();
+        questUI.SetActive(true);
+        
         foreach (GameObject ui in otherUIs)
         {
             if (ui != null)
@@ -45,6 +48,7 @@ public class ProfileUIController : MonoBehaviour
     private IEnumerator CloseWithAnim()
     {
         yield return StartCoroutine(ScalePanel(questUI.transform, Vector3.zero, animDuration));
+        SFXPlayer.Instance.PlayClick();
         questUI.SetActive(false);
         questUI.transform.localScale = panelOriginalScale; // 다시 원래 크기로 복구
         foreach (GameObject ui in otherUIs)

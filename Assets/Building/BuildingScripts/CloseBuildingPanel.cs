@@ -16,6 +16,7 @@ public class CloseBuildingPanel : MonoBehaviour
 
     public void Close()
     {
+        SFXPlayer.Instance.PlayClick();
         if (targetPanel != null)
         {
             if (animCoroutine != null) StopCoroutine(animCoroutine);
