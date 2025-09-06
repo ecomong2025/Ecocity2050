@@ -135,9 +135,36 @@ public class TileClickInstaller : MonoBehaviour
             }
         }
 
-        // 회전 단축키(optional)
-        if (previewInstance != null && Input.GetKeyDown(KeyCode.R))
-            RotatePreview();
+        // 회전 단축키
+        if (previewInstance != null)
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                // 기존 R 키 → +90도 회전
+                RotatePreview();
+            }
+            else if (Input.GetKeyDown(KeyCode.W))
+            {
+                previewRotation = 0f;
+                SpawnPreviewOverSelection(selectedBuildingPrefab);
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                previewRotation = 90f;
+                SpawnPreviewOverSelection(selectedBuildingPrefab);
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+            {
+                previewRotation = 180f;
+                SpawnPreviewOverSelection(selectedBuildingPrefab);
+            }
+            else if (Input.GetKeyDown(KeyCode.A))
+            {
+                previewRotation = 270f;
+                SpawnPreviewOverSelection(selectedBuildingPrefab);
+            }
+        }
+
     }
 
     // ─────────────────────────────────────────────────────────────
