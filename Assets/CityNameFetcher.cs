@@ -24,7 +24,7 @@ public class CityNameFetcher : MonoBehaviour
     public ScenePayload payload;   // GameScene에서 채워둔 ScenePayload.asset
 
     [Header("서버 엔드포인트")]
-    [SerializeField] private string endpoint = "http://localhost:8000/name-city";
+    [SerializeField] private string endpoint = "https://ecocity2050-be.onrender.com/name-city";
 
     [Header("UI")]
     public TMP_Text cityNameText;
