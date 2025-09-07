@@ -115,7 +115,6 @@ public class TileClickInstaller : MonoBehaviour
                 if (buildingInstallPanel) buildingInstallPanel.SetActive(true);
                 if (confirmInstallButton) confirmInstallButton.interactable = valid;
 
-                // 드래그 확정(마우스 업)
                 if (Input.GetMouseButtonUp(0))
                 {
                     isDragging = false;
@@ -123,10 +122,14 @@ public class TileClickInstaller : MonoBehaviour
                     {
                         currentTiles = rectTiles;
                         SpawnPreviewOverSelection(selectedBuildingPrefab);
-                        ClearHighlight();
+                        // ✅ 하이라이트 유지 (설치 확정 전까지 보이게)
                     }
-                    else ClearHighlight();
+                    else
+                    {
+                        ClearHighlight();                 // 불가일 때만 숨김
+                    }
                 }
+
             }
             else if (Input.GetMouseButtonUp(0))
             {
@@ -477,6 +480,12 @@ public class TileClickInstaller : MonoBehaviour
         GameManager.Instance?.CompletePlacing();
         ClearPreviewAndPanel();
         SFXPlayer.Instance?.PlayClick();
+
+        GameManager.Instance?.CompletePlacing();
+        ClearPreviewAndPanel();
+
+        ClearHighlight();                 // ✅ 설치 확정 시 하이라이트 숨김
+        SFXPlayer.Instance?.PlayClick();
     }
 
     void NotifyCitizensOfNewBuilding()
@@ -491,6 +500,7 @@ public class TileClickInstaller : MonoBehaviour
         GameManager.Instance?.CancelPlacing();
         SFXPlayer.Instance?.PlayClick();
         ClearPreviewAndPanel();
+        ClearHighlight();                 // ✅ 취소 시 숨김 (파괴 아님)
     }
 
     void ClearPreviewAndPanel()
@@ -507,6 +517,7 @@ public class TileClickInstaller : MonoBehaviour
         if (previewInstance != null) Destroy(previewInstance);
         selectedBuildingPrefab = null;
         ClearPreviewAndPanel();
+
     }
 
     Vector2Int GetRotatedSize(int width, int height, float rotation)
