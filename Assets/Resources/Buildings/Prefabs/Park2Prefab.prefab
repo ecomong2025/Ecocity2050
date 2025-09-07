@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8875245098522072690}
   - component: {fileID: 1358348223386749672}
   - component: {fileID: 3175505411451647979}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.144
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 3562416355729815601}
   - component: {fileID: 2996098413246738016}
   - component: {fileID: 5110858996264001819}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.126
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 4714305964369165194}
   - component: {fileID: 1243588132944221657}
   - component: {fileID: 3166082753507381081}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.140
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -269,7 +269,7 @@ GameObject:
   - component: {fileID: 4003692340819224835}
   - component: {fileID: 394742485538505837}
   - component: {fileID: 1058371514778634203}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.133
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -355,7 +355,7 @@ GameObject:
   - component: {fileID: 7614863147279632157}
   - component: {fileID: 7138370921984144999}
   - component: {fileID: 8655085965042664954}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.197
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -441,7 +441,7 @@ GameObject:
   - component: {fileID: 1584785031077770869}
   - component: {fileID: 5561795313789020135}
   - component: {fileID: 6010679112273005055}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.151
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -527,7 +527,7 @@ GameObject:
   - component: {fileID: 6593220744137940029}
   - component: {fileID: 7742359678787664770}
   - component: {fileID: 2153068784301884221}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Circle.045
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -614,7 +614,8 @@ GameObject:
   - component: {fileID: 3998865763895401650}
   - component: {fileID: 1196308716008515704}
   - component: {fileID: 3986414330323265060}
-  m_Layer: 0
+  - component: {fileID: -901990738381362422}
+  m_Layer: 3
   m_Name: Park2Prefab
   m_TagString: park
   m_Icon: {fileID: 0}
@@ -710,6 +711,27 @@ MonoBehaviour:
   instantCO2Change: -50
   co2PerSecond: -10
   maxCO2Change: -200
+--- !u!65 &-901990738381362422
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836218177184303533}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.00021370407, y: 0.00021370403, z: 0.00382658}
+  m_Center: {x: 0.007646408, y: 0.0110724345, z: 0.0013451223}
 --- !u!1 &850560212862774882
 GameObject:
   m_ObjectHideFlags: 0
@@ -721,7 +743,7 @@ GameObject:
   - component: {fileID: 2870842624103004532}
   - component: {fileID: 6999343034905486494}
   - component: {fileID: 4431295239193734316}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.051
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -807,7 +829,7 @@ GameObject:
   - component: {fileID: 8784839000751769137}
   - component: {fileID: 3141568309987244525}
   - component: {fileID: 3323661021124009149}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.196
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -893,7 +915,7 @@ GameObject:
   - component: {fileID: 3663805627219929134}
   - component: {fileID: 7384512392261110893}
   - component: {fileID: 1748820667231652825}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.198
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -979,7 +1001,7 @@ GameObject:
   - component: {fileID: 1098202817233702014}
   - component: {fileID: 2028970905692990257}
   - component: {fileID: 1737989712372668386}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.131
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1065,7 +1087,7 @@ GameObject:
   - component: {fileID: 3006450223036172533}
   - component: {fileID: 1293727553403882769}
   - component: {fileID: 7139843424612664953}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.048
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1151,7 +1173,7 @@ GameObject:
   - component: {fileID: 4506803804120529087}
   - component: {fileID: 3126368406871830383}
   - component: {fileID: 6299108075967464061}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.065
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1237,7 +1259,7 @@ GameObject:
   - component: {fileID: 6169750456202797682}
   - component: {fileID: 2289045634300577490}
   - component: {fileID: 3669634355439586302}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.052
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1323,7 +1345,7 @@ GameObject:
   - component: {fileID: 7820502783350757102}
   - component: {fileID: 6197953148975518919}
   - component: {fileID: 2449768512109645421}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.044
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1414,7 +1436,7 @@ GameObject:
   - component: {fileID: 1201568018434780489}
   - component: {fileID: 6159573328530336803}
   - component: {fileID: 8393146662310003294}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.128
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1500,7 +1522,7 @@ GameObject:
   - component: {fileID: 2927278046304503506}
   - component: {fileID: 7603332368782735112}
   - component: {fileID: 5665629407186482986}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.043
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1591,7 +1613,7 @@ GameObject:
   - component: {fileID: 5836967158291824932}
   - component: {fileID: 3391696764882200456}
   - component: {fileID: 4550696806899882135}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.199
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1677,7 +1699,7 @@ GameObject:
   - component: {fileID: 7285043831293828229}
   - component: {fileID: 8767427854945720341}
   - component: {fileID: 7005644993392537452}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.053
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1763,7 +1785,7 @@ GameObject:
   - component: {fileID: 5269231334615902295}
   - component: {fileID: 7625917566516186442}
   - component: {fileID: 1259062017147908323}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Plane.121
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1853,7 +1875,7 @@ GameObject:
   - component: {fileID: 6131651456844919839}
   - component: {fileID: 8331691810195916018}
   - component: {fileID: 2731162310970873939}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.130
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1939,7 +1961,7 @@ GameObject:
   - component: {fileID: 6140438737336854665}
   - component: {fileID: 5940984613946451170}
   - component: {fileID: 2369532666048128761}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cylinder.071
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2025,7 +2047,7 @@ GameObject:
   - component: {fileID: 4539311718184735154}
   - component: {fileID: 2107023649412437115}
   - component: {fileID: 7551376515169787192}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.137
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2111,7 +2133,7 @@ GameObject:
   - component: {fileID: 1056286788342569935}
   - component: {fileID: 8166960834146587433}
   - component: {fileID: 7194716869866536417}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.129
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2197,7 +2219,7 @@ GameObject:
   - component: {fileID: 5991143172060766428}
   - component: {fileID: 4112840225692360621}
   - component: {fileID: 5721688322159132072}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.127
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2283,7 +2305,7 @@ GameObject:
   - component: {fileID: 561672185550742362}
   - component: {fileID: 7999697842829604948}
   - component: {fileID: 4272804845039679946}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.149
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2369,7 +2391,7 @@ GameObject:
   - component: {fileID: 4996930478865572585}
   - component: {fileID: 2254163594624725017}
   - component: {fileID: 1103597601018277517}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.139
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2455,7 +2477,7 @@ GameObject:
   - component: {fileID: 4619848488354306876}
   - component: {fileID: 2531108441044122002}
   - component: {fileID: 3247065684791181459}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Plane.124
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2574,7 +2596,7 @@ GameObject:
   - component: {fileID: 2940611490435066116}
   - component: {fileID: 7889695330332954476}
   - component: {fileID: 7175619431091253127}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.046
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2665,7 +2687,7 @@ GameObject:
   - component: {fileID: 7767503615793102454}
   - component: {fileID: 9101218107129433381}
   - component: {fileID: 5121523369955165519}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.135
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2751,7 +2773,7 @@ GameObject:
   - component: {fileID: 7830109796798611934}
   - component: {fileID: 6000248056508056942}
   - component: {fileID: 8760296906017426553}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.147
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2837,7 +2859,7 @@ GameObject:
   - component: {fileID: 7949320677852833407}
   - component: {fileID: 6343817664835492210}
   - component: {fileID: 7362636486644867396}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.134
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2923,7 +2945,7 @@ GameObject:
   - component: {fileID: 4813704732918099311}
   - component: {fileID: 4012568134892581205}
   - component: {fileID: 4392770690628400807}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.040
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3009,7 +3031,7 @@ GameObject:
   - component: {fileID: 5491922449004216010}
   - component: {fileID: 1804517176939191368}
   - component: {fileID: 1237531579305869349}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.150
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3095,7 +3117,7 @@ GameObject:
   - component: {fileID: 6039918931128027822}
   - component: {fileID: 1808412844739032678}
   - component: {fileID: 156627857565251305}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.047
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3186,7 +3208,7 @@ GameObject:
   - component: {fileID: 2651218116746616372}
   - component: {fileID: 7861130546663838076}
   - component: {fileID: 437837513400075445}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.042
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3272,7 +3294,7 @@ GameObject:
   - component: {fileID: 2248465984127639660}
   - component: {fileID: 5996621275007313506}
   - component: {fileID: 4083470381666698787}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.146
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3358,7 +3380,7 @@ GameObject:
   - component: {fileID: 4427592545615607750}
   - component: {fileID: 4784164809209212787}
   - component: {fileID: 5029059098393655997}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.143
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3444,7 +3466,7 @@ GameObject:
   - component: {fileID: 2548553198019202688}
   - component: {fileID: 1546244424363645483}
   - component: {fileID: 4451163285258493702}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.148
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3530,7 +3552,7 @@ GameObject:
   - component: {fileID: 5821000483381497974}
   - component: {fileID: 5684241633613492499}
   - component: {fileID: 2601279928817974309}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sphere.012
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3616,7 +3638,7 @@ GameObject:
   - component: {fileID: 132955958663518814}
   - component: {fileID: 2394249317404851247}
   - component: {fileID: 2911745684243788419}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.132
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3702,7 +3724,7 @@ GameObject:
   - component: {fileID: 7906999800530014925}
   - component: {fileID: 5280654173324017943}
   - component: {fileID: 5166515135001023707}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.041
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3788,7 +3810,7 @@ GameObject:
   - component: {fileID: 4319295370907913183}
   - component: {fileID: 8377457127772772610}
   - component: {fileID: 2108844516647158003}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.045
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3879,7 +3901,7 @@ GameObject:
   - component: {fileID: 5919844509531947505}
   - component: {fileID: 2623809441746051444}
   - component: {fileID: 4875164034087304561}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.050
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3965,7 +3987,7 @@ GameObject:
   - component: {fileID: 6721404173969550197}
   - component: {fileID: 3338563620591671909}
   - component: {fileID: 5224943728948688254}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sphere.013
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4051,7 +4073,7 @@ GameObject:
   - component: {fileID: 8439854198779169623}
   - component: {fileID: 7717844423033050099}
   - component: {fileID: 8689383525082817314}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.125
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4137,7 +4159,7 @@ GameObject:
   - component: {fileID: 6634729600710946580}
   - component: {fileID: 5219357981651618919}
   - component: {fileID: 8764791893696277431}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.145
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4223,7 +4245,7 @@ GameObject:
   - component: {fileID: 3644592744411031947}
   - component: {fileID: 6960988424328494301}
   - component: {fileID: 7882960851313573997}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: park ground.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4311,7 +4333,7 @@ GameObject:
   - component: {fileID: 2635303537119523058}
   - component: {fileID: 8660880318502992658}
   - component: {fileID: 5606052197745671964}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.136
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4397,7 +4419,7 @@ GameObject:
   - component: {fileID: 2704028043834417567}
   - component: {fileID: 3271180834846342862}
   - component: {fileID: 6116012544292264488}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.152
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4483,7 +4505,7 @@ GameObject:
   - component: {fileID: 8159216124462431836}
   - component: {fileID: 820352108401557138}
   - component: {fileID: 5780562069612674908}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.142
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4569,7 +4591,7 @@ GameObject:
   - component: {fileID: 7264742124523842462}
   - component: {fileID: 3077420714576414771}
   - component: {fileID: 722734418151437332}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Circle.044
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4655,7 +4677,7 @@ GameObject:
   - component: {fileID: 5059460482576345384}
   - component: {fileID: 5862620038173217553}
   - component: {fileID: 3532204703874568325}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.138
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4741,7 +4763,7 @@ GameObject:
   - component: {fileID: 9203882856512515579}
   - component: {fileID: 603156008146724439}
   - component: {fileID: 5455271350845986311}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.141
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4827,7 +4849,7 @@ GameObject:
   - component: {fileID: 7270979970328549327}
   - component: {fileID: 161155057026928805}
   - component: {fileID: 2466504224272576075}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: flower bush.049
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4913,7 +4935,7 @@ GameObject:
   - component: {fileID: 8702249207493699236}
   - component: {fileID: 6000426452053398052}
   - component: {fileID: 4279447827399769164}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Icosphere.066
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4999,7 +5021,7 @@ GameObject:
   - component: {fileID: 7362949811099421963}
   - component: {fileID: 8302855369432002538}
   - component: {fileID: 6510846935415899072}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cylinder.070
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5085,7 +5107,7 @@ GameObject:
   - component: {fileID: 1663221701956248410}
   - component: {fileID: 1875640489092270810}
   - component: {fileID: 3488480867379966005}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Circle.046
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5171,7 +5193,7 @@ GameObject:
   - component: {fileID: 313717764615548109}
   - component: {fileID: 531343849244293351}
   - component: {fileID: 8410778204775808712}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.195
   m_TagString: Untagged
   m_Icon: {fileID: 0}
