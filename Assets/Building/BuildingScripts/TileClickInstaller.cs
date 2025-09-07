@@ -12,6 +12,8 @@ public class TileClickInstaller : MonoBehaviour
     public bool enableHotkeys = true;            // 키 사용 여부
     public bool requirePlacingForHotkeys = true; // 설치중일 때만 허용
     public KeyCode rotateKey = KeyCode.Space;    // 회전 키
+    public enum PivotMode { Center, PivotTile }
+    [Header("Pivot Mode")] public PivotMode pivotMode = PivotMode.PivotTile; // 기본: 타일 중심에 스냅
 
     [Range(0.90f, 1.10f)] public float footprintPadding = 1.00f; // 설치 면적 패딩
     public bool fillBothAxes = true; // true: X/Z 각각 채움, false: 균등 스케일
@@ -419,7 +421,6 @@ public class TileClickInstaller : MonoBehaviour
     {
         if (selectedBuildingPrefab == null) return;
 
-        // 1) 각도 진행 (항상 +90)
         SFXPlayer.Instance?.PlayClick();
         previewRotation = (previewRotation + 90f) % 360f;
         int snapped = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f) / 90f) * 90;
@@ -428,58 +429,225 @@ public class TileClickInstaller : MonoBehaviour
                  selectedBuildingPrefab.GetComponentInChildren<BuildingData>();
         if (bd == null) return;
 
-        // 2) 새 회전에서의 가로×세로
+        // 폭×높이(회전 반영)
         var size = GetRotatedSize(bd.tileWidth, bd.tileHeight, snapped);
 
         List<GameObject> rectTiles = null;
         bool valid = false;
 
-        // 현재 선택된 타일이 있으면 그 집합의 "좌하단 코너"를 기준으로 재계산
-        if (currentTiles != null && currentTiles.Count > 0 && _stepU > 0f && _stepV > 0f)
+        if (pivotMode == PivotMode.PivotTile && _pivotTile != null && _stepU > 0f && _stepV > 0f)
         {
-            // 이전에 추정된 그리드 축(+방향) 기준으로 좌하단 코너 선택
-            var corner = GetCornerMinMin(currentTiles, _gridU * _signU, _gridV * _signV);
+            // === 피벗 타일 기준 회전: u/v 축을 시계방향으로 돌린 다음, 피벗에서 w×h 채우기 ===
+            GetRotatedAxes(snapped, out var uR, out var vR, out float stepUR, out float stepVR);
 
-            // dragTile을 코너 자신으로 넣으면 FindTilesRectangleOnGrid가 +U/+V 방향으로 채워요
+            GameObject baseTile = _pivotTile;
+            // base에서 +u +v 한 칸 떨어진 곳을 dragTile로(사각 채우기 방향 정의용)
+            GameObject dragTile = FindNearestTileToWorld(
+                baseTile.transform.position + uR * stepUR + vR * stepVR
+            );
+
             rectTiles = FindTilesRectangleOnGrid(
-                corner, size.x, size.y, corner,
+                baseTile, size.x, size.y, dragTile,
                 out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
             );
 
-            valid = rectTiles != null
-                 && rectTiles.Count == size.x * size.y
-                 && AllTilesFree(rectTiles);
+            valid = rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles);
         }
-        else if (_pivotTile != null) // 드래그 직후(확정 전) 상태라면 시작 타일 기준
+        else
         {
-            var dirTile = _dirTile != null ? _dirTile : _pivotTile;
-            rectTiles = FindTilesRectangleOnGrid(
-                _pivotTile, size.x, size.y, dirTile,
-                out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
-            );
+            // === 기존(중심 기준) 경로: 현재 선택 or 드래그 기준으로 재계산 ===
+            if (currentTiles != null && currentTiles.Count > 0 && _stepU > 0f && _stepV > 0f)
+            {
+                // 중심 고정 후보들 중 가장 가까운 것 선택
+                Bounds selB = GetTilesBounds(currentTiles);
+                Vector3 C = new Vector3(selB.center.x, 0f, selB.center.z);
 
-            valid = rectTiles != null
-                 && rectTiles.Count == size.x * size.y
-                 && AllTilesFree(rectTiles);
+                float bestErr = float.PositiveInfinity;
+                List<GameObject> best = null; bool bestValid = false;
+
+                int[] s = { +1, -1 };
+                foreach (var su in s)
+                    foreach (var sv in s)
+                    {
+                        GameObject bt, dt; float err;
+                        var rect = BuildRectCentered(C, size.x, size.y, su, sv, out bt, out dt, out err);
+                        bool ok = rect != null && rect.Count == size.x * size.y && AllTilesFree(rect);
+                        if (ok && err < bestErr) { best = rect; bestErr = err; bestValid = true; }
+                        else if (!bestValid && rect != null && err < bestErr) { best = rect; bestErr = err; }
+                    }
+                rectTiles = best; valid = bestValid;
+            }
+            else if (_pivotTile != null)
+            {
+                var dirTile = _dirTile != null ? _dirTile : _pivotTile;
+                rectTiles = FindTilesRectangleOnGrid(
+                    _pivotTile, size.x, size.y, dirTile,
+                    out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
+                );
+                valid = rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles);
+            }
         }
 
-        // 3) UI/하이라이트 동기화
+        // 하이라이트/버튼
         HighlightTiles(rectTiles, valid);
         if (buildingInstallPanel) buildingInstallPanel.SetActive(true);
         if (confirmInstallButton) confirmInstallButton.interactable = valid;
 
-        // 4) 프리뷰 동기화
-        if (valid)
+        // 프리뷰
+        if (rectTiles != null)
         {
             currentTiles = rectTiles;
-            SpawnPreviewOverSelection(selectedBuildingPrefab);
-            HighlightTiles(currentTiles, true); // 프리뷰 켠 뒤에도 초록 유지
+            if (valid)
+            {
+                SpawnPreviewOverSelection(selectedBuildingPrefab);
+                HighlightTiles(currentTiles, true);
+            }
+            else if (previewInstance != null)
+            {
+                previewInstance.transform.rotation = Quaternion.Euler(0f, snapped, 0f);
+            }
+        }
+    }
+    // 선택된 타일들의 월드 바운즈(중심 C 계산용)
+    Bounds GetTilesBounds(List<GameObject> tiles)
+    {
+        var r0 = tiles[0].GetComponent<Renderer>();
+        Bounds b = r0 ? r0.bounds : new Bounds(tiles[0].transform.position, Vector3.zero);
+        for (int i = 1; i < tiles.Count; i++)
+        {
+            var r = tiles[i].GetComponent<Renderer>();
+            if (r) b.Encapsulate(r.bounds);
+            else b.Encapsulate(tiles[i].transform.position);
+        }
+        return b;
+    }
+    // === 헬퍼: 중심(C)을 유지하면서 w×h 직사각형 후보를 만들기 ===
+    // signU, signV = +1/-1 조합으로 네 가지 방향 후보를 만들 때 사용
+    List<GameObject> BuildRectCentered(
+        Vector3 C, int w, int h, int signU, int signV,
+        out GameObject baseTile, out GameObject dragTile, out float centerError)
+    {
+        Vector3 uHat = _gridU.normalized;
+        Vector3 vHat = _gridV.normalized;
+        float stepUabs = Mathf.Abs(_stepU);
+        float stepVabs = Mathf.Abs(_stepV);
+
+        // 중심 C를 기준으로 좌하단(minU,minV) 목표 좌표 계산
+        Vector3 minTarget =
+            C - uHat * stepUabs * ((w - 1) * 0.5f) * signU
+              - vHat * stepVabs * ((h - 1) * 0.5f) * signV;
+
+        // 그 위치에 가장 가까운 타일을 기준/드래그 타일로 선택
+        baseTile = FindNearestTileToWorld(minTarget);
+        dragTile = FindNearestTileToWorld(minTarget + uHat * stepUabs * signU + vHat * stepVabs * signV);
+
+        // 그리드 직사각형 뽑기
+        var rect = FindTilesRectangleOnGrid(
+            baseTile, w, h, dragTile,
+            out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
+        );
+
+        // 중심 오차(우선순위 선택용)
+        if (rect != null && rect.Count == w * h)
+        {
+            Bounds b = GetTilesBounds(rect);
+            Vector3 cc = new Vector3(b.center.x, 0f, b.center.z);
+            centerError = Vector3.Distance(cc, C);
         }
         else
         {
-            // 설치 불가일 땐 프리뷰만 각도 반영 (하이라이트는 빨강)
-            if (previewInstance != null)
-                previewInstance.transform.rotation = Quaternion.Euler(0f, snapped, 0f);
+            centerError = float.PositiveInfinity;
+        }
+
+        return rect;
+    }
+
+    // 임의의 월드 좌표에 가장 가까운 Tile
+    GameObject FindNearestTileToWorld(Vector3 pos)
+    {
+        GameObject closest = null; float best = float.MaxValue;
+        var tiles = GameObject.FindGameObjectsWithTag("Tile");
+        foreach (var t in tiles)
+        {
+            float d = (t.transform.position - pos).sqrMagnitude;
+            if (d < best) { best = d; closest = t; }
+        }
+        return closest;
+    }
+
+    // 중심 C를 기준으로, 기준축(u,v)을 'rotSteps'만큼 시계방향 회전해 w×h 직사각형을 구성
+    
+
+
+    // 중심 C를 기준으로, 기준축(u,v)을 'rotSteps'만큼 시계방향 회전해 w×h 직사각형을 구성
+    // rotSteps: 0=그대로, 1=90°CW, 2=180°, 3=270°CW
+    List<GameObject> BuildRectCenteredRotated(
+        Vector3 C, int w, int h, int rotSteps, out float centerError)
+    {
+        Vector3 uHat = _gridU.normalized;
+        Vector3 vHat = _gridV.normalized;
+        float sU = Mathf.Abs(_stepU);
+        float sV = Mathf.Abs(_stepV);
+
+        // 회전된 기준축(uR, vR)과 각 축의 스텝 크기(stepUR, stepVR) 결정
+        Vector3 uR, vR; float stepUR, stepVR;
+        switch (rotSteps & 3)
+        {
+            case 0: uR = uHat; vR = vHat; stepUR = sU; stepVR = sV; break;      // 0°
+            case 1: uR = vHat; vR = -uHat; stepUR = sV; stepVR = sU; break;      // 90° CW
+            case 2: uR = -uHat; vR = -vHat; stepUR = sU; stepVR = sV; break;      // 180°
+            default: // 3
+                uR = -vHat; vR = uHat; stepUR = sV; stepVR = sU; break;     // 270° CW
+        }
+
+        // min 코너(좌하단) 목표 위치: 중심 고정
+        Vector3 minTarget =
+            C - uR * stepUR * ((w - 1) * 0.5f)
+              - vR * stepVR * ((h - 1) * 0.5f);
+
+        // 타일 스냅
+        var allTiles = GameObject.FindGameObjectsWithTag("Tile");
+        float tol = 0.45f * Mathf.Min(stepUR, stepVR);
+
+        var rect = new List<GameObject>(w * h);
+        for (int iu = 0; iu < w; iu++)
+        {
+            for (int iv = 0; iv < h; iv++)
+            {
+                Vector3 target = minTarget + uR * stepUR * iu + vR * stepVR * iv;
+
+                GameObject closest = null; float minD = float.MaxValue;
+                foreach (var t in allTiles)
+                {
+                    float d = Vector3.Distance(t.transform.position, target);
+                    if (d < tol && d < minD) { minD = d; closest = t; }
+                }
+                if (!closest) { centerError = float.PositiveInfinity; return null; }
+                rect.Add(closest);
+            }
+        }
+
+        // 중심 오차(디버그/우선순위용)
+        Bounds b = GetTilesBounds(rect);
+        Vector3 cc = new Vector3(b.center.x, 0f, b.center.z);
+        centerError = Vector3.Distance(cc, C);
+        return rect;
+    }
+
+
+    void GetRotatedAxes(int snappedDeg, out Vector3 uR, out Vector3 vR, out float stepUR, out float stepVR)
+    {
+        Vector3 u = _gridU.normalized;
+        Vector3 v = _gridV.normalized;
+        float sU = Mathf.Abs(_stepU);
+        float sV = Mathf.Abs(_stepV);
+
+        switch (((snappedDeg / 90) % 4 + 4) % 4)
+        {
+            case 0: uR = u; vR = v; stepUR = sU; stepVR = sV; break;      // 0°
+            case 1: uR = v; vR = -u; stepUR = sV; stepVR = sU; break;      // 90° CW
+            case 2: uR = -u; vR = -v; stepUR = sU; stepVR = sV; break;      // 180°
+            default: uR = -v; vR = u; stepUR = sV; stepVR = sU; break;     // 270° CW
         }
     }
 
@@ -626,6 +794,32 @@ public class TileClickInstaller : MonoBehaviour
         {
             try { previewInstance.tag = "Building"; }
             catch (UnityException e) { Debug.LogWarning($"[TileClickInstaller] 'Building' 태그 설정 실패: {e.Message}"); }
+        }
+        // --- 피벗 타일 스냅(짝수 풋프린트가 격자선 위에 놓이는 걸 방지) ---
+        if (pivotMode == PivotMode.PivotTile && _pivotTile != null && _stepU > 0f && _stepV > 0f)
+        {
+            // 현재 회전 각도로 회전된 축/스텝
+            int snapped = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f) / 90f) * 90;
+            GetRotatedAxes(snapped, out var uR, out var vR, out float stepUR, out float stepVR);
+
+            // 현재 선택 사각형의 "최소 코너" 타일을 구해, 그 코너가 정확히 타일 그리드에 맞도록 부모를 이동
+            var minTile = GetCornerMinMin(currentTiles, uR, vR);
+            if (previewInstance != null && minTile != null)
+            {
+                // min 타일의 중심을 기준으로, 건물 바운즈의 최소 코너가
+                // (min타일 중심 - 0.5*u - 0.5*v) 에 오도록 스냅해주면 시각적으로 "사이에 끼는" 느낌이 사라짐
+                Vector3 wantCorner = minTile.transform.position - 0.5f * uR * stepUR - 0.5f * vR * stepVR;
+
+                // 현재 프리뷰의 바운즈 최소 코너(world) 계산
+                if (TryGetModelBounds(modelInstance, out Bounds b))
+                {
+                    // 현 바운즈에서 min 코너를 계산하려면 uR,vR 방향으로 절반씩 이동
+                    // 간단화: 프리뷰 부모를 (wantCorner + 절반 오프셋) 쪽으로 평행이동
+                    Vector3 currentCorner = b.min; // 대략 바닥 기준일 때 min이 코너에 해당 (메시/콜라이더에 따라 다르면 보정 필요)
+                    Vector3 delta = (wantCorner - currentCorner);
+                    previewInstance.transform.position += new Vector3(delta.x, 0f, delta.z);
+                }
+            }
         }
 
         // 대표 타일만 부모로
