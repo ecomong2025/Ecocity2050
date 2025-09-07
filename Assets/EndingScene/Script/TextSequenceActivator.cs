@@ -37,6 +37,10 @@ public class GroupSequenceActivator : MonoBehaviour
             for (int i = 0; i < count; i++)
                 parentForGroups.GetChild(i).gameObject.SetActive(i == idx);
 
+            // 마지막 그룹이면 대기만 하고 break
+            if (idx == count - 1 && !loop)
+                yield break;
+
             yield return new WaitForSeconds(interval);
 
             idx++;
@@ -46,8 +50,6 @@ public class GroupSequenceActivator : MonoBehaviour
                 idx = 0;
             }
         }
-
-        SetAll(false);
     }
 
     void SetAll(bool on)
