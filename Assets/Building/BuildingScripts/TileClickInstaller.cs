@@ -612,7 +612,7 @@ public class TileClickInstaller : MonoBehaviour
         citizenController?.OnBuildingInstalled(previewInstance.transform.position);
 
         GameManager.Instance?.CompletePlacing();
-        ClearPreviewAndPanel();
+
         ClearPreviewAndPanel(false);
         // 설치 끝 → 시각 효과 OFF
         ClearHighlight();
@@ -648,7 +648,7 @@ public class TileClickInstaller : MonoBehaviour
     {
         if (previewInstance != null) Destroy(previewInstance);
         GameManager.Instance?.CancelPlacing();
-        ClearPreviewAndPanel();
+        ClearPreviewAndPanel(true);
 
         TogglePlacementFX(false);  // ★ 취소도 OFF
         SFXPlayer.Instance?.PlayClick();
@@ -658,19 +658,12 @@ public class TileClickInstaller : MonoBehaviour
     {
         if (previewInstance != null) Destroy(previewInstance);
         selectedBuildingPrefab = null;
-        ClearPreviewAndPanel();
+        ClearPreviewAndPanel(true);
 
         TogglePlacementFX(false);  // ★ 선택 해제도 OFF
     }
 
-    void ClearPreviewAndPanel()
-    {
-        if (previewInstance != null) Destroy(previewInstance);
-        previewInstance = null;
-        modelInstance = null;
 
-        if (buildingInstallPanel) buildingInstallPanel.SetActive(false);
-    }
 
 
     Vector2Int GetRotatedSize(int width, int height, float rotation)
