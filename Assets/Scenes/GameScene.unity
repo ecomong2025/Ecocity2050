@@ -58334,6 +58334,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 199973674}
+        m_TargetAssemblyTypeName: ChatUIManager, Assembly-CSharp
+        m_MethodName: CloseChat
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1 &1930793705
 GameObject:
   m_ObjectHideFlags: 0
@@ -63300,7 +63312,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collapseSfx: {fileID: 8300000, guid: c01bbab8442e45146be860df82582360, type: 3}
-  collapseVolume: 0.5
+  collapseVolume: 1
   normalDisasterInterval: 10
   severeDisasterInterval: 10
 --- !u!1 &2132139039
