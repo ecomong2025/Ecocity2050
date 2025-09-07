@@ -8,6 +8,10 @@ public class TileClickInstaller : MonoBehaviour
     [Header("Placement Settings")]
     [Tooltip("타일 점유를 표시할 마커 이름")]
     public string occupiedMarkerName = "__OCCUPIED__";
+    [Header("Hotkeys")]
+    public bool enableHotkeys = true;            // 키 사용 여부
+    public bool requirePlacingForHotkeys = true; // 설치중일 때만 허용
+    public KeyCode rotateKey = KeyCode.Space;    // 회전 키
 
     [Range(0.90f, 1.10f)] public float footprintPadding = 1.00f; // 설치 면적 패딩
     public bool fillBothAxes = true; // true: X/Z 각각 채움, false: 균등 스케일
@@ -219,7 +223,14 @@ public class TileClickInstaller : MonoBehaviour
         }
 
         if (selectedBuildingPrefab == null) return;
+        if (enableHotkeys && (!requirePlacingForHotkeys || placing))
+        {
+            if (Input.GetKeyDown(rotateKey))
+                RotatePreview();
+        }
 
+        // 설치 중이 아니면 이후 로직 패스
+        if (!placing) return;
         // 드래그 시작
         if (Input.GetMouseButtonDown(0) && TryGetTileUnderMouse(out var tile))
         {
@@ -277,15 +288,7 @@ public class TileClickInstaller : MonoBehaviour
             }
         }
 
-        // 회전 단축키(프리뷰 있을 때만)
-        if (previewInstance != null)
-        {
-            if (Input.GetKeyDown(KeyCode.R)) { RotatePreview(); }
-            else if (Input.GetKeyDown(KeyCode.W)) { previewRotation = 0f; SpawnPreviewOverSelection(selectedBuildingPrefab); }
-            else if (Input.GetKeyDown(KeyCode.D)) { previewRotation = 90f; SpawnPreviewOverSelection(selectedBuildingPrefab); }
-            else if (Input.GetKeyDown(KeyCode.S)) { previewRotation = 180f; SpawnPreviewOverSelection(selectedBuildingPrefab); }
-            else if (Input.GetKeyDown(KeyCode.A)) { previewRotation = 270f; SpawnPreviewOverSelection(selectedBuildingPrefab); }
-        }
+        
 
         // 설치 모드가 아니면 하이라이트 잔상 제거
         if (!IsPlacingNow() && highlightedTiles.Count > 0)
