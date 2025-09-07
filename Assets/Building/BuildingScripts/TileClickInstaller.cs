@@ -419,7 +419,7 @@ public class TileClickInstaller : MonoBehaviour
     {
         if (selectedBuildingPrefab == null) return;
 
-        // 1) 항상 다음 90도로 진행 (롤백 금지)
+        // 1) 각도 진행 (항상 +90)
         SFXPlayer.Instance?.PlayClick();
         previewRotation = (previewRotation + 90f) % 360f;
         int snapped = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f) / 90f) * 90;
@@ -428,16 +428,33 @@ public class TileClickInstaller : MonoBehaviour
                  selectedBuildingPrefab.GetComponentInChildren<BuildingData>();
         if (bd == null) return;
 
-        // 2) 새 회전에 맞는 가로×세로로 선택영역 재계산
+        // 2) 새 회전에서의 가로×세로
         var size = GetRotatedSize(bd.tileWidth, bd.tileHeight, snapped);
 
         List<GameObject> rectTiles = null;
         bool valid = false;
 
-        if (_pivotTile != null && _dirTile != null)
+        // 현재 선택된 타일이 있으면 그 집합의 "좌하단 코너"를 기준으로 재계산
+        if (currentTiles != null && currentTiles.Count > 0 && _stepU > 0f && _stepV > 0f)
         {
+            // 이전에 추정된 그리드 축(+방향) 기준으로 좌하단 코너 선택
+            var corner = GetCornerMinMin(currentTiles, _gridU * _signU, _gridV * _signV);
+
+            // dragTile을 코너 자신으로 넣으면 FindTilesRectangleOnGrid가 +U/+V 방향으로 채워요
             rectTiles = FindTilesRectangleOnGrid(
-                _pivotTile, size.x, size.y, _dirTile,
+                corner, size.x, size.y, corner,
+                out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
+            );
+
+            valid = rectTiles != null
+                 && rectTiles.Count == size.x * size.y
+                 && AllTilesFree(rectTiles);
+        }
+        else if (_pivotTile != null) // 드래그 직후(확정 전) 상태라면 시작 타일 기준
+        {
+            var dirTile = _dirTile != null ? _dirTile : _pivotTile;
+            rectTiles = FindTilesRectangleOnGrid(
+                _pivotTile, size.x, size.y, dirTile,
                 out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
             );
 
@@ -446,26 +463,47 @@ public class TileClickInstaller : MonoBehaviour
                  && AllTilesFree(rectTiles);
         }
 
-        // 3) 하이라이트/버튼 상태 동기화 (유효하지 않으면 빨강 + 설치 비활성)
+        // 3) UI/하이라이트 동기화
         HighlightTiles(rectTiles, valid);
         if (buildingInstallPanel) buildingInstallPanel.SetActive(true);
         if (confirmInstallButton) confirmInstallButton.interactable = valid;
 
-        // 4) 프리뷰 동기화: 유효하면 선택영역 위에 재배치, 아니면 각도만 바꿈
+        // 4) 프리뷰 동기화
         if (valid)
         {
             currentTiles = rectTiles;
             SpawnPreviewOverSelection(selectedBuildingPrefab);
-            // 프리뷰 켠 뒤에도 하이라이트는 선택영역과 동일하게 유지
-            HighlightTiles(currentTiles, true);
+            HighlightTiles(currentTiles, true); // 프리뷰 켠 뒤에도 초록 유지
         }
         else
         {
+            // 설치 불가일 땐 프리뷰만 각도 반영 (하이라이트는 빨강)
             if (previewInstance != null)
                 previewInstance.transform.rotation = Quaternion.Euler(0f, snapped, 0f);
         }
     }
 
+
+    GameObject GetCornerMinMin(List<GameObject> tiles, Vector3 uPos, Vector3 vPos)
+    {
+        // uPos, vPos는 각각 그리드의 +U/+V 방향 단위 벡터(또는 그에 비례)
+        GameObject best = null;
+        float bestU = float.MaxValue, bestV = float.MaxValue;
+        const float eps = 1e-4f;
+
+        foreach (var t in tiles)
+        {
+            var p = t.transform.position;
+            float du = Vector3.Dot(p, uPos);
+            float dv = Vector3.Dot(p, vPos);
+
+            if (du < bestU - eps || (Mathf.Abs(du - bestU) <= eps && dv < bestV))
+            {
+                best = t; bestU = du; bestV = dv;
+            }
+        }
+        return best != null ? best : tiles[0];
+    }
 
 
     void SpawnPreviewOverSelection(GameObject prefab)
