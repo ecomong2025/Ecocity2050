@@ -10630,6 +10630,7 @@ GameObject:
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
   - component: {fileID: 330585549}
+  - component: {fileID: 330585550}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -10771,6 +10772,23 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   m_Enabled: 1
+--- !u!114 &330585550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 00e298d760029bf4ea9216adb6a1a7c8, type: 2}
 --- !u!1 &335352331
 GameObject:
   m_ObjectHideFlags: 0
@@ -20680,6 +20698,65 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!1 &690109119
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 690109120}
+  - component: {fileID: 690109122}
+  m_Layer: 0
+  m_Name: TileGroupOutlineManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &690109120
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690109119}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &690109122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690109119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 994c45dad583ead4eb744ab3c8a63f45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilesRoot1: {fileID: 267089707}
+  tilesRoot2: {fileID: 34975930}
+  tilesRoot3: {fileID: 682922844}
+  tilesRoot4: {fileID: 1191220350}
+  tilesRoot5: {fileID: 1777411846}
+  lineMat: {fileID: 2100000, guid: c7e2d8f1a5dfb3e47a5a37fe9768b58d, type: 2}
+  yOffset: 0.1
+  borderPercent: 0.001
+  drawAllFourEdges: 1
+  blink: 1
+  blinkSpeed: 1.5
+  alphaLow: 0.08
+  alphaHigh: 0.112
+  intensityLow: 0.2
+  intensityHigh: 0.3
 --- !u!1 &694751367
 GameObject:
   m_ObjectHideFlags: 0
@@ -42400,6 +42477,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1421606835}
   - component: {fileID: 1421606836}
+  - component: {fileID: 1421606837}
   m_Layer: 0
   m_Name: BuildingHoverManager
   m_TagString: Untagged
@@ -42436,6 +42514,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contentRoot: {fileID: 856841327}
   overlayName: BuildingLockOverlay
+--- !u!114 &1421606837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421606834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8c8df5a192d7fb4ab316df7ea1ab70d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  highlightMat: {fileID: 2100000, guid: c7e2d8f1a5dfb3e47a5a37fe9768b58d, type: 2}
+  highlightValid: {r: 0.2, g: 1, b: 0.4, a: 0.35}
+  highlightInvalid: {r: 1, g: 0.25, b: 0.25, a: 0.35}
+  highlightYOffset: 0.01
+  lineMat: {fileID: 0}
+  warningPanel: {fileID: 319495318}
+  confirmButton: {fileID: 365173976}
+  buildingInstallPanel: {fileID: 1247353971}
+  confirmInstallButton: {fileID: 365173976}
+  cancelInstallButton: {fileID: 1228325617}
+  rotateButton: {fileID: 2064277867}
+  occupiedMarkerName: __OCCUPIED__
+  footprintPadding: 0.98
 --- !u!1 &1425803276
 GameObject:
   m_ObjectHideFlags: 0
@@ -44840,6 +44946,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8c8df5a192d7fb4ab316df7ea1ab70d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  highlightMat: {fileID: 0}
+  highlightValid: {r: 0.2, g: 1, b: 0.4, a: 0.35}
+  highlightInvalid: {r: 1, g: 0.25, b: 0.25, a: 0.35}
+  highlightYOffset: 0.01
+  lineMat: {fileID: 0}
   warningPanel: {fileID: 319495318}
   confirmButton: {fileID: 166840435}
   buildingInstallPanel: {fileID: 1247353971}
@@ -64217,3 +64331,4 @@ SceneRoots:
   - {fileID: 1242852573}
   - {fileID: 423433580}
   - {fileID: 283418130}
+  - {fileID: 690109120}
