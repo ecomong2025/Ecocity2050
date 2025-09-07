@@ -417,34 +417,56 @@ public class TileClickInstaller : MonoBehaviour
 
     void RotatePreview()
     {
+        if (selectedBuildingPrefab == null) return;
+
+        // 1) 항상 다음 90도로 진행 (롤백 금지)
         SFXPlayer.Instance?.PlayClick();
         previewRotation = (previewRotation + 90f) % 360f;
+        int snapped = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f) / 90f) * 90;
 
-        var bd = selectedBuildingPrefab?.GetComponent<BuildingData>() ??
-                 selectedBuildingPrefab?.GetComponentInChildren<BuildingData>();
+        var bd = selectedBuildingPrefab.GetComponent<BuildingData>() ??
+                 selectedBuildingPrefab.GetComponentInChildren<BuildingData>();
         if (bd == null) return;
 
-        var size = GetRotatedSize(bd.tileWidth, bd.tileHeight, previewRotation);
+        // 2) 새 회전에 맞는 가로×세로로 선택영역 재계산
+        var size = GetRotatedSize(bd.tileWidth, bd.tileHeight, snapped);
+
+        List<GameObject> rectTiles = null;
+        bool valid = false;
 
         if (_pivotTile != null && _dirTile != null)
         {
-            var rectTiles = FindTilesRectangleOnGrid(
+            rectTiles = FindTilesRectangleOnGrid(
                 _pivotTile, size.x, size.y, _dirTile,
                 out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
             );
 
-            if (rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles))
-            {
-                currentTiles = rectTiles;
-                SpawnPreviewOverSelection(selectedBuildingPrefab);
-                return;
-            }
+            valid = rectTiles != null
+                 && rectTiles.Count == size.x * size.y
+                 && AllTilesFree(rectTiles);
         }
 
-        // 폴백: 프리뷰만 회전
-        if (previewInstance != null)
-            previewInstance.transform.rotation = Quaternion.Euler(0f, previewRotation, 0f);
+        // 3) 하이라이트/버튼 상태 동기화 (유효하지 않으면 빨강 + 설치 비활성)
+        HighlightTiles(rectTiles, valid);
+        if (buildingInstallPanel) buildingInstallPanel.SetActive(true);
+        if (confirmInstallButton) confirmInstallButton.interactable = valid;
+
+        // 4) 프리뷰 동기화: 유효하면 선택영역 위에 재배치, 아니면 각도만 바꿈
+        if (valid)
+        {
+            currentTiles = rectTiles;
+            SpawnPreviewOverSelection(selectedBuildingPrefab);
+            // 프리뷰 켠 뒤에도 하이라이트는 선택영역과 동일하게 유지
+            HighlightTiles(currentTiles, true);
+        }
+        else
+        {
+            if (previewInstance != null)
+                previewInstance.transform.rotation = Quaternion.Euler(0f, snapped, 0f);
+        }
     }
+
+
 
     void SpawnPreviewOverSelection(GameObject prefab)
     {
@@ -462,18 +484,11 @@ public class TileClickInstaller : MonoBehaviour
         float lenU = (_stepU > 0f) ? _stepU * Mathf.Max(1, Mathf.RoundToInt(selB.size.x / _stepU)) : selB.size.x;
         float lenV = (_stepV > 0f) ? _stepV * Mathf.Max(1, Mathf.RoundToInt(selB.size.z / _stepV)) : selB.size.z;
 
-        // C) 회전 기준 타일 폭/높이
-        var sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, previewRotation);
-
-        // D) 비대칭 자동 보정
+        // C) 회전 기준 타일 폭/높이 (사용자 회전을 그대로 신뢰, 90도 스냅)
         int desiredRot = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f));
-        bool modelLongX = sizeTiles.x >= sizeTiles.y;
-        bool gridLongU = lenU >= lenV;
-        if (bd.tileWidth != bd.tileHeight && modelLongX != gridLongU)
-        {
-            desiredRot = (desiredRot + 90) % 360;
-            sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
-        }
+        desiredRot = Mathf.RoundToInt(desiredRot / 90f) * 90;  // 0/90/180/270 스냅
+        var sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
+
 
         // E) 목표 크기
         Vector3 targetSize = (_stepU > 0f && _stepV > 0f)
@@ -519,6 +534,9 @@ public class TileClickInstaller : MonoBehaviour
         if (confirmInstallButton) confirmInstallButton.interactable = true;
 
         previewRotation = desiredRot;
+        // 프리뷰 켠 뒤, 선택 영역과 하이라이트 다시 일치시킴(초록)
+        HighlightTiles(currentTiles, true);
+
     }
 
     // 비율 유지(균등) 스케일
