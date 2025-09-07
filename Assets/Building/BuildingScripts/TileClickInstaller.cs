@@ -479,10 +479,6 @@ public class TileClickInstaller : MonoBehaviour
 
         GameManager.Instance?.CompletePlacing();
         ClearPreviewAndPanel();
-        SFXPlayer.Instance?.PlayClick();
-
-        GameManager.Instance?.CompletePlacing();
-        ClearPreviewAndPanel();
 
         ClearHighlight();                 // ✅ 설치 확정 시 하이라이트 숨김
         SFXPlayer.Instance?.PlayClick();
