@@ -21,19 +21,19 @@ public class EndingSceneController : MonoBehaviour
         }
 
         // CO₂ 값 출력
-        string co2Message = $"최종 CO₂: {payload.co2Tons:0.0}";
+        string co2Message = $"{payload.co2Tons:0.0}";
         foreach (var t in co2Texts)
             if (t != null) t.text = co2Message;
 
         // 시민 만족도 출력
-        string satisfactionMessage = $"시민 만족도: {payload.citizenSatisfactionLabel}";
+        string satisfactionMessage = $"{payload.citizenSatisfactionLabel}";
         foreach (var t in satisfactionTexts)
             if (t != null) t.text = satisfactionMessage;
 
         // 도시 이름 출력
         string cityNameMessage = string.IsNullOrEmpty(payload.aiCityName)
             ? "도시 이름 생성 중..."
-            : $"AI 도시 이름: {payload.aiCityName}";
+            : $"{payload.aiCityName}";
         foreach (var t in cityNameTexts)
             if (t != null) t.text = cityNameMessage;
     }
