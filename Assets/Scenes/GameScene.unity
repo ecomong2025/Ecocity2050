@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -14047,7 +14047,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -19558,7 +19558,7 @@ MonoBehaviour:
   - {fileID: 1219843073}
   - {fileID: 686733290}
   - {fileID: 232463146}
-  - {fileID: 0}
+  - {fileID: 2109106507}
   animDuration: 0.25
 --- !u!1 &654045463
 GameObject:
@@ -39005,7 +39005,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1338715403
 Transform:
   m_ObjectHideFlags: 0
@@ -39043,7 +39043,7 @@ MonoBehaviour:
   - {fileID: 401119986}
   - {fileID: 174177533}
   - {fileID: 686733290}
-  - {fileID: 2063288944}
+  - {fileID: 2109106507}
   - {fileID: 1444884833}
 --- !u!1 &1343751718
 GameObject:
@@ -43715,7 +43715,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2109106507}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -44127,7 +44127,7 @@ PrefabInstance:
     - target: {fileID: 7722790511566355210, guid: adaa4a040c11d414c948362349441105, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[8].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2109106507}
     - target: {fileID: 7722790511566355210, guid: adaa4a040c11d414c948362349441105, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -56303,6 +56303,8 @@ Transform:
   - {fileID: 832575519}
   - {fileID: 283418130}
   - {fileID: 799258801}
+  - {fileID: 97759528}
+  - {fileID: 1142692738}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1836272241
@@ -62909,14 +62911,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 330585545}
   mapSize: 5
-  buildingPanel: {fileID: 370156117}
-  chatPanel: {fileID: 849468537}
-  questUI: {fileID: 1519766997}
+  uiBlockers:
+  - {fileID: 370156117}
+  - {fileID: 1519766997}
+  - {fileID: 1338715402}
+  - {fileID: 849468537}
+  - {fileID: 687768036}
+  - {fileID: 430474308}
+  - {fileID: 1242852569}
   zoomSpeed: 5
   minDistance: 5
   maxDistance: 20
   mapCenter: {x: 0, y: 0, z: 0}
   panSpeed: 5
+  yawDragSpeed: 0.2
+  yawKeySpeed: 60
   limitX: {x: -15, y: 15}
   limitZ: {x: -15, y: 15}
 --- !u!1 &2096917681
