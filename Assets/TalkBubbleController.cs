@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TalkBubbleController : MonoBehaviour
 {
@@ -9,17 +10,8 @@ public class TalkBubbleController : MonoBehaviour
     public TMP_Text bubbleText;
 
     [Header("Block When These Panels Are Open")]
-    [Tooltip("퀘스트 UI 루트 패널 (열려있으면 말풍선 숨김)")]
-    [SerializeField] private GameObject questPanel;
-    [Tooltip("퀴즈 UI 루트 패널 (열려있으면 말풍선 숨김)")]
-    [SerializeField] private GameObject quizPanel;
-    [Tooltip("빌딩 배치/상세 UI 루트 패널 (열려있으면 말풍선 숨김)")]
-    [SerializeField] private GameObject buildingPanel;
-    [Tooltip("빌딩 설치 패널 (열려있으면 말풍선 숨김)")]
-    [SerializeField] private GameObject buildingInstallPanel;
-    [Tooltip("채팅/대화 패널 (열려있으면 말풍선 숨김)")]
-    [SerializeField] private GameObject chatPanel;
-    
+    [Tooltip("이 리스트 안에 있는 패널이 켜져 있으면 말풍선 숨김")]
+    [SerializeField] private List<GameObject> blockPanels = new List<GameObject>();
 
     public float showTime = 5f;
 
@@ -28,9 +20,12 @@ public class TalkBubbleController : MonoBehaviour
 
     void Start()
     {
-        // GameManager에 퀴즈 패널 참조가 있다면 자동 바인딩(인스펙터 비워둬도 OK)
-        if (quizPanel == null && GameManager.Instance != null)
-            quizPanel = GameManager.Instance.quizMainPanel;
+        // GameManager에 퀴즈 패널이 있다면 자동으로 추가 (인스펙터 비워둬도 OK)
+        if (GameManager.Instance != null && GameManager.Instance.quizMainPanel != null 
+            && !blockPanels.Contains(GameManager.Instance.quizMainPanel))
+        {
+            blockPanels.Add(GameManager.Instance.quizMainPanel);
+        }
 
         if (talkBubble != null)
             talkBubble.SetActive(false); // 시작 시 비활성화
@@ -53,19 +48,16 @@ public class TalkBubbleController : MonoBehaviour
 
     public void ShowBubble(float co2Value)
     {
-        // 패널이 열려 있으면 아예 처리하지 않음
         if (IsBlockedByAnyPanel())
             return;
 
         int newRange = GetRange(co2Value);
 
-        // 같은 범위면 아무것도 하지 않음
         if (newRange == currentRange)
             return;
 
         currentRange = newRange;
 
-        // 범위 밖이면 말풍선 숨김
         if (newRange == -1)
         {
             if (talkBubble != null && talkBubble.activeSelf)
@@ -76,7 +68,6 @@ public class TalkBubbleController : MonoBehaviour
         if (bubbleText != null)
             bubbleText.text = GetTextForRange(newRange);
 
-        // 기존 코루틴 중지 후 새로 시작
         if (bubbleCoroutine != null)
             StopCoroutine(bubbleCoroutine);
 
@@ -86,12 +77,11 @@ public class TalkBubbleController : MonoBehaviour
     private IEnumerator ShowBubbleCoroutine()
     {
         if (talkBubble != null)
-            talkBubble.SetActive(true); // Panel 표시
+            talkBubble.SetActive(true);
 
         float t = 0f;
         while (t < showTime)
         {
-            // 중간에 패널이 열리면 즉시 종료
             if (IsBlockedByAnyPanel())
                 break;
 
@@ -100,22 +90,22 @@ public class TalkBubbleController : MonoBehaviour
         }
 
         if (talkBubble != null)
-            talkBubble.SetActive(false); // 숨김
+            talkBubble.SetActive(false);
         bubbleCoroutine = null;
     }
 
     private bool IsBlockedByAnyPanel()
     {
-        bool questOpen    = questPanel    != null && questPanel.activeInHierarchy;
-        bool quizOpen     = quizPanel     != null && quizPanel.activeInHierarchy;
-        bool buildingOpen = buildingPanel != null && buildingPanel.activeInHierarchy;
-        bool installOpen  = buildingInstallPanel != null && buildingInstallPanel.activeInHierarchy;
-        bool chatOpen     = chatPanel     != null && chatPanel.activeInHierarchy;
+        // 리스트에 있는 패널 중 하나라도 열려 있으면 true
+        foreach (var panel in blockPanels)
+        {
+            if (panel != null && panel.activeInHierarchy)
+                return true;
+        }
 
-        // ✅ 설치중이면(패널이 아직 안 떠도) 말풍선 차단
+        // 설치중이면 차단
         bool placing = GameManager.Instance != null && GameManager.Instance.IsPlacingBuilding;
-
-        return questOpen || quizOpen || buildingOpen || installOpen || chatOpen || placing;
+        return placing;
     }
 
     private int GetRange(float co2)
@@ -126,7 +116,7 @@ public class TalkBubbleController : MonoBehaviour
         else if (co2 >= 651 && co2 <= 750) return 3;
         else if (co2 >= 751 && co2 <= 850) return 4;
         else if (co2 >= 851) return 5;
-        else return -1; // 범위 밖이면 말풍선 안 뜸
+        else return -1;
     }
 
     private string GetTextForRange(int range)
