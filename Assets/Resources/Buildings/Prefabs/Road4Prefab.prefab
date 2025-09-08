@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e8518b2e67ab61f4691f4fee869ab76d, type: 3}
       propertyPath: m_Name
-      value: Road3
+      value: Road4Prefab
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e8518b2e67ab61f4691f4fee869ab76d, type: 3}
       propertyPath: m_TagString
@@ -83,9 +83,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileWidth: 1
   tileHeight: 1
-  cost: 0
+  cost: 20
   maxIncomeAmount: 0
   incomePer5Minutes: 0
   instantCO2Change: 0
-  co2PerSecond: 0
-  maxCO2Change: 0
+  co2PerSecond: 10
+  maxCO2Change: 30

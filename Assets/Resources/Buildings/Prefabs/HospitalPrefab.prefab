@@ -83,9 +83,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileWidth: 1
   tileHeight: 2
-  cost: 0
-  maxIncomeAmount: 0
-  incomePer5Minutes: 0
+  cost: 120
+  maxIncomeAmount: 120
+  incomePer5Minutes: 20
   instantCO2Change: 0
-  co2PerSecond: 0
-  maxCO2Change: 0
+  co2PerSecond: 5
+  maxCO2Change: 50

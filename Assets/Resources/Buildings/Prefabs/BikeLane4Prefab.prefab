@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d513dc529c955bc43862b5174b946e1b, type: 3}
       propertyPath: m_Name
-      value: BikeLane4
+      value: BikeLane4Prefab
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d513dc529c955bc43862b5174b946e1b, type: 3}
       propertyPath: m_TagString
@@ -83,9 +83,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileWidth: 1
   tileHeight: 1
-  cost: 0
+  cost: 20
   maxIncomeAmount: 0
   incomePer5Minutes: 0
-  instantCO2Change: 0
+  instantCO2Change: -10
   co2PerSecond: 0
   maxCO2Change: 0

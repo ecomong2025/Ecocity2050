@@ -120,5 +120,5 @@ MonoBehaviour:
   maxIncomeAmount: 0
   incomePer5Minutes: 0
   instantCO2Change: 0
-  co2PerSecond: 0
+  co2PerSecond: 5
   maxCO2Change: 20

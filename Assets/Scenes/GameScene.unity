@@ -28738,8 +28738,8 @@ MonoBehaviour:
   popupSeconds: 3
   fadeWithCanvasGroup: 1
   sfxSource: {fileID: 113856243}
-  popupOpenSfx: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
-  sfxVolume: 0.5
+  popupOpenSfx: {fileID: 8300000, guid: 00f6e4a836aeec2418590c0059723eee, type: 3}
+  sfxVolume: 0.8
   quizPanel: {fileID: 1891359380}
   chatPanel: {fileID: 849468537}
 --- !u!1 &972832412
