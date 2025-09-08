@@ -33,7 +33,8 @@ public class CoinUIController : MonoBehaviour
             IsPanelActive("ChatPanel") ||
             IsPanelActive("QuestUI") ||
             IsPanelActive("NewsOverlayCanvas") ||
-            IsPanelActive("QuizLimitPanel"))
+            IsPanelActive("QuizLimitPanel") ||
+            IsPanelActive("SettingPanel"))
             return;
 
         var sfxPlayer = GameObject.Find("SFXPlayer");

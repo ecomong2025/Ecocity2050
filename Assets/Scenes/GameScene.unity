@@ -3038,6 +3038,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settingPanel: {fileID: 430474308}
+  animDuration: 0.25
+  scaleClosed: {x: 0, y: 0, z: 1}
+  scaleOpened: {x: 1, y: 1, z: 1}
   bgmOnButton: {fileID: 0}
   bgmOffButton: {fileID: 0}
   sfxOnButton: {fileID: 0}
@@ -4352,6 +4355,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &127190385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5059,6 +5068,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &142959405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5467,6 +5482,8 @@ MonoBehaviour:
   - {fileID: 1338715402}
   - {fileID: 1891359380}
   - {fileID: 849468537}
+  - {fileID: 430474308}
+  - {fileID: 1338715402}
   showTime: 5
 --- !u!1 &152723554
 GameObject:
@@ -6506,6 +6523,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &191485488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6979,6 +7002,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &205321694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9759,6 +9788,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &309716278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10188,6 +10223,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &321990909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11332,6 +11373,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &345695768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11990,10 +12037,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
-        m_MethodName: PlayClickSound
-        m_Mode: 1
+      - m_Target: {fileID: 2109106507}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -12281,6 +12328,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &382830479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16046,6 +16099,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &488859753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18299,6 +18358,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &605361534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19074,6 +19139,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &642698866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19372,6 +19443,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &648089038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23494,6 +23571,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &774556229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24077,6 +24160,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &783685170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27784,7 +27873,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -27887,7 +27976,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2109106507}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -31139,6 +31228,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1069688595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32531,12 +32626,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -34758,6 +34853,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1204495154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36177,10 +36278,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: BtnSFX, Assembly-CSharp
-        m_MethodName: PlayClickSound
-        m_Mode: 1
+      - m_Target: {fileID: 2109106507}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -37556,6 +37657,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1282291952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39920,6 +40027,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1365222796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40268,6 +40381,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1367790473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40838,6 +40957,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1384563087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42454,6 +42579,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1421024563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42658,8 +42789,6 @@ MonoBehaviour:
   highlightInvalid: {r: 1, g: 0.25, b: 0.25, a: 0.35}
   highlightYOffset: 0.01
   lineMat: {fileID: 0}
-  warningPanel: {fileID: 319495318}
-  confirmButton: {fileID: 365173976}
   buildingInstallPanel: {fileID: 1247353971}
   confirmInstallButton: {fileID: 365173976}
   cancelInstallButton: {fileID: 1228325617}
@@ -43376,6 +43505,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1444578319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45079,8 +45214,6 @@ MonoBehaviour:
   highlightInvalid: {r: 1, g: 0.25, b: 0.25, a: 0.35}
   highlightYOffset: 0.01
   lineMat: {fileID: 0}
-  warningPanel: {fileID: 319495318}
-  confirmButton: {fileID: 166840435}
   buildingInstallPanel: {fileID: 1247353971}
   confirmInstallButton: {fileID: 365173976}
   cancelInstallButton: {fileID: 1228325617}
@@ -45537,6 +45670,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1498998920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45875,6 +46014,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1510790254
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46163,6 +46308,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1520789305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46473,6 +46624,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1525481792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46771,6 +46928,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1528269930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49608,6 +49771,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1621191240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50547,6 +50716,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1651436019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51624,7 +51799,91 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1684054054}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 686733290}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2109106507}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1219843073}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1444884833}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 174177533}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 232463146}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 401119986}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &1684054054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54788,6 +55047,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1788582177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55685,6 +55950,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1806494839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57404,6 +57675,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1870223656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58088,6 +58365,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
+  warningPanel: {fileID: 319495318}
+  warningConfirmButton: {fileID: 166840435}
+  fallbackPanelPath: WarningPanel
+  blockTargets:
+  - {fileID: 370156117}
+  - {fileID: 291774700}
 --- !u!114 &1906696456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58919,7 +59202,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2109106507}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -63475,7 +63758,103 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2109106510}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 686733290}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1219843073}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 174177533}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1444884833}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 401119986}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 232463146}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2109106507}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 412181745}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2109106510
 MonoBehaviour:
   m_ObjectHideFlags: 0

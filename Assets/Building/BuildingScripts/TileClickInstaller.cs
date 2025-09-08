@@ -35,10 +35,6 @@ public class TileClickInstaller : MonoBehaviour
 
     public static TileClickInstaller Instance;
 
-    [Header("UI Elements")]
-    public GameObject warningPanel;
-    public Button confirmButton;
-
     [Header("Building Install Panel")]
     public GameObject buildingInstallPanel;
     public Button confirmInstallButton;
@@ -70,7 +66,6 @@ public class TileClickInstaller : MonoBehaviour
 
     void Start()
     {
-        if (confirmButton != null) confirmButton.onClick.AddListener(CloseWarningPanel);
         if (confirmInstallButton != null) confirmInstallButton.onClick.AddListener(ConfirmInstall);
         if (cancelInstallButton != null) cancelInstallButton.onClick.AddListener(CancelInstall);
         if (rotateButton != null) rotateButton.onClick.AddListener(RotatePreview);
@@ -80,6 +75,8 @@ public class TileClickInstaller : MonoBehaviour
 
     void Update()
     {
+        if (IsPanelActive("BuildingPanel")) return;
+
         if (selectedBuildingPrefab == null) return;
 
         // 드래그 시작
@@ -167,6 +164,12 @@ public class TileClickInstaller : MonoBehaviour
 
     }
 
+    bool IsPanelActive(string panelName)
+    {
+        var go = GameObject.Find(panelName);
+        return go != null && go.activeInHierarchy;
+    }
+
     // ─────────────────────────────────────────────────────────────
     // 실제 그리드 축(u, v)을 추정해 width×height 타일을 모은다 (그리드 정보 out 제공)
     List<GameObject> FindTilesRectangleOnGrid(
@@ -239,12 +242,6 @@ public class TileClickInstaller : MonoBehaviour
         return result;
     }
     // ─────────────────────────────────────────────────────────────
-
-    public void CloseWarningPanel()
-    {
-        if (warningPanel != null) warningPanel.SetActive(false);
-        SFXPlayer.Instance?.PlayClick();
-    }
 
     public void SetSelectedBuilding(GameObject prefab)
     {
