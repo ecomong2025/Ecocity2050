@@ -4355,12 +4355,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &127190385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5068,12 +5063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &142959405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6523,12 +6513,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &191485488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7002,12 +6987,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &205321694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9788,12 +9768,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &309716278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10059,6 +10034,8 @@ GameObject:
   - component: {fileID: 319495321}
   - component: {fileID: 319495320}
   - component: {fileID: 319495322}
+  - component: {fileID: 319495323}
+  - component: {fileID: 319495324}
   m_Layer: 5
   m_Name: WarningPanel
   m_TagString: Untagged
@@ -10138,6 +10115,45 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &319495323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319495318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1e23ce9abb98456e9834a7d022db14e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  warningPanel: {fileID: 319495318}
+  confirmButton: {fileID: 166840435}
+  blockTargets:
+  - {fileID: 370156117}
+--- !u!223 &319495324
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319495318}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 200
+  m_TargetDisplay: 0
 --- !u!1 &321990904
 GameObject:
   m_ObjectHideFlags: 0
@@ -10223,12 +10239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &321990909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11373,12 +11384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &345695768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12206,6 +12212,7 @@ GameObject:
   - component: {fileID: 370156118}
   - component: {fileID: 370156120}
   - component: {fileID: 370156119}
+  - component: {fileID: 370156121}
   m_Layer: 5
   m_Name: BuildingPanel
   m_TagString: Untagged
@@ -12272,6 +12279,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 370156117}
   m_CullTransparentMesh: 1
+--- !u!225 &370156121
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 370156117}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &382830476
 GameObject:
   m_ObjectHideFlags: 0
@@ -12328,12 +12347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &382830479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16099,12 +16113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &488859753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18358,12 +18367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &605361534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19139,12 +19143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &642698866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19443,12 +19442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &648089038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23571,12 +23565,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &774556229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24160,12 +24149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &783685170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31228,12 +31212,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1069688595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34853,12 +34832,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1204495154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37657,12 +37631,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1282291952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40027,12 +39996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1365222796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40381,12 +40345,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1367790473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40957,12 +40916,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1384563087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42579,12 +42533,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1421024563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43505,12 +43454,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1444578319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45670,12 +45614,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1498998920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46014,12 +45953,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1510790254
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46308,12 +46242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1520789305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46624,12 +46553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1525481792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46928,12 +46852,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1528269930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49771,12 +49690,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1621191240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50716,12 +50630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1651436019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55047,12 +54956,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1788582177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55950,12 +55854,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1806494839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57675,12 +57574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1870223656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58365,12 +58259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelNameToClose: BuildingPanel
-  warningPanel: {fileID: 319495318}
-  warningConfirmButton: {fileID: 166840435}
-  fallbackPanelPath: WarningPanel
-  blockTargets:
-  - {fileID: 370156117}
-  - {fileID: 291774700}
+  warningController: {fileID: 319495323}
 --- !u!114 &1906696456
 MonoBehaviour:
   m_ObjectHideFlags: 0
