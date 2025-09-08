@@ -9,28 +9,47 @@ public class TileClickInstaller : MonoBehaviour
     [Tooltip("타일 점유를 표시할 마커 이름")]
     public string occupiedMarkerName = "__OCCUPIED__";
 
-    // 1.00 = 딱 맞춤, <1.0 = 살짝 작게, >1.0 = 살짝 크게(‘보강’)
-    [Range(0.90f, 1.10f)] public float footprintPadding = 1.00f;
+    [Header("Hotkeys")]
+    public bool enableHotkeys = true;
+    public bool requirePlacingForHotkeys = true;
+    public KeyCode rotateKey = KeyCode.Space;
+    public enum PivotMode { Center, PivotTile }
+    [Header("Pivot Mode")] public PivotMode pivotMode = PivotMode.PivotTile;
 
-    // true면 X/Z를 각각 타일 직사각형에 정확히 맞춰 채움(비율 왜곡 허용)
-    // false면 균등 스케일(비율 유지)
-    public bool fillBothAxes = true;
+    [Header("Scaling")]
+    [Range(0.90f, 1.10f)] public float footprintPadding = 1.00f; // 설치 면적 패딩
+    public bool fillBothAxes = true;  // true: U/V 각각 맞춤(왜곡 허용), false: 균등 스케일
+    public bool keepHeight = true;    // true: Y 스케일 고정(추천)
+
+    // === Tile edge (타일 둘레 초록 라인) ===
+    [Header("Tile Edge Lines")]
+    [Tooltip("각 Tile의 자식 중 '테두리 라인'이 들어있는 자식 이름")]
+    public string tileEdgeChildName = "TileEdge";
+
+    readonly List<Renderer> _tileEdgeRenderers = new();
 
     // === Drag Select ===
     [Header("Drag Select")]
-    public LayerMask tileLayerMask = ~0;      // Tile 레이어만 켜두면 좋아요
-    public Material highlightMat;             // URP/Unlit Transparent(초록), 없으면 lineMat 써도 됨
+    public LayerMask tileLayerMask = ~0; // Tile 레이어 추천
+    public Material highlightMat;
     public Color highlightValid = new Color(0.2f, 1f, 0.4f, 0.35f);
     public Color highlightInvalid = new Color(1f, 0.25f, 0.25f, 0.35f);
     public float highlightYOffset = 0.01f;
     public Material lineMat;
 
+    // === Grid Lines(선택) ===
+    [Header("Grid Lines (Optional)")]
+    public Transform gridLinesRoot;
+    public Renderer[] extraGridLineRenderers;
+
+    // 내부
     bool isDragging;
     GameObject dragStartTile;
     List<GameObject> highlightedTiles = new();
     List<GameObject> highlightQuads = new();
 
-    static readonly int BaseColorID2 = Shader.PropertyToID("_BaseColor"); // 하이라이트용
+    static readonly int BaseColorID2 = Shader.PropertyToID("_BaseColor"); // URP
+    static readonly int ColorID = Shader.PropertyToID("_Color");          // Built-in
     MaterialPropertyBlock _mpbHighlight;
 
     public static TileClickInstaller Instance;
@@ -41,23 +60,91 @@ public class TileClickInstaller : MonoBehaviour
     public Button cancelInstallButton;
     public Button rotateButton;
 
-    // ====== 설정 ======
-    [Header("Placement Settings")]
-    [Tooltip("타일 점유를 표시할 마커 이름")]
-
-
+    // 선택/프리뷰 상태
     private GameObject selectedBuildingPrefab;
-    private GameObject previewInstance;   // 회전 중심이 될 빈 오브젝트(부모)
-    private GameObject modelInstance;     // 실제 건물 모델(자식)
+    private GameObject previewInstance;   // 회전 중심 부모(Holder)
+    private GameObject modelInstance;     // 실제 모델(자식)
     private float previewRotation = 0f;   // 0/90/180/270
     private List<GameObject> currentTiles;
 
-    // —— 회전/재선택을 위한 그리드 정보 캐시 ——
-    Vector3 _gridU, _gridV; // 그리드 축(정규화)
-    float _stepU, _stepV;   // 축 간격(월드 단위)
-    int _signU, _signV;     // 드래그 방향 부호
-    GameObject _pivotTile;  // 드래그 시작 타일(피벗)
-    GameObject _dirTile;    // 드래그 도중 마우스 아래 타일(방향 기준)
+    // 그리드 정보 캐시
+    Vector3 _gridU, _gridV;
+    float _stepU, _stepV;
+    int _signU, _signV;
+    GameObject _pivotTile;
+    GameObject _dirTile;
+
+    [Header("Grid Lines (toggle while placing)")]
+    public string gridLineTag = "GridLine";
+
+    readonly List<Renderer> _gridRenderers = new();
+    readonly List<LineRenderer> _gridLineRenderers = new();
+    bool _gridShown = false;
+
+    void CacheTileEdgeLines()
+    {
+        _tileEdgeRenderers.Clear();
+        var tiles = GameObject.FindGameObjectsWithTag("Tile");
+        foreach (var t in tiles)
+        {
+            Transform edge = string.IsNullOrEmpty(tileEdgeChildName) ? null : t.transform.Find(tileEdgeChildName);
+            if (edge != null)
+            {
+                _tileEdgeRenderers.AddRange(edge.GetComponentsInChildren<Renderer>(true));
+            }
+            else
+            {
+                foreach (var r in t.GetComponentsInChildren<Renderer>(true))
+                {
+                    if (r is LineRenderer) { _tileEdgeRenderers.Add(r); continue; }
+                    var n = r.name.ToLowerInvariant();
+                    if (n.Contains("edge") || n.Contains("glow") || n.Contains("grid"))
+                        _tileEdgeRenderers.Add(r);
+                }
+            }
+        }
+    }
+
+    void SetTileEdgeLinesVisible(bool on)
+    {
+        foreach (var r in _tileEdgeRenderers)
+            if (r) r.enabled = on;
+    }
+
+    void TogglePlacementFX(bool on)
+    {
+        SetGridLinesVisible(on);
+        SetTileEdgeLinesVisible(on);
+        if (!on) ClearHighlight();
+        _gridShown = on;
+    }
+
+    void CacheGridLines()
+    {
+        _gridRenderers.Clear();
+        _gridLineRenderers.Clear();
+        if (gridLinesRoot)
+        {
+            _gridRenderers.AddRange(gridLinesRoot.GetComponentsInChildren<Renderer>(true));
+            _gridLineRenderers.AddRange(gridLinesRoot.GetComponentsInChildren<LineRenderer>(true));
+        }
+        if (extraGridLineRenderers != null && extraGridLineRenderers.Length > 0)
+            _gridRenderers.AddRange(extraGridLineRenderers);
+    }
+
+    void SetGridLinesVisible(bool on)
+    {
+        if (gridLinesRoot) { gridLinesRoot.gameObject.SetActive(on); return; }
+        foreach (var lr in _gridLineRenderers) if (lr) lr.enabled = on;
+        foreach (var r in _gridRenderers) if (r) r.enabled = on;
+    }
+
+    bool IsPlacingNow()
+    {
+        return selectedBuildingPrefab != null
+               && buildingInstallPanel != null
+               && buildingInstallPanel.activeInHierarchy;
+    }
 
     void Awake()
     {
@@ -71,13 +158,36 @@ public class TileClickInstaller : MonoBehaviour
         if (rotateButton != null) rotateButton.onClick.AddListener(RotatePreview);
 
         _mpbHighlight = new MaterialPropertyBlock();
+
+        CacheGridLines();
+        SetGridLinesVisible(false);
+        _gridShown = false;
+        CacheTileEdgeLines();
+        TogglePlacementFX(false);
+        ClearHighlight();
+        CacheGridLines();
+        SetGridLinesVisible(false);
+        _gridShown = false;
     }
 
     void Update()
     {
-        if (IsPanelActive("BuildingPanel")) return;
+        bool placing = IsPlacingNow();
+        if (placing != _gridShown) TogglePlacementFX(placing);
+
+        bool shouldShowGrid = IsPlacingNow();
+        if (shouldShowGrid != _gridShown)
+        {
+            SetGridLinesVisible(shouldShowGrid);
+            _gridShown = shouldShowGrid;
+            if (!shouldShowGrid) { ClearHighlight(); HideSelectionLine(); }
+        }
 
         if (selectedBuildingPrefab == null) return;
+        if (enableHotkeys && (!requirePlacingForHotkeys || placing))
+            if (Input.GetKeyDown(rotateKey)) RotatePreview();
+
+        if (!placing) return;
 
         // 드래그 시작
         if (Input.GetMouseButtonDown(0) && TryGetTileUnderMouse(out var tile))
@@ -92,7 +202,8 @@ public class TileClickInstaller : MonoBehaviour
         {
             if (TryGetTileUnderMouse(out var tileB))
             {
-                var bd = selectedBuildingPrefab.GetComponent<BuildingData>() ?? selectedBuildingPrefab.GetComponentInChildren<BuildingData>();
+                var bd = selectedBuildingPrefab.GetComponent<BuildingData>() ??
+                         selectedBuildingPrefab.GetComponentInChildren<BuildingData>();
                 if (bd == null) return;
 
                 var size = GetRotatedSize(bd.tileWidth, bd.tileHeight, previewRotation);
@@ -102,7 +213,7 @@ public class TileClickInstaller : MonoBehaviour
                     out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
                 );
 
-                _pivotTile = dragStartTile; // 회전 시 재사용
+                _pivotTile = dragStartTile;
                 _dirTile = tileB;
 
                 bool valid = rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles);
@@ -112,7 +223,7 @@ public class TileClickInstaller : MonoBehaviour
                 if (buildingInstallPanel) buildingInstallPanel.SetActive(true);
                 if (confirmInstallButton) confirmInstallButton.interactable = valid;
 
-                // 드래그 확정(마우스 업)
+                // 드래그 확정
                 if (Input.GetMouseButtonUp(0))
                 {
                     isDragging = false;
@@ -120,7 +231,6 @@ public class TileClickInstaller : MonoBehaviour
                     {
                         currentTiles = rectTiles;
                         SpawnPreviewOverSelection(selectedBuildingPrefab);
-                        ClearHighlight();
                     }
                     else ClearHighlight();
                 }
@@ -132,46 +242,14 @@ public class TileClickInstaller : MonoBehaviour
             }
         }
 
-        // 회전 단축키
-        if (previewInstance != null)
-        {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                // 기존 R 키 → +90도 회전
-                RotatePreview();
-            }
-            else if (Input.GetKeyDown(KeyCode.W))
-            {
-                previewRotation = 0f;
-                SpawnPreviewOverSelection(selectedBuildingPrefab);
-            }
-            else if (Input.GetKeyDown(KeyCode.D))
-            {
-                previewRotation = 90f;
-                SpawnPreviewOverSelection(selectedBuildingPrefab);
-            }
-            else if (Input.GetKeyDown(KeyCode.S))
-            {
-                previewRotation = 180f;
-                SpawnPreviewOverSelection(selectedBuildingPrefab);
-            }
-            else if (Input.GetKeyDown(KeyCode.A))
-            {
-                previewRotation = 270f;
-                SpawnPreviewOverSelection(selectedBuildingPrefab);
-            }
-        }
-
+        if (!IsPlacingNow() && highlightedTiles.Count > 0)
+            ClearHighlight();
     }
 
-    bool IsPanelActive(string panelName)
-    {
-        var go = GameObject.Find(panelName);
-        return go != null && go.activeInHierarchy;
-    }
+    void HideSelectionLine() { /* 선택 라인 쓰면 여기서 끄기 */ }
 
     // ─────────────────────────────────────────────────────────────
-    // 실제 그리드 축(u, v)을 추정해 width×height 타일을 모은다 (그리드 정보 out 제공)
+    // 그리드 사각형 찾기
     List<GameObject> FindTilesRectangleOnGrid(
         GameObject baseTile, int width, int height, GameObject dragTile,
         out Vector3 u, out Vector3 vAxis, out float stepU, out float stepV, out int signU, out int signV)
@@ -181,19 +259,17 @@ public class TileClickInstaller : MonoBehaviour
         GameObject[] allTiles = GameObject.FindGameObjectsWithTag("Tile");
         Vector3 basePos = baseTile.transform.position;
 
-        // 1) 가까운 이웃 벡터 모으기
         var neigh = new List<Vector3>();
         foreach (var t in allTiles)
         {
             if (t == baseTile) continue;
-            Vector3 v = t.transform.position - basePos; v.y = 0;
-            if (v.sqrMagnitude > 0.0001f) neigh.Add(v);
+            Vector3 vv = t.transform.position - basePos; vv.y = 0;
+            if (vv.sqrMagnitude > 0.0001f) neigh.Add(vv);
         }
         if (neigh.Count == 0) return null;
         neigh.Sort((a, b) => a.sqrMagnitude.CompareTo(b.sqrMagnitude));
 
-        // 2) u축/stepU, v축/stepV
-        Vector3 uNorm = neigh[0].normalized; // 가장 가까운 이웃 방향
+        Vector3 uNorm = neigh[0].normalized;
         float stepUVal = Mathf.Sqrt(neigh[0].sqrMagnitude);
 
         Vector3 vNorm = Vector3.zero; float stepVVal = stepUVal;
@@ -209,14 +285,12 @@ public class TileClickInstaller : MonoBehaviour
             if (vNorm.sqrMagnitude < 0.5f) vNorm = Vector3.forward;
         }
 
-        // 3) 드래그 방향으로 축 부호 결정
         Vector3 dragDir = dragTile.transform.position - basePos; dragDir.y = 0;
         int signUVal = Vector3.Dot(dragDir, uNorm) >= 0 ? 1 : -1;
         int signVVal = Vector3.Dot(dragDir, vNorm) >= 0 ? 1 : -1;
 
         float tolerance = 0.45f * Mathf.Min(stepUVal, stepVVal);
 
-        // 4) 타일 채우기
         var result = new List<GameObject>(width * height);
         for (int iu = 0; iu < width; iu++)
         {
@@ -237,312 +311,497 @@ public class TileClickInstaller : MonoBehaviour
             }
         }
 
-        // out 값 채우기
         u = uNorm; vAxis = vNorm; stepU = stepUVal; stepV = stepVVal; signU = signUVal; signV = signVVal;
         return result;
     }
-    // ─────────────────────────────────────────────────────────────
 
     public void SetSelectedBuilding(GameObject prefab)
     {
         if (previewInstance != null) CancelInstall();
-
         selectedBuildingPrefab = prefab;
-        Debug.Log($"선택된 건물: {prefab.name}");
 
-        if (buildingInstallPanel) buildingInstallPanel.SetActive(true);
-        if (confirmInstallButton) confirmInstallButton.interactable = true;
-        if (rotateButton) rotateButton.interactable = true;
+        buildingInstallPanel?.SetActive(true);
+        confirmInstallButton!.interactable = true;
+        rotateButton!.interactable = true;
 
         GameManager.Instance?.StartPlacing();
+
+        TogglePlacementFX(true);
         SFXPlayer.Instance?.PlayClick();
     }
 
     void RotatePreview()
     {
+        if (selectedBuildingPrefab == null) return;
+
         SFXPlayer.Instance?.PlayClick();
         previewRotation = (previewRotation + 90f) % 360f;
+        int snapped = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f) / 90f) * 90;
 
-        var bd = selectedBuildingPrefab?.GetComponent<BuildingData>() ??
-                 selectedBuildingPrefab?.GetComponentInChildren<BuildingData>();
+        var bd = selectedBuildingPrefab.GetComponent<BuildingData>() ??
+                 selectedBuildingPrefab.GetComponentInChildren<BuildingData>();
         if (bd == null) return;
 
-        var size = GetRotatedSize(bd.tileWidth, bd.tileHeight, previewRotation);
+        var size = GetRotatedSize(bd.tileWidth, bd.tileHeight, snapped);
 
-        if (_pivotTile != null && _dirTile != null)
+        List<GameObject> rectTiles = null;
+        bool valid = false;
+
+        if (pivotMode == PivotMode.PivotTile && _pivotTile != null && _stepU > 0f && _stepV > 0f)
         {
-            var rectTiles = FindTilesRectangleOnGrid(
-                _pivotTile, size.x, size.y, _dirTile,
+            GetRotatedAxes(snapped, out var uR, out var vR, out float stepUR, out float stepVR);
+
+            GameObject baseTile = _pivotTile;
+            GameObject dragTile = FindNearestTileToWorld(
+                baseTile.transform.position + uR * stepUR + vR * stepVR
+            );
+
+            rectTiles = FindTilesRectangleOnGrid(
+                baseTile, size.x, size.y, dragTile,
                 out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
             );
 
-            if (rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles))
-            {
-                currentTiles = rectTiles;
-                SpawnPreviewOverSelection(selectedBuildingPrefab); // 내부에서 긴변 자동정렬 + 정확 스냅
-                return;
-            }
-        }
-
-        // 폴백: 프리뷰만 회전
-        if (previewInstance != null)
-            previewInstance.transform.rotation = Quaternion.Euler(0f, previewRotation, 0f);
-    }
-
-
-    void SpawnPreviewOverSelection(GameObject prefab)
-    {
-        if (previewInstance != null) Destroy(previewInstance);
-        modelInstance = null;
-
-        var bd = prefab.GetComponent<BuildingData>() ?? prefab.GetComponentInChildren<BuildingData>();
-
-        // A) 선택 타일들의 합쳐진 바운즈(정렬/높이 기준)
-        Bounds selB = currentTiles[0].GetComponent<Renderer>().bounds;
-        for (int i = 1; i < currentTiles.Count; i++)
-            selB.Encapsulate(currentTiles[i].GetComponent<Renderer>().bounds);
-
-        // B) 그리드 길이(축 방향 실제 길이)
-        float lenU = (_stepU > 0f) ? _stepU * Mathf.Max(1, Mathf.RoundToInt(selB.size.x / _stepU)) : selB.size.x;
-        float lenV = (_stepV > 0f) ? _stepV * Mathf.Max(1, Mathf.RoundToInt(selB.size.z / _stepV)) : selB.size.z;
-
-        // C) 현재 회전 기준 타일 폭/높이
-        var sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, previewRotation);
-
-        // D) 비대칭(예: 2x1)일 때 긴 변(2)이 반드시 긴 축(lenU/lenV)에 가도록 자동 보정
-        int desiredRot = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f));
-        bool modelLongX = sizeTiles.x >= sizeTiles.y;
-        bool gridLongU = lenU >= lenV;
-        if (bd.tileWidth != bd.tileHeight && modelLongX != gridLongU)
-        {
-            desiredRot = (desiredRot + 90) % 360;
-            sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
-        }
-
-        // E) 목표 크기(“타일 개수 × 그리드 스텝”)에 패딩 적용
-        Vector3 targetSize = (_stepU > 0f && _stepV > 0f)
-            ? new Vector3(sizeTiles.x * _stepU * footprintPadding,
-                          selB.size.y,
-                          sizeTiles.y * _stepV * footprintPadding)
-            : new Vector3(selB.size.x * footprintPadding, selB.size.y, selB.size.z * footprintPadding); // 폴백
-
-        // F) 부모/모델 생성 — 중심(XZ) + 바닥(Y)에 스냅
-        previewInstance = new GameObject("BuildingPreviewParent");
-        previewInstance.transform.SetPositionAndRotation(
-            new Vector3(selB.center.x, selB.max.y, selB.center.z),
-            Quaternion.Euler(0f, desiredRot, 0f)
-        );
-
-        modelInstance = Instantiate(prefab, previewInstance.transform);
-        modelInstance.name = "BuildingModel";
-        modelInstance.SetActive(false);
-
-        if (!TryGetModelBounds(modelInstance, out Bounds modelBounds))
-        {
-            Destroy(previewInstance); previewInstance = null; modelInstance = null;
-            Debug.LogError("[Installer] 프리팹에서 렌더러/콜라이더/메시를 찾지 못했습니다.");
-            return;
-        }
-
-        // G) 스케일 — 정확 채움(fillBothAxes) or 균등 스케일
-        if (bd.tileWidth != bd.tileHeight)
-        {
-            // 🔹 비대칭 건물 (예: 2x1, 1x2) → 무조건 작은 쪽 기준으로 줄임
-            ResizeToFitUniform(modelInstance, targetSize, modelBounds);
+            valid = rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles);
         }
         else
         {
-            // 🔹 정사각형 건물은 기존 옵션 따라감
-            if (fillBothAxes) ResizeToFitExact(modelInstance, targetSize);
-            else ResizeToFitUniform(modelInstance, targetSize, modelBounds);
+            if (currentTiles != null && currentTiles.Count > 0 && _stepU > 0f && _stepV > 0f)
+            {
+                Bounds selB = GetTilesBounds(currentTiles);
+                Vector3 C = new Vector3(selB.center.x, 0f, selB.center.z);
+
+                float bestErr = float.PositiveInfinity;
+                List<GameObject> best = null; bool bestValid = false;
+
+                int[] s = { +1, -1 };
+                foreach (var su in s)
+                    foreach (var sv in s)
+                    {
+                        GameObject bt, dt; float err;
+                        var rect = BuildRectCentered(C, size.x, size.y, su, sv, out bt, out dt, out err);
+                        bool ok = rect != null && rect.Count == size.x * size.y && AllTilesFree(rect);
+                        if (ok && err < bestErr) { best = rect; bestErr = err; bestValid = true; }
+                        else if (!bestValid && rect != null && err < bestErr) { best = rect; bestErr = err; }
+                    }
+                rectTiles = best; valid = bestValid;
+            }
+            else if (_pivotTile != null)
+            {
+                var dirTile = _dirTile != null ? _dirTile : _pivotTile;
+                rectTiles = FindTilesRectangleOnGrid(
+                    _pivotTile, size.x, size.y, dirTile,
+                    out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
+                );
+                valid = rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles);
+            }
+            ApplyPreviewYaw();   // 이미 떠 있는 프리뷰가 있으면 각도만 갱신
         }
 
+        HighlightTiles(rectTiles, valid);
+        if (buildingInstallPanel) buildingInstallPanel.SetActive(true);
+        if (confirmInstallButton) confirmInstallButton.interactable = valid;
 
-        // H) 바닥/중앙으로 최종 정렬(정확 스냅)
-        AlignPreviewToSelection(selB);
-
-        modelInstance.SetActive(true);
-        buildingInstallPanel?.SetActive(true);
-        if (confirmInstallButton) confirmInstallButton.interactable = true;
-
-        // 실제 적용된 회전을 캐시에 반영
-        previewRotation = desiredRot;
-    }
-    // 비율 유지(균등) 스케일
-    void ResizeToFitUniform(GameObject building, Vector3 targetSize, Bounds _unused)
-    {
-        var t = building.transform;
-        t.localScale = Vector3.one;
-
-        if (!TryGetModelBounds(building, out Bounds baseB)) return;
-        Vector3 size = baseB.size; if (size.x <= 0f || size.z <= 0f) return;
-
-        float s = Mathf.Min(targetSize.x / size.x, targetSize.z / size.z);
-        t.localScale = new Vector3(s, s, s);
-    }
-
-    // X/Z를 각각 정확히 맞추는 스케일(약간의 왜곡 허용) — ‘보강’ 느낌
-    void ResizeToFitExact(GameObject building, Vector3 targetSize)
-    {
-        var t = building.transform;
-        t.localScale = Vector3.one;
-
-        if (!TryGetModelBounds(building, out Bounds baseB)) return;
-        Vector3 size = baseB.size; if (size.x <= 0f || size.z <= 0f) return;
-
-        float sx = targetSize.x / size.x;
-        float sz = targetSize.z / size.z;
-        float sy = Mathf.Min(sx, sz); // Y는 과도 변형 방지(낮은 배율만 적용)
-        t.localScale = new Vector3(sx, sy, sz);
-    }
-
-
-    void AlignPreviewToSelection(Bounds selectionBounds)
-    {
-        if (!TryGetModelBounds(modelInstance, out Bounds b)) return;
-        Vector3 deltaWorld = new Vector3(
-            selectionBounds.center.x - b.center.x,
-            selectionBounds.max.y - b.min.y,
-            selectionBounds.center.z - b.center.z
-        );
-        modelInstance.transform.position += deltaWorld;
-    }
-
-    void ConfirmInstall()
-    {
-        if (previewInstance == null || currentTiles == null) return;
-
-        GameManager gameManager = FindObjectOfType<GameManager>();
-        if (gameManager == null) return;
-
-        BuildingData buildingData = modelInstance.GetComponent<BuildingData>() ?? modelInstance.GetComponentInChildren<BuildingData>();
-        if (buildingData == null) return;
-
-        // 태그 설정 시도
-        if (previewInstance.tag != "Building")
+        if (rectTiles != null)
         {
-            try { previewInstance.tag = "Building"; }
-            catch (UnityException e)
+            currentTiles = rectTiles;
+            if (valid)
             {
-                Debug.LogWarning($"[TileClickInstaller] 'Building' 태그 설정 실패: {e.Message}");
+                SpawnPreviewOverSelection(selectedBuildingPrefab);
+                HighlightTiles(currentTiles, true);
+            }
+            else if (previewInstance != null)
+            {
+                previewInstance.transform.rotation = Quaternion.Euler(0f, snapped, 0f);
+            }
+        }
+    }
+
+    Bounds GetTilesBounds(List<GameObject> tiles)
+    {
+        var r0 = tiles[0].GetComponent<Renderer>();
+        Bounds b = r0 ? r0.bounds : new Bounds(tiles[0].transform.position, Vector3.zero);
+        for (int i = 1; i < tiles.Count; i++)
+        {
+            var r = tiles[i].GetComponent<Renderer>();
+            if (r) b.Encapsulate(r.bounds);
+            else b.Encapsulate(tiles[i].transform.position);
+        }
+        return b;
+    }
+
+    List<GameObject> BuildRectCentered(
+        Vector3 C, int w, int h, int signU, int signV,
+        out GameObject baseTile, out GameObject dragTile, out float centerError)
+    {
+        Vector3 uHat = _gridU.normalized;
+        Vector3 vHat = _gridV.normalized;
+        float stepUabs = Mathf.Abs(_stepU);
+        float stepVabs = Mathf.Abs(_stepV);
+
+        Vector3 minTarget =
+            C - uHat * stepUabs * ((w - 1) * 0.5f) * signU
+              - vHat * stepVabs * ((h - 1) * 0.5f) * signV;
+
+        baseTile = FindNearestTileToWorld(minTarget);
+        dragTile = FindNearestTileToWorld(minTarget + uHat * stepUabs * signU + vHat * stepVabs * signV);
+
+        var rect = FindTilesRectangleOnGrid(
+            baseTile, w, h, dragTile,
+            out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
+        );
+
+        if (rect != null && rect.Count == w * h)
+        {
+            Bounds b = GetTilesBounds(rect);
+            Vector3 cc = new Vector3(b.center.x, 0f, b.center.z);
+            centerError = Vector3.Distance(cc, C);
+        }
+        else centerError = float.PositiveInfinity;
+
+        return rect;
+    }
+
+    GameObject FindNearestTileToWorld(Vector3 pos)
+    {
+        GameObject closest = null; float best = float.MaxValue;
+        var tiles = GameObject.FindGameObjectsWithTag("Tile");
+        foreach (var t in tiles)
+        {
+            float d = (t.transform.position - pos).sqrMagnitude;
+            if (d < best) { best = d; closest = t; }
+        }
+        return closest;
+    }
+
+    List<GameObject> BuildRectCenteredRotated(
+        Vector3 C, int w, int h, int rotSteps, out float centerError)
+    {
+        Vector3 uHat = _gridU.normalized;
+        Vector3 vHat = _gridV.normalized;
+        float sU = Mathf.Abs(_stepU);
+        float sV = Mathf.Abs(_stepV);
+
+        Vector3 uR, vR; float stepUR, stepVR;
+        switch (rotSteps & 3)
+        {
+            case 0: uR = uHat; vR = vHat; stepUR = sU; stepVR = sV; break;
+            case 1: uR = vHat; vR = -uHat; stepUR = sV; stepVR = sU; break;
+            case 2: uR = -uHat; vR = -vHat; stepUR = sU; stepVR = sV; break;
+            default: uR = -vHat; vR = uHat; stepUR = sV; stepVR = sU; break;
+        }
+
+        Vector3 minTarget =
+            C - uR * stepUR * ((w - 1) * 0.5f)
+              - vR * stepVR * ((h - 1) * 0.5f);
+
+        var allTiles = GameObject.FindGameObjectsWithTag("Tile");
+        float tol = 0.45f * Mathf.Min(stepUR, stepVR);
+
+        var rect = new List<GameObject>(w * h);
+        for (int iu = 0; iu < w; iu++)
+        {
+            for (int iv = 0; iv < h; iv++)
+            {
+                Vector3 target = minTarget + uR * stepUR * iu + vR * stepVR * iv;
+
+                GameObject closest = null; float minD = float.MaxValue;
+                foreach (var t in allTiles)
+                {
+                    float d = Vector3.Distance(t.transform.position, target);
+                    if (d < tol && d < minD) { minD = d; closest = t; }
+                }
+                if (!closest) { centerError = float.PositiveInfinity; return null; }
+                rect.Add(closest);
             }
         }
 
-        // 대표 타일 1개만 부모로
-        previewInstance.transform.SetParent(currentTiles[0].transform, true);
-
-        // 모든 타일에 점유 마커 생성
-        foreach (var tile in currentTiles)
-            if (tile.transform.Find(occupiedMarkerName) == null)
-                new GameObject(occupiedMarkerName).transform.SetParent(tile.transform, false);
-
-        // (선택) 설치된 오브젝트에 풋프린트 기록
-        var footprint = previewInstance.AddComponent<BuildingFootprint>();
-        footprint.Init(currentTiles, occupiedMarkerName);
-
-        // 게임 매니저 반영 (프로젝트 로직에 맞게 유지)
-        int totalCO2Impact = buildingData.instantCO2Change;
-        if (buildingData.co2PerSecond != 0) totalCO2Impact += buildingData.maxCO2Change;
-
-        int incomePerMinute = (buildingData.incomePer5Minutes > 0) ? buildingData.incomePer5Minutes / 5 : 0;
-
-        gameManager.AddBuilding(
-            selectedBuildingPrefab.name.Replace("Prefab", ""),
-            buildingData.cost,
-            totalCO2Impact,
-            incomePerMinute,
-            previewInstance.transform.position,
-            previewInstance
-        );
-
-        gameManager.ApplyBuildingCost(
-            buildingData.cost,
-            buildingData.instantCO2Change,
-            buildingData.co2PerSecond,
-            buildingData.maxCO2Change,
-            buildingData.incomePer5Minutes,
-            buildingData.transform,
-            buildingData.maxIncomeAmount
-        );
-
-        YearQuestManager.Instance?.OnBuildingInstalled(selectedBuildingPrefab, buildingData);
-        NotifyCitizensOfNewBuilding();
-
-        var citizenController = FindObjectOfType<CitizenGroupController>();
-        citizenController?.OnBuildingInstalled(previewInstance.transform.position);
-
-        GameManager.Instance?.CompletePlacing();
-        ClearPreviewAndPanel();
-        SFXPlayer.Instance?.PlayClick();
+        Bounds b = GetTilesBounds(rect);
+        Vector3 cc = new Vector3(b.center.x, 0f, b.center.z);
+        centerError = Vector3.Distance(cc, C);
+        return rect;
     }
 
-    void NotifyCitizensOfNewBuilding()
+    void GetRotatedAxes(int snappedDeg, out Vector3 uR, out Vector3 vR, out float stepUR, out float stepVR)
     {
-        foreach (var c in FindObjectsOfType<CitizenWanderer>())
-            c.OnNewBuildingInstalled();
+        Vector3 u = _gridU.normalized;
+        Vector3 v = _gridV.normalized;
+        float sU = Mathf.Abs(_stepU);
+        float sV = Mathf.Abs(_stepV);
+
+        switch (((snappedDeg / 90) % 4 + 4) % 4)
+        {
+            case 0: uR = u; vR = v; stepUR = sU; stepVR = sV; break;
+            case 1: uR = v; vR = -u; stepUR = sV; stepVR = sU; break;
+            case 2: uR = -u; vR = -v; stepUR = sU; stepVR = sV; break;
+            default: uR = -v; vR = u; stepUR = sV; stepVR = sU; break;
+        }
     }
 
-    void CancelInstall()
+    GameObject GetCornerMinMin(List<GameObject> tiles, Vector3 uPos, Vector3 vPos)
     {
-        if (previewInstance != null) Destroy(previewInstance);
-        GameManager.Instance?.CancelPlacing();
-        SFXPlayer.Instance?.PlayClick();
-        ClearPreviewAndPanel();
+        GameObject best = null;
+        float bestU = float.MaxValue, bestV = float.MaxValue;
+        const float eps = 1e-4f;
+
+        foreach (var t in tiles)
+        {
+            var p = t.transform.position;
+            float du = Vector3.Dot(p, uPos);
+            float dv = Vector3.Dot(p, vPos);
+
+            if (du < bestU - eps || (Mathf.Abs(du - bestU) <= eps && dv < bestV))
+            { best = t; bestU = du; bestV = dv; }
+        }
+        return best != null ? best : tiles[0];
     }
 
-    void ClearPreviewAndPanel()
+    // 0/90/180/270 스냅
+    int Snap90(float deg) => Mathf.RoundToInt(Mathf.Repeat(deg, 360f) / 90f) * 90;
+
+    // 그리드 프레임/스텝/중심/길이 추정
+    bool TryComputeSelectionFrame(out Vector3 uHat, out Vector3 vHat, out float stepU, out float stepV,
+                                  out Vector3 center, out float lenU, out float lenV)
     {
-        previewInstance = null;
+        uHat = Vector3.right; vHat = Vector3.forward; stepU = 1f; stepV = 1f;
+        center = Vector3.zero; lenU = 1f; lenV = 1f;
+        if (currentTiles == null || currentTiles.Count == 0) return false;
+
+        if (_gridU.sqrMagnitude > 1e-6f && _gridV.sqrMagnitude > 1e-6f)
+        {
+            uHat = _gridU.normalized;
+            vHat = _gridV.normalized;
+        }
+        else
+        {
+            Vector3 a = currentTiles[0].transform.position, b = a; float best = -1f;
+            for (int i = 0; i < currentTiles.Count; i++)
+            {
+                var pi = currentTiles[i].transform.position; pi.y = 0;
+                for (int j = i + 1; j < currentTiles.Count; j++)
+                {
+                    var pj = currentTiles[j].transform.position; pj.y = 0;
+                    float d2 = (pi - pj).sqrMagnitude;
+                    if (d2 > best) { best = d2; a = pi; b = pj; }
+                }
+            }
+            uHat = (b - a); uHat.y = 0; if (uHat.sqrMagnitude < 1e-6f) uHat = Vector3.forward; uHat.Normalize();
+            vHat = Vector3.Cross(Vector3.up, uHat).normalized;
+        }
+        if (Vector3.Dot(Vector3.Cross(uHat, vHat), Vector3.up) < 0f) vHat = -vHat;
+
+        float minU = float.PositiveInfinity, maxU = float.NegativeInfinity;
+        float minV = float.PositiveInfinity, maxV = float.NegativeInfinity;
+        var projU = new List<float>(currentTiles.Count);
+        var projV = new List<float>(currentTiles.Count);
+
+        foreach (var t in currentTiles)
+        {
+            Vector3 p = t.transform.position; p.y = 0;
+            float pu = Vector3.Dot(p, uHat);
+            float pv = Vector3.Dot(p, vHat);
+            projU.Add(pu); projV.Add(pv);
+            if (pu < minU) minU = pu; if (pu > maxU) maxU = pu;
+            if (pv < minV) minV = pv; if (pv > maxV) maxV = pv;
+        }
+
+        float EstimateStep(List<float> xs)
+        {
+            if (xs.Count < 2) return 1f;
+            xs.Sort();
+            var diffs = new List<float>();
+            for (int i = 1; i < xs.Count; i++) { float d = xs[i] - xs[i - 1]; if (d > 1e-4f) diffs.Add(d); }
+            if (diffs.Count == 0) return 1f;
+            diffs.Sort();
+            int m = diffs.Count / 2;
+            return (diffs.Count % 2 == 1) ? diffs[m] : 0.5f * (diffs[m - 1] + diffs[m]);
+        }
+
+        stepU = (_stepU > 1e-6f) ? _stepU : EstimateStep(new List<float>(projU));
+        stepV = (_stepV > 1e-6f) ? _stepV : EstimateStep(new List<float>(projV));
+
+        Vector3 minCorner = (uHat * (minU - 0.5f * stepU)) + (vHat * (minV - 0.5f * stepV));
+        lenU = (maxU - minU) + stepU;
+        lenV = (maxV - minV) + stepV;
+        center = minCorner + uHat * (lenU * 0.5f) + vHat * (lenV * 0.5f);
+
+        return true;
+    }
+
+    // 모델 바닥을 targetY에 맞추기
+    void RaiseBottomTo(GameObject go, float targetY)
+    {
+        if (!TryGetModelBounds(go, out Bounds b)) return;
+        float dy = targetY - b.min.y;
+        if (Mathf.Abs(dy) > 1e-6f) go.transform.position += new Vector3(0f, dy, 0f);
+    }
+
+    void SpawnPreviewOverSelection(GameObject prefab)
+    {
+        if (previewInstance) Destroy(previewInstance);
         modelInstance = null;
-        // selectedBuildingPrefab = null;  // 선택 유지
-        currentTiles = null;
-        if (buildingInstallPanel) buildingInstallPanel.SetActive(false);
+        if (prefab == null || currentTiles == null || currentTiles.Count == 0) return;
+
+        if (!TryComputeSelectionFrame(out var uHat, out var vHat, out var stepU, out var stepV,
+                                       out var selCenter, out var lenU, out var lenV))
+            return;
+
+        Bounds selB = GetTilesBounds(currentTiles);
+        float topY = selB.max.y;
+
+        // 기본 회전 (셀 방향 기준 회전)
+        int snapped = Snap90(previewRotation);
+        Quaternion rot = Quaternion.LookRotation(vHat.normalized, Vector3.up) * Quaternion.Euler(0f, snapped, 0f);
+
+        // 프리뷰 홀더 생성
+        previewInstance = new GameObject("PreviewHolder");
+        previewInstance.transform.SetPositionAndRotation(
+            new Vector3(selCenter.x, topY, selCenter.z),
+            rot
+        );
+
+        // 프리팹 인스턴스 생성
+        modelInstance = Instantiate(prefab, previewInstance.transform);
+        modelInstance.name = "BuildingModel";
+        modelInstance.transform.localPosition = Vector3.zero;
+        modelInstance.transform.localRotation = Quaternion.identity;
+
+        var bd = prefab.GetComponent<BuildingData>() ?? prefab.GetComponentInChildren<BuildingData>();
+        if (bd != null)
+        {
+            // 회전에 따른 셀 크기 보정
+            Vector2Int size = GetRotatedSize(bd.tileWidth, bd.tileHeight, snapped);
+            float targetU = Mathf.Max(1, size.x) * stepU * footprintPadding;
+            float targetV = Mathf.Max(1, size.y) * stepV * footprintPadding;
+
+            // 초기 스케일 유지
+            modelInstance.transform.localScale = prefab.transform.localScale;
+
+            // 원래 바운즈 측정
+            MeasureOrientedBounds(modelInstance, previewInstance.transform,
+                out float lenU0, out float lenV0, out float minY0, out float maxY0, out Vector3 center0);
+
+            // 스케일 팩터 계산
+            float scaleU = (lenU0 > 1e-4f) ? targetU / lenU0 : 1f;
+            float scaleV = (lenV0 > 1e-4f) ? targetV / lenV0 : 1f;
+            float scaleY = keepHeight ? 1f : Mathf.Min(scaleU, scaleV);
+
+            modelInstance.transform.localScale = new Vector3(
+                modelInstance.transform.localScale.x * scaleU,
+                modelInstance.transform.localScale.y * scaleY,
+                modelInstance.transform.localScale.z * scaleV
+            );
+
+            // 다시 바운즈 측정해서 위치 보정
+            MeasureOrientedBounds(modelInstance, previewInstance.transform,
+                out _, out _, out float minY1, out _, out Vector3 center1);
+
+            Vector3 deltaXZ = new Vector3(selCenter.x - center1.x, 0f, selCenter.z - center1.z);
+            float dy = (topY + 0.001f) - minY1;
+
+            modelInstance.transform.position += deltaXZ + new Vector3(0f, dy, 0f);
+        }
+
+        buildingInstallPanel?.SetActive(true);
+        if (confirmInstallButton) confirmInstallButton.interactable = true;
+        HighlightTiles(currentTiles, true);
     }
 
-    public void ClearSelection()
+
+
+    void MeasureOrientedBounds(GameObject go, Transform holder,
+                           out float lenU, out float lenV,
+                           out float minY, out float maxY,
+                           out Vector3 centerWorld)
     {
-        if (previewInstance != null) Destroy(previewInstance);
-        selectedBuildingPrefab = null;
-        ClearPreviewAndPanel();
+        Vector3 u = holder.right.normalized;
+        Vector3 v = holder.forward.normalized;
+
+        float minUacc = float.PositiveInfinity, maxUacc = float.NegativeInfinity;
+        float minVacc = float.PositiveInfinity, maxVacc = float.NegativeInfinity;
+        float minYacc = float.PositiveInfinity, maxYacc = float.NegativeInfinity;
+
+        var renderers = go.GetComponentsInChildren<Renderer>(true);
+        if (renderers.Length == 0)
+        {
+            lenU = lenV = 0f;
+            minY = maxY = go.transform.position.y;
+            centerWorld = go.transform.position;
+            return;
+        }
+
+        foreach (var r in renderers)
+        {
+            Bounds lb = r.localBounds;
+            Vector3 c = lb.center;
+            Vector3 e = lb.extents;
+
+            for (int xi = -1; xi <= 1; xi += 2)
+                for (int yi = -1; yi <= 1; yi += 2)
+                    for (int zi = -1; zi <= 1; zi += 2)
+                    {
+                        Vector3 localCorner = c + new Vector3(xi * e.x, yi * e.y, zi * e.z);
+                        Vector3 w = r.transform.TransformPoint(localCorner);
+
+                        float du = Vector3.Dot(w, u);
+                        float dv = Vector3.Dot(w, v);
+                        float yy = w.y;
+
+                        if (du < minUacc) minUacc = du; if (du > maxUacc) maxUacc = du;
+                        if (dv < minVacc) minVacc = dv; if (dv > maxVacc) maxVacc = dv;
+                        if (yy < minYacc) minYacc = yy; if (yy > maxYacc) maxYacc = yy;
+                    }
+        }
+
+        lenU = maxUacc - minUacc;
+        lenV = maxVacc - minVacc;
+        minY = minYacc;
+        maxY = maxYacc;
+
+        float cU = 0.5f * (minUacc + maxUacc);
+        float cV = 0.5f * (minVacc + maxVacc);
+        float cY = 0.5f * (minYacc + maxYacc);
+        centerWorld = u * cU + v * cV + Vector3.up * cY;
     }
 
-    Vector2Int GetRotatedSize(int width, int height, float rotation)
+
+    // 선택영역 상단에 Y만 맞춤(보조용 – 현재는 사용 안 함)
+    void AlignPreviewYToSelectionTop(Bounds selectionBounds)
     {
-        // rotation을 0/90/180/270으로 스냅
-        int r = Mathf.RoundToInt(Mathf.Repeat(rotation, 360f) / 90f) * 90;
-        return (r % 180 != 0) ? new Vector2Int(height, width) : new Vector2Int(width, height);
+        if (!TryGetModelBounds(modelInstance, out Bounds b)) return;
+        float dy = selectionBounds.max.y - b.min.y;
+        modelInstance.transform.position += new Vector3(0f, dy, 0f);
     }
 
-    Vector3 GetTileSize(GameObject tile)
+    void ApplyPreviewYaw()
     {
-        var r = tile.GetComponent<Renderer>();
-        if (r != null) return r.bounds.size;
-        var c = tile.GetComponent<Collider>();
-        if (c != null) return c.bounds.size;
-        return Vector3.one;
+        if (!previewInstance) return;
+
+        int snapped = Snap90(previewRotation);
+
+        if (_gridU.sqrMagnitude > 1e-6f)
+        {
+            // right == +U, forward == +V 가 되도록 basis 구성
+            Vector3 uB = _gridU.normalized;
+            Vector3 vB = -Vector3.Cross(Vector3.up, uB).normalized;
+            Quaternion basis = Quaternion.LookRotation(vB, Vector3.up);
+            previewInstance.transform.rotation = basis * Quaternion.Euler(0f, snapped, 0f);
+        }
+        else
+        {
+            // 축 정보를 못 잡은 경우: 그냥 Y축 스냅 회전만
+            previewInstance.transform.rotation = Quaternion.Euler(0f, snapped, 0f);
+        }
     }
 
-    // === 크기/바운즈 유틸 ===
-    // 절대 스케일로 맞추도록 수정(누적 곱 방지)
-    void ResizeToFit(GameObject building, Vector3 targetSize, Bounds _unused)
-    {
-        var t = building.transform;
-        t.localScale = Vector3.one; // 리셋
 
-        if (!TryGetModelBounds(building, out Bounds baseB)) return;
 
-        Vector3 size = baseB.size;
-        if (size.x <= 0f || size.z <= 0f) return;
-
-        float s = Mathf.Min(targetSize.x / size.x, targetSize.z / size.z);
-        t.localScale = new Vector3(s, s, s);
-    }
-
+    // 마우스 아래 타일 찾기
     bool TryGetTileUnderMouse(out GameObject tile)
     {
         tile = null;
         var cam = Camera.main;
         if (!cam) return false;
+
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out var hit, 1000f, tileLayerMask))
         {
@@ -555,47 +814,23 @@ public class TileClickInstaller : MonoBehaviour
         return false;
     }
 
+    // 선택한 타일들이 모두 비어있는지 검사
     bool AllTilesFree(List<GameObject> tiles)
     {
+        if (tiles == null || tiles.Count == 0) return false;
         foreach (var t in tiles)
+        {
+            if (t == null) return false;
             if (t.transform.Find(occupiedMarkerName) != null) return false;
+        }
         return true;
-    }
-
-    // (남겨둔 버전) 세계 X/Z 기준 직사각형 — 회전 그리드에서는 사용 비추
-    List<GameObject> FindTilesRectangle(GameObject baseTile, int width, int height, int dirX, int dirZ)
-    {
-        if (dirX == 0 && dirZ == 0) dirX = 1;
-
-        var result = new List<GameObject>(width * height);
-        GameObject[] allTiles = GameObject.FindGameObjectsWithTag("Tile");
-        float tileSize = GetTileSize(baseTile).x;
-        float tolerance = tileSize * 0.5f;
-
-        Vector3 origin = baseTile.transform.position;
-        Vector3 u = (dirX != 0) ? new Vector3(dirX, 0, 0) : new Vector3(0, 0, dirZ);
-        Vector3 v = (dirX != 0) ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0);
-
-        for (int iu = 0; iu < width; iu++)
-            for (int iv = 0; iv < height; iv++)
-            {
-                Vector3 target = origin + (u * iu + v * iv) * tileSize;
-
-                GameObject closest = null; float minDist = float.MaxValue;
-                foreach (var t in allTiles)
-                {
-                    float d = Vector3.Distance(t.transform.position, target);
-                    if (d < tolerance && d < minDist) { minDist = d; closest = t; }
-                }
-                if (!closest) return null;
-                result.Add(closest);
-            }
-        return result;
     }
 
     // 하이라이트 표시/해제
     void HighlightTiles(List<GameObject> tiles, bool valid)
     {
+        if (!IsPlacingNow()) { ClearHighlight(); return; }
+
         ClearHighlight();
         if (tiles == null) return;
 
@@ -604,12 +839,16 @@ public class TileClickInstaller : MonoBehaviour
         Color col = valid ? highlightValid : highlightInvalid;
         _mpbHighlight.Clear();
         _mpbHighlight.SetColor(BaseColorID2, col);
+        _mpbHighlight.SetColor(ColorID, col);
 
         for (int i = 0; i < tiles.Count; i++)
         {
             var t = tiles[i];
             var q = highlightQuads[i];
-            var b = t.GetComponent<Renderer>().bounds;
+            var r = t.GetComponent<Renderer>();
+            if (!r) continue;
+
+            var b = r.bounds;
 
             q.transform.position = new Vector3(b.center.x, b.center.y + highlightYOffset, b.center.z);
             q.transform.rotation = Quaternion.Euler(90, 0, 0);
@@ -684,7 +923,37 @@ public class TileClickInstaller : MonoBehaviour
         return false;
     }
 
-    // ====== (회전 전 방식) 타일 찾기: RotatePreview에서만 쓰면 됨 (보존)
+    // (보존) 세계 X/Z 기준 직사각형
+    List<GameObject> FindTilesRectangle(GameObject baseTile, int width, int height, int dirX, int dirZ)
+    {
+        if (dirX == 0 && dirZ == 0) dirX = 1;
+
+        var result = new List<GameObject>(width * height);
+        GameObject[] allTiles = GameObject.FindGameObjectsWithTag("Tile");
+        float tileSize = GetTileSize(baseTile).x;
+        float tolerance = tileSize * 0.5f;
+
+        Vector3 origin = baseTile.transform.position;
+        Vector3 u = (dirX != 0) ? new Vector3(dirX, 0, 0) : new Vector3(0, 0, dirZ);
+        Vector3 v = (dirX != 0) ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0);
+
+        for (int iu = 0; iu < width; iu++)
+            for (int iv = 0; iv < height; iv++)
+            {
+                Vector3 target = origin + (u * iu + v * iv) * tileSize;
+
+                GameObject closest = null; float minDist = float.MaxValue;
+                foreach (var t in allTiles)
+                {
+                    float d = Vector3.Distance(t.transform.position, target);
+                    if (d < tolerance && d < minDist) { minDist = d; closest = t; }
+                }
+                if (!closest) return null;
+                result.Add(closest);
+            }
+        return result;
+    }
+
     List<GameObject> FindTilesAround(GameObject baseTile, int width, int height)
     {
         List<GameObject> result = new List<GameObject>();
@@ -710,5 +979,150 @@ public class TileClickInstaller : MonoBehaviour
                 result.Add(closest);
             }
         return result;
+    }
+
+    // 선택 영역 바운즈(보조)
+    void FitModelXZToSelectionBounds(GameObject model, Bounds selB, bool exactBothAxes, float padding)
+    {
+        if (!TryGetModelBounds(model, out Bounds b)) return;
+
+        float targetX = selB.size.x * padding;
+        float targetZ = selB.size.z * padding;
+
+        if (b.size.x < 1e-5f || b.size.z < 1e-5f) return;
+        Vector3 curLocal = model.transform.localScale;
+
+        float sx = targetX / b.size.x;
+        float sz = targetZ / b.size.z;
+
+        if (exactBothAxes)
+        {
+            float yFactor = keepHeight ? 1f : Mathf.Min(sx, sz);
+            model.transform.localScale = new Vector3(curLocal.x * sx, curLocal.y * yFactor, curLocal.z * sz);
+        }
+        else
+        {
+            float s = Mathf.Min(sx, sz);
+            float yFactor = keepHeight ? 1f : s;
+            model.transform.localScale = new Vector3(curLocal.x * s, curLocal.y * yFactor, curLocal.z * s);
+        }
+
+        if (TryGetModelBounds(model, out b))
+        {
+            Vector3 deltaXZ = new Vector3(selB.center.x - b.center.x, 0f, selB.center.z - b.center.z);
+            model.transform.position += deltaXZ;
+        }
+    }
+
+    void AlignPreviewToSelection(Bounds selectionBounds)
+    {
+        if (!TryGetModelBounds(modelInstance, out Bounds b)) return;
+        Vector3 deltaWorld = new Vector3(
+            selectionBounds.center.x - b.center.x,
+            selectionBounds.max.y - b.min.y,
+            selectionBounds.center.z - b.center.z
+        );
+        modelInstance.transform.position += deltaWorld;
+    }
+
+    void ConfirmInstall()
+    {
+        if (previewInstance == null || currentTiles == null) return;
+
+        foreach (var tile in currentTiles)
+            if (tile && tile.transform.Find(occupiedMarkerName) == null)
+                new GameObject(occupiedMarkerName).transform.SetParent(tile.transform, false);
+
+        var footprint = previewInstance.GetComponent<BuildingFootprint>() ?? previewInstance.AddComponent<BuildingFootprint>();
+        footprint.Init(currentTiles, occupiedMarkerName);
+
+        var buildingData = previewInstance.GetComponent<BuildingData>() ??
+                           previewInstance.GetComponentInChildren<BuildingData>();
+        if (buildingData)
+        {
+            int totalCO2Impact = buildingData.instantCO2Change;
+            if (buildingData.co2PerSecond != 0) totalCO2Impact += buildingData.maxCO2Change;
+            int incomePerMinute = (buildingData.incomePer5Minutes > 0) ? buildingData.incomePer5Minutes / 5 : 0;
+
+            GameManager.Instance?.AddBuilding(
+                selectedBuildingPrefab.name.Replace("Prefab", ""),
+                buildingData.cost,
+                totalCO2Impact,
+                incomePerMinute,
+                previewInstance.transform.position,
+                previewInstance
+            );
+
+            GameManager.Instance?.ApplyBuildingCost(
+                buildingData.cost,
+                buildingData.instantCO2Change,
+                buildingData.co2PerSecond,
+                buildingData.maxCO2Change,
+                buildingData.incomePer5Minutes,
+                buildingData.transform,
+                buildingData.maxIncomeAmount
+            );
+        }
+
+        YearQuestManager.Instance?.OnBuildingInstalled(selectedBuildingPrefab, buildingData);
+        NotifyCitizensOfNewBuilding();
+        FindObjectOfType<CitizenGroupController>()?.OnBuildingInstalled(previewInstance.transform.position);
+
+        GameManager.Instance?.CompletePlacing();
+        ClearHighlight();
+        SetGridLinesVisible(false);
+        _gridShown = false;
+        buildingInstallPanel?.SetActive(false);
+    }
+
+    void ClearPreviewAndPanel(bool destroyPreview = true)
+    {
+        if (destroyPreview && previewInstance != null)
+            Destroy(previewInstance);
+
+        previewInstance = null;
+        modelInstance = null;
+
+        if (buildingInstallPanel) buildingInstallPanel.SetActive(false);
+    }
+
+    void NotifyCitizensOfNewBuilding()
+    {
+        foreach (var c in FindObjectsOfType<CitizenWanderer>())
+            c.OnNewBuildingInstalled();
+    }
+
+    void CancelInstall()
+    {
+        if (previewInstance != null) Destroy(previewInstance);
+        GameManager.Instance?.CancelPlacing();
+        ClearPreviewAndPanel(true);
+
+        TogglePlacementFX(false);
+        SFXPlayer.Instance?.PlayClick();
+    }
+
+    public void ClearSelection()
+    {
+        if (previewInstance != null) Destroy(previewInstance);
+        selectedBuildingPrefab = null;
+        ClearPreviewAndPanel(true);
+
+        TogglePlacementFX(false);
+    }
+
+    Vector2Int GetRotatedSize(int width, int height, float rotation)
+    {
+        int r = Mathf.RoundToInt(Mathf.Repeat(rotation, 360f) / 90f) * 90;
+        return (r % 180 != 0) ? new Vector2Int(height, width) : new Vector2Int(width, height);
+    }
+
+    Vector3 GetTileSize(GameObject tile)
+    {
+        var r = tile.GetComponent<Renderer>();
+        if (r != null) return r.bounds.size;
+        var c = tile.GetComponent<Collider>();
+        if (c != null) return c.bounds.size;
+        return Vector3.one;
     }
 }
