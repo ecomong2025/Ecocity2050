@@ -43980,6 +43980,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8c8df5a192d7fb4ab316df7ea1ab70d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableWhilePlacing: []
+  enableHotkeys: 1
+  requirePlacingForHotkeys: 1
+  rotateKey: 32
   occupiedMarkerName: __OCCUPIED__
   footprintPadding: 0.98
   fillBothAxes: 1
@@ -43994,13 +43998,12 @@ MonoBehaviour:
   lineMat: {fileID: 0}
   gridLinesRoot: {fileID: 0}
   extraGridLineRenderers: []
-  warningPanel: {fileID: 319495318}
-  confirmButton: {fileID: 365173976}
+  warningPanel: {fileID: 0}
+  confirmButton: {fileID: 0}
   buildingInstallPanel: {fileID: 1247353971}
   confirmInstallButton: {fileID: 365173976}
   cancelInstallButton: {fileID: 1228325617}
   rotateButton: {fileID: 2064277867}
-  gridLineTag: GridLine
 --- !u!1 &1425803276
 GameObject:
   m_ObjectHideFlags: 0
@@ -46510,6 +46513,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8c8df5a192d7fb4ab316df7ea1ab70d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableWhilePlacing: []
+  enableHotkeys: 1
+  requirePlacingForHotkeys: 1
+  rotateKey: 32
   occupiedMarkerName: __OCCUPIED__
   footprintPadding: 0.98
   fillBothAxes: 1
@@ -46524,13 +46531,12 @@ MonoBehaviour:
   lineMat: {fileID: 0}
   gridLinesRoot: {fileID: 0}
   extraGridLineRenderers: []
-  warningPanel: {fileID: 319495318}
-  confirmButton: {fileID: 166840435}
+  warningPanel: {fileID: 0}
+  confirmButton: {fileID: 0}
   buildingInstallPanel: {fileID: 1247353971}
   confirmInstallButton: {fileID: 365173976}
   cancelInstallButton: {fileID: 1228325617}
   rotateButton: {fileID: 2064277867}
-  gridLineTag: GridLine
 --- !u!4 &1479176197
 Transform:
   m_ObjectHideFlags: 0
