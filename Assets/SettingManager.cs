@@ -56,6 +56,17 @@ public class SettingManager : MonoBehaviour
         SetupButtons();
         UpdateButtonStates();
 
+        // 🔹 씬이 시작될 때, PlayerPrefs에서 불러온 설정대로 오디오 상태 적용
+        if (bgmAudioSource != null)
+            bgmAudioSource.volume = isBGMOn ? 1f : 0f;
+
+        if (sfxAudioSource != null)
+            sfxAudioSource.volume = isSFXOn ? 1f : 0f;
+
+        // 🔹 전역 SFXPlayer까지 반영
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.SetVolume(isSFXOn ? 1f : 0f);
+
         if (settingPanel != null)
             settingPanel.SetActive(false);
     }
@@ -79,7 +90,11 @@ public class SettingManager : MonoBehaviour
     public void SetBGM(bool isOn)
     {
         isBGMOn = isOn;
-        if (bgmAudioSource != null) bgmAudioSource.volume = isOn ? 1f : 0f;
+
+        // 🔹 토글 시에만 BGM 변경
+        if (bgmAudioSource != null)
+            bgmAudioSource.volume = isOn ? 1f : 0f;
+
         PlayerPrefs.SetInt("BGM", isOn ? 1 : 0);
         PlayerPrefs.Save();
         UpdateBGMButtons();
@@ -88,7 +103,14 @@ public class SettingManager : MonoBehaviour
     public void SetSFX(bool isOn)
     {
         isSFXOn = isOn;
-        if (sfxAudioSource != null) sfxAudioSource.volume = isOn ? 1f : 0f;
+
+        // 🔹 토글 시에만 SFX 변경
+        if (sfxAudioSource != null)
+            sfxAudioSource.volume = isOn ? 1f : 0f;
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.SetVolume(isOn ? 1f : 0f);
+
         PlayerPrefs.SetInt("SFX", isOn ? 1 : 0);
         PlayerPrefs.Save();
         UpdateSFXButtons();
@@ -126,7 +148,7 @@ public class SettingManager : MonoBehaviour
     {
         RectTransform rt = settingPanel.GetComponent<RectTransform>();
         Vector3 start = open ? scaleClosed : scaleOpened;
-        Vector3 end   = open ? scaleOpened : scaleClosed;
+        Vector3 end = open ? scaleOpened : scaleClosed;
 
         rt.localScale = start;
         float t = 0f;
@@ -193,3 +215,4 @@ public class SettingManager : MonoBehaviour
     public bool IsBGMOn() => isBGMOn;
     public bool IsSFXOn() => isSFXOn;
 }
+
