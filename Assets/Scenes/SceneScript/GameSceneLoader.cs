@@ -79,7 +79,7 @@ public class GameSceneLoader : MonoBehaviour
     public void OnStartGame()
     {
         SFXPlayer.Instance.PlayClick();
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("TutorialScene");
     }
 
     public void OnStartTutorial()

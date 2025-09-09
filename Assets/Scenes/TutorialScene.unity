@@ -1441,7 +1441,7 @@ MonoBehaviour:
   onFinished:
     m_PersistentCalls:
       m_Calls: []
-  nextSceneName: IntroScene
+  nextSceneName: GameScene
   sceneDelay: 0
 --- !u!1 &1806805533
 GameObject:
