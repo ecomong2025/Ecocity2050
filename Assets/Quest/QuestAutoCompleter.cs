@@ -62,17 +62,13 @@ public class QuestAutoCompleter : MonoBehaviour
     {
         if (prefab == null || data == null || yqm == null) return;
 
-        if (IsFactory(prefab, data)) TryComplete(currentYear, QUEST_BUILDING);
-
-        // 제로 에미션 건물 → 만족도 퀘스트로 귀속
-        if (IsZeroEmission(data))   TryComplete(currentYear, QUEST_SATISFACTION);
-
         // 연도별 디자인 룰(유지)
-        if (prefab.CompareTag("BikeRoad")           && currentYear == 2030) TryComplete(currentYear, QUEST_BUILDING);
-        if (prefab.CompareTag("EnergySaving")       && currentYear == 2035) TryComplete(currentYear, QUEST_BUILDING);
-        if (prefab.CompareTag("PublicTransport")    && currentYear == 2040) TryComplete(currentYear, QUEST_BUILDING);
-        if ((prefab.CompareTag("EcoPlant") || prefab.name.Contains("발전소")) && currentYear == 2045)
-            TryComplete(currentYear, QUEST_BUILDING);
+        if (IsFactory(prefab, data) && currentYear == 2025) TryComplete(currentYear, QUEST_BUILDING);
+        if (IsZeroEmission(data) && currentYear == 2025) TryComplete(currentYear, QUEST_SATISFACTION);
+        if (prefab.CompareTag("BikeRoad") && currentYear == 2030) TryComplete(currentYear, QUEST_BUILDING);
+        if (prefab.CompareTag("EnergySaving") && currentYear == 2035) TryComplete(currentYear, QUEST_BUILDING);
+        if (prefab.CompareTag("PublicTransport") && currentYear == 2040) TryComplete(currentYear, QUEST_BUILDING);
+        if ((prefab.CompareTag("EcoPlant") || prefab.name.Contains("발전소")) && currentYear == 2045) TryComplete(currentYear, QUEST_BUILDING);
 
         // 2045: 수익 건물 + GPT 대화 완료 → 챗봇 퀘스트
         if (currentYear == 2045 && data.incomePer5Minutes > 0 && gpt != null && gpt.IsChatCompletedForYear(2045))
