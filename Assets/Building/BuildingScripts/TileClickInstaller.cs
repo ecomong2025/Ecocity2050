@@ -375,14 +375,23 @@ public class TileClickInstaller : MonoBehaviour
     void RotatePreview()
     {
         SFXPlayer.Instance?.PlayClick();
-        previewRotation = (previewRotation + 90f) % 360f;
 
         var bd = selectedBuildingPrefab?.GetComponent<BuildingData>() ??
                  selectedBuildingPrefab?.GetComponentInChildren<BuildingData>();
         if (bd == null) return;
 
+        // 직사각형(예: 2x1)은 180°씩, 정사각형(1x1, 2x2)은 90°씩 회전
+        float step = (bd.tileWidth != bd.tileHeight) ? 180f : 90f;
+        previewRotation = Mathf.Repeat(previewRotation + step, 360f);
+
+        // 회전을 90° 단위로 스냅(부동소수점 오차 방지)
+        int rotIndex = Mathf.RoundToInt(previewRotation / 90f) & 3; // 0,1,2,3
+        previewRotation = rotIndex * 90f;
+
+        // 현재 회전에서 요구되는 타일 폭/높이(2x1 ↔ 1x2)
         var size = GetRotatedSize(bd.tileWidth, bd.tileHeight, previewRotation);
 
+        // 가능하면 기존 피벗/드래그 방향을 이용해 타일 집합 재계산 → 프리뷰 재생성
         if (_pivotTile && _dirTile)
         {
             var rectTiles = FindTilesRectangleOnGrid(
@@ -390,17 +399,21 @@ public class TileClickInstaller : MonoBehaviour
                 out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
             );
 
-            if (rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles))
+            bool valid = rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles);
+            if (valid)
             {
                 currentTiles = rectTiles;
                 SpawnPreviewOverSelection(selectedBuildingPrefab);
+                if (confirmInstallButton) confirmInstallButton.interactable = true;
                 return;
             }
         }
 
+        // 타일 집합을 못 찾았으면, 최소한 프리뷰 모델만 회전해서 보여주기
         if (previewInstance != null)
             previewInstance.transform.rotation = Quaternion.Euler(0f, previewRotation, 0f);
     }
+
 
     void SpawnPreviewOverSelection(GameObject prefab)
     {
