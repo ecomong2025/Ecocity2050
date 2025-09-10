@@ -792,6 +792,7 @@ GameObject:
   - component: {fileID: 5625710382059155389}
   - component: {fileID: 2252477825036796659}
   - component: {fileID: 809616911686927674}
+  - component: {fileID: 3987265817228340529}
   m_Layer: 3
   m_Name: SubwayPrefab
   m_TagString: PublicTransport
@@ -905,6 +906,27 @@ MonoBehaviour:
   co2PerSecond: 1
   maxCO2Change: 5
 --- !u!65 &809616911686927674
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6130091482204556904}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0058801556, y: 0.0058801547, z: 0.0064732786}
+  m_Center: {x: -0.00019199727, y: 0.0030046455, z: 0.015567067}
+--- !u!65 &3987265817228340529
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

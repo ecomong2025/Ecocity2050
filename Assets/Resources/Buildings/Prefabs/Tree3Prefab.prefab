@@ -1305,6 +1305,7 @@ GameObject:
   - component: {fileID: 5506033936008902832}
   - component: {fileID: 1340625710401792388}
   - component: {fileID: 3946961883372921542}
+  - component: {fileID: 3654957058688028800}
   m_Layer: 3
   m_Name: Tree3Prefab
   m_TagString: tree
@@ -1427,6 +1428,27 @@ MonoBehaviour:
   co2PerSecond: 0
   maxCO2Change: 0
 --- !u!65 &3946961883372921542
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6298742306717686117}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.019172186, y: 0.019172182, z: 0.0008734905}
+  m_Center: {x: -0.009851483, y: -0.008704607, z: 0.00026320736}
+--- !u!65 &3654957058688028800
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -2513,6 +2513,7 @@ GameObject:
   - component: {fileID: 6132592238039482601}
   - component: {fileID: 5790589194601352448}
   - component: {fileID: -1935957118602466886}
+  - component: {fileID: 3907232936760047067}
   m_Layer: 3
   m_Name: SchoolPrefab
   m_TagString: school
@@ -2597,6 +2598,27 @@ MonoBehaviour:
   co2PerSecond: 5
   maxCO2Change: 50
 --- !u!65 &-1935957118602466886
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6796081966507170387}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &3907232936760047067
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

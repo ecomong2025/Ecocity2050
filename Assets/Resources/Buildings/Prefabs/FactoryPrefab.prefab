@@ -702,6 +702,7 @@ GameObject:
   - component: {fileID: 2805582811828579459}
   - component: {fileID: 2142521049278077940}
   - component: {fileID: -8616645298723870958}
+  - component: {fileID: -7707126949354762210}
   m_Layer: 3
   m_Name: FactoryPrefab
   m_TagString: Factory
@@ -748,6 +749,27 @@ MonoBehaviour:
   co2PerSecond: 10
   maxCO2Change: 300
 --- !u!65 &-8616645298723870958
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3288962670325904953}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &-7707126949354762210
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

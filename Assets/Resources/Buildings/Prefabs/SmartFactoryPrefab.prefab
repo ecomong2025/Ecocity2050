@@ -5111,6 +5111,7 @@ GameObject:
   - component: {fileID: 6246623709798211046}
   - component: {fileID: 5939053151689849392}
   - component: {fileID: -4823043097350225593}
+  - component: {fileID: -8332567372781627546}
   m_Layer: 3
   m_Name: SmartFactoryPrefab
   m_TagString: Factory
@@ -5310,6 +5311,27 @@ MonoBehaviour:
   co2PerSecond: 10
   maxCO2Change: 150
 --- !u!65 &-4823043097350225593
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5598127560629271603}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.009966702, y: 0.0354161, z: 0.028530864}
+  m_Center: {x: 0.0029259422, y: -0.000059775997, z: 0.013663768}
+--- !u!65 &-8332567372781627546
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -53,6 +53,10 @@ PrefabInstance:
       value: HospitalPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 418fbd7868056ac4fbe147cc2e41a817, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 418fbd7868056ac4fbe147cc2e41a817, type: 3}
       propertyPath: m_TagString
       value: hospital
       objectReference: {fileID: 0}
@@ -63,6 +67,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 418fbd7868056ac4fbe147cc2e41a817, type: 3}
       insertIndex: -1
       addedObject: {fileID: 295040734411994969}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 418fbd7868056ac4fbe147cc2e41a817, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -7459512448472236917}
   m_SourcePrefab: {fileID: 100100000, guid: 418fbd7868056ac4fbe147cc2e41a817, type: 3}
 --- !u!1 &2911168219360025045 stripped
 GameObject:
@@ -89,3 +96,24 @@ MonoBehaviour:
   instantCO2Change: 0
   co2PerSecond: 5
   maxCO2Change: 50
+--- !u!65 &-7459512448472236917
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2911168219360025045}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.02037084, y: 0.045838587, z: 0.041589595}
+  m_Center: {x: 0.0001229709, y: 0.0020970702, z: -0.0011879355}

@@ -615,6 +615,7 @@ GameObject:
   - component: {fileID: 1196308716008515704}
   - component: {fileID: 3986414330323265060}
   - component: {fileID: -901990738381362422}
+  - component: {fileID: -8002170659632657864}
   m_Layer: 3
   m_Name: Park2Prefab
   m_TagString: park
@@ -712,6 +713,27 @@ MonoBehaviour:
   co2PerSecond: -10
   maxCO2Change: -200
 --- !u!65 &-901990738381362422
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836218177184303533}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.00021370407, y: 0.00021370403, z: 0.00382658}
+  m_Center: {x: 0.007646408, y: 0.0110724345, z: 0.0013451223}
+--- !u!65 &-8002170659632657864
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

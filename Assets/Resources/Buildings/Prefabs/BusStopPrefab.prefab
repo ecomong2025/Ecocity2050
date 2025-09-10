@@ -873,6 +873,7 @@ GameObject:
   - component: {fileID: 4668921733324712494}
   - component: {fileID: 6899740537510715839}
   - component: {fileID: 1538317469971161896}
+  - component: {fileID: -6441113375354439339}
   m_Layer: 3
   m_Name: BusStopPrefab
   m_TagString: PublicTransport
@@ -983,6 +984,27 @@ MonoBehaviour:
   co2PerSecond: 2
   maxCO2Change: 10
 --- !u!65 &1538317469971161896
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6614569475079670779}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.020833556, y: 0.020833546, z: 0.0034576573}
+  m_Center: {x: -0.006927068, y: -0.005054082, z: -0.00051594427}
+--- !u!65 &-6441113375354439339
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

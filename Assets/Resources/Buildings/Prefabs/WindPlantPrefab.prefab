@@ -874,6 +874,7 @@ GameObject:
   - component: {fileID: 4339760661756791757}
   - component: {fileID: 269354028172798548}
   - component: {fileID: -4462730934127906761}
+  - component: {fileID: -7345400099202707543}
   m_Layer: 3
   m_Name: WindPlantPrefab
   m_TagString: EcoPlant
@@ -998,6 +999,27 @@ MonoBehaviour:
   co2PerSecond: -10
   maxCO2Change: -250
 --- !u!65 &-4462730934127906761
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2826309087880669720}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.013889986, y: 0.02, z: 0.016301105}
+  m_Center: {x: -0.0013909354, y: -0.00044961312, z: 0.009767714}
+--- !u!65 &-7345400099202707543
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
