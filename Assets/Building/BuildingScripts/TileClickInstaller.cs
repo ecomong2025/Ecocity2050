@@ -42,6 +42,9 @@ public class TileClickInstaller : MonoBehaviour
             _uiNavSuppressed = false;
         }
     }
+    [SerializeField]
+    [Tooltip("긴축 자동 보정 (사용자 회전 우선, 기본 off)")]
+    bool autoAlignRotationToSelection = false;
 
     // ─────────────────────────────────────────────────────────────
     // Placement / Grid / Highlight
@@ -401,11 +404,18 @@ public class TileClickInstaller : MonoBehaviour
 
     void SpawnPreviewOverSelection(GameObject prefab)
     {
+        // 1) 기존 프리뷰 제거
         if (previewInstance != null) Destroy(previewInstance);
         modelInstance = null;
 
         var bd = prefab.GetComponent<BuildingData>() ?? prefab.GetComponentInChildren<BuildingData>();
+        if (bd == null || currentTiles == null || currentTiles.Count == 0)
+        {
+            Debug.LogWarning("[Installer] BuildingData 또는 currentTiles 누락");
+            return;
+        }
 
+        // 2) 선택 영역 바운즈
         Bounds selB = currentTiles[0].GetComponent<Renderer>().bounds;
         for (int i = 1; i < currentTiles.Count; i++)
             selB.Encapsulate(currentTiles[i].GetComponent<Renderer>().bounds);
@@ -413,31 +423,45 @@ public class TileClickInstaller : MonoBehaviour
         float lenU = (_stepU > 0f) ? _stepU * Mathf.Max(1, Mathf.RoundToInt(selB.size.x / _stepU)) : selB.size.x;
         float lenV = (_stepV > 0f) ? _stepV * Mathf.Max(1, Mathf.RoundToInt(selB.size.z / _stepV)) : selB.size.z;
 
-        var sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, previewRotation);
-
+        // 3) 회전: 사용자 입력이 기본
         int desiredRot = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f));
-        bool modelLongX = sizeTiles.x >= sizeTiles.y;
-        bool gridLongU = lenU >= lenV;
-        if (bd.tileWidth != bd.tileHeight && modelLongX != gridLongU)
+        var sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
+
+        // (옵션) 보기 좋게 긴축 맞춤
+        if (autoAlignRotationToSelection && bd.tileWidth != bd.tileHeight)
         {
-            desiredRot = (desiredRot + 90) % 360;
-            sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
+            bool modelLongX = sizeTiles.x >= sizeTiles.y;
+            bool gridLongU = lenU >= lenV;
+            if (modelLongX != gridLongU)
+            {
+                desiredRot = (desiredRot + 90) % 360;
+                sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
+            }
         }
 
-        Vector3 targetSize = (_stepU > 0f && _stepV > 0f)
-            ? new Vector3(sizeTiles.x * _stepU * footprintPadding, selB.size.y, sizeTiles.y * _stepV * footprintPadding)
-            : new Vector3(selB.size.x * footprintPadding, selB.size.y, selB.size.z * footprintPadding);
+        // 4) 프리뷰 한 번만 생성 (앵커는 pivotTile 있으면 그 중심, 없으면 selB.center)
+        Vector3 center = selB.center;
+        if (_pivotTile != null)
+        {
+            var pr = _pivotTile.GetComponent<Renderer>();
+            if (pr != null) center = pr.bounds.center;
+        }
 
         previewInstance = new GameObject("BuildingPreviewParent");
         previewInstance.transform.SetPositionAndRotation(
-            new Vector3(selB.center.x, selB.max.y, selB.center.z),
+            new Vector3(center.x, selB.max.y, center.z),
             Quaternion.Euler(0f, desiredRot, 0f)
         );
 
+        // 5) 모델 생성
         modelInstance = Instantiate(prefab, previewInstance.transform);
         modelInstance.name = "BuildingModel";
         modelInstance.SetActive(false);
 
+        // 🔸 원래 프리팹 스케일 저장
+        Vector3 originalScale = modelInstance.transform.localScale;
+
+        // 6) 모델 바운즈
         if (!TryGetModelBounds(modelInstance, out Bounds modelBounds))
         {
             Destroy(previewInstance); previewInstance = null; modelInstance = null;
@@ -445,24 +469,62 @@ public class TileClickInstaller : MonoBehaviour
             return;
         }
 
+        // 7) 타일 크기에 맞춘 스케일
+        Vector3 targetSize = (_stepU > 0f && _stepV > 0f)
+            ? new Vector3(sizeTiles.x * _stepU * footprintPadding, selB.size.y, sizeTiles.y * _stepV * footprintPadding)
+            : new Vector3(selB.size.x * footprintPadding, selB.size.y, selB.size.z * footprintPadding);
+
         if (bd.tileWidth != bd.tileHeight)
         {
-            ResizeToFitUniform(modelInstance, targetSize, modelBounds);
+            // Uniform 스케일 = 원래 스케일 × 보정
+            modelInstance.transform.localScale = originalScale;
+            if (modelBounds.size.x > 0f && modelBounds.size.z > 0f)
+            {
+                float s = Mathf.Min(targetSize.x / modelBounds.size.x, targetSize.z / modelBounds.size.z);
+                modelInstance.transform.localScale = originalScale * s;
+            }
         }
         else
         {
-            if (fillBothAxes) ResizeToFitExact(modelInstance, targetSize);
-            else ResizeToFitUniform(modelInstance, targetSize, modelBounds);
+            if (fillBothAxes)
+            {
+                modelInstance.transform.localScale = originalScale;
+                if (modelBounds.size.x > 0f && modelBounds.size.z > 0f)
+                {
+                    float sx = targetSize.x / modelBounds.size.x;
+                    float sz = targetSize.z / modelBounds.size.z;
+                    float sy = Mathf.Min(sx, sz);
+                    modelInstance.transform.localScale = new Vector3(originalScale.x * sx,
+                                                                     originalScale.y * sy,
+                                                                     originalScale.z * sz);
+                }
+            }
+            else
+            {
+                modelInstance.transform.localScale = originalScale;
+                if (modelBounds.size.x > 0f && modelBounds.size.z > 0f)
+                {
+                    float s = Mathf.Min(targetSize.x / modelBounds.size.x, targetSize.z / modelBounds.size.z);
+                    modelInstance.transform.localScale = originalScale * s;
+                }
+            }
         }
 
+        // 8) 중심/바닥 정렬
         AlignPreviewToSelection(selB);
 
+        // 9) 표시
         modelInstance.SetActive(true);
         buildingInstallPanel?.SetActive(true);
         if (confirmInstallButton) confirmInstallButton.interactable = true;
 
-        previewRotation = desiredRot;
+        // 10) 자동보정 ON이면 최종 회전을 previewRotation에 동기화
+        if (autoAlignRotationToSelection)
+            previewRotation = desiredRot;
+
+        Debug.Log($"[SpawnPreview] prevRot={previewRotation}, desiredRot={desiredRot}, sizeTiles={sizeTiles}, origScale={originalScale}");
     }
+
 
     void ResizeToFitUniform(GameObject building, Vector3 targetSize, Bounds _unused)
     {
