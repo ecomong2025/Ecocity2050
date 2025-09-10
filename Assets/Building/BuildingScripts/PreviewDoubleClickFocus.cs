@@ -323,32 +323,39 @@ public class PreviewDoubleClickFocus : MonoBehaviour
         return null;
     }
 
-    Transform FindActivePreviewRoot()
+    // 기존 FindActivePreviewRoot() 교체
+Transform FindActivePreviewRoot()
+{
+    // 씬 루트부터 순회
+    var scene = gameObject.scene;
+    if (!scene.IsValid()) return null;
+
+    Transform best = null;
+    int bestDepth = -1;
+
+    var roots = scene.GetRootGameObjects();
+    foreach (var go in roots)
+        CollectPreview(go.transform, ref best, ref bestDepth, 0);
+
+    // 설치 완료 후(타일 자식) 프리뷰는 무시
+    if (requirePreviewUnparented && best && best.parent != null)
+        return null;
+
+    return best;
+}
+
+void CollectPreview(Transform t, ref Transform best, ref int bestDepth, int depth)
+{
+    if (!t.gameObject.activeInHierarchy) return;
+    if (t.name == previewRootName)
     {
-        // 현재 씬의 루트부터 순회하며 활성 프리뷰를 찾음 (가장 최근 활성 객체를 선택)
-        var scene = gameObject.scene;
-        if (!scene.IsValid()) return null;
-        Transform latest = null;
-        int bestDepth = -1;
-
-        var roots = scene.GetRootGameObjects();
-        foreach (var go in roots)
-            CollectPreview(go.transform, ref latest, ref bestDepth, 0);
-
-        return latest;
+        // 가장 최근/가장 깊은(대개 가장 나중에 생성된) 것을 선택
+        if (depth > bestDepth) { best = t; bestDepth = depth; }
     }
+    for (int i = 0; i < t.childCount; i++)
+        CollectPreview(t.GetChild(i), ref best, ref bestDepth, depth + 1);
+}
 
-    void CollectPreview(Transform t, ref Transform latest, ref int bestDepth, int depth)
-    {
-        if (!t.gameObject.activeInHierarchy) return;
-        if (t.name == "BuildingPreviewParent")
-        {
-            // 더 깊은(최근 생성) 객체를 우선
-            if (depth > bestDepth) { latest = t; bestDepth = depth; }
-        }
-        for (int i = 0; i < t.childCount; i++)
-            CollectPreview(t.GetChild(i), ref latest, ref bestDepth, depth + 1);
-    }
 
     bool TryGetWorldBounds(Transform root, out Bounds b)
     {
