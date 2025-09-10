@@ -46822,7 +46822,7 @@ MonoBehaviour:
   enableHotkeys: 1
   requirePlacingForHotkeys: 1
   rotateKey: 32
-  autoAlignRotationToSelection: 0
+  autoAlignRotationToSelection: 1
   occupiedMarkerName: __OCCUPIED__
   footprintPadding: 0.98
   fillBothAxes: 1

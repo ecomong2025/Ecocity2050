@@ -201,25 +201,33 @@ public class TileClickInstaller : MonoBehaviour
         TogglePlacementFX(false);
         ClearHighlight();
     }
+    // 드래그 확정(클릭) 직후 미리보기에서 '한 번' 긴축 보정을 허용하기 위한 플래그
+    bool _autoAlignPending = false;
+
 
     void Update()
     {
         bool placing = IsPlacingNow();
-        if (placing != _gridShown)
-            TogglePlacementFX(placing);
+        if (placing != _gridShown) TogglePlacementFX(placing);
 
-        // 🔸 스페이스바만 회전
+        // 드래그 중에는 회전 금지
         if (enableHotkeys && (!requirePlacingForHotkeys || placing))
         {
-            if (Input.GetKeyDown(rotateKey))
+            if (Input.GetKeyDown(rotateKey) && !isDragging)
                 RotatePreview();
         }
 
-        // 설치 중이 아니면 이하 로직 종료
         if (!placing) return;
         if (selectedBuildingPrefab == null) return;
 
-        // 드래그 시작
+        // ⬇⬇⬇ 여기서 한 번만 선언 (스코프 고정) ⬇⬇⬇
+        GameObject hoverTile = null;                 // 마우스 아래 타일(= tileB)
+        List<GameObject> rectTiles = null;           // 후보 타일 집합
+        BuildingData bd = selectedBuildingPrefab.GetComponent<BuildingData>()
+                          ?? selectedBuildingPrefab.GetComponentInChildren<BuildingData>();
+        // ⬆⬆⬆ 이후에는 "재선언 금지" — 값만 대입해서 사용 ⬆⬆⬆
+
+        // ── 드래그 시작 ──
         if (Input.GetMouseButtonDown(0) && TryGetTileUnderMouse(out var tile))
         {
             isDragging = true;
@@ -227,42 +235,64 @@ public class TileClickInstaller : MonoBehaviour
             ClearHighlight();
         }
 
-        // 드래그 중
+        // ── 드래그 중 ──
         if (isDragging)
         {
-            if (TryGetTileUnderMouse(out var tileB))
+            if (TryGetTileUnderMouse(out hoverTile))
             {
-                var bd = selectedBuildingPrefab.GetComponent<BuildingData>() ??
-                         selectedBuildingPrefab.GetComponentInChildren<BuildingData>();
                 if (bd == null) return;
 
+                // 현재 회전에 따른 필요 칸수 (2x1 ↔ 1x2)
                 var size = GetRotatedSize(bd.tileWidth, bd.tileHeight, previewRotation);
 
-                var rectTiles = FindTilesRectangleOnGrid(
-                    dragStartTile, size.x, size.y, tileB,
+                // 드래그 영역 후보
+                rectTiles = FindTilesRectangleOnGrid(
+                    dragStartTile, size.x, size.y, hoverTile,
                     out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
                 );
 
                 _pivotTile = dragStartTile;
-                _dirTile = tileB;
+                _dirTile = hoverTile;
 
-                bool valid = rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles);
+                bool valid = rectTiles != null
+                          && rectTiles.Count == size.x * size.y
+                          && AllTilesFree(rectTiles);
 
                 HighlightTiles(rectTiles, valid);
-
                 if (buildingInstallPanel) buildingInstallPanel.SetActive(true);
                 if (confirmInstallButton) confirmInstallButton.interactable = valid;
 
-                // 드래그 확정
+                // ── 드래그 종료(확정) ──
                 if (Input.GetMouseButtonUp(0))
                 {
                     isDragging = false;
                     if (valid)
                     {
                         currentTiles = rectTiles;
+
+                        // 직사각형이면 드래그 축(U/V)에 맞춰 초기 각도 0°/90°
+                        if (bd != null && bd.tileWidth != bd.tileHeight)
+                        {
+                            Vector3 dragDir = (hoverTile.transform.position - dragStartTile.transform.position);
+                            dragDir.y = 0f;
+                            float du = Mathf.Abs(Vector3.Dot(dragDir.normalized, _gridU.normalized));
+                            float dv = Mathf.Abs(Vector3.Dot(dragDir.normalized, _gridV.normalized));
+                            previewRotation = (du >= dv) ? 0f : 90f; // U=0/180, V=90/270
+                        }
+                        else
+                        {
+                            previewRotation = 0f;
+                        }
+
+                        // 이번 클릭으로 뜨는 미리보기에서 '1회' 긴축 보정 허용
+                        _autoAlignPending = true;
+
                         SpawnPreviewOverSelection(selectedBuildingPrefab);
                     }
-                    else ClearHighlight();
+                    else
+                    {
+                        ClearHighlight();
+                    }
                 }
             }
             else if (Input.GetMouseButtonUp(0))
@@ -276,6 +306,7 @@ public class TileClickInstaller : MonoBehaviour
         if (!IsPlacingNow() && highlightedTiles.Count > 0)
             ClearHighlight();
     }
+
 
     // ─────────────────────────────────────────────────────────────
     void HideSelectionLine() { /* 필요 시 선택 라인 끄는 코드 */ }
@@ -374,45 +405,21 @@ public class TileClickInstaller : MonoBehaviour
 
     void RotatePreview()
     {
-        SFXPlayer.Instance?.PlayClick();
-
         var bd = selectedBuildingPrefab?.GetComponent<BuildingData>() ??
                  selectedBuildingPrefab?.GetComponentInChildren<BuildingData>();
-        if (bd == null) return;
+        if (!bd) return;
 
-        // 직사각형(예: 2x1)은 180°씩, 정사각형(1x1, 2x2)은 90°씩 회전
-        float step = (bd.tileWidth != bd.tileHeight) ? 180f : 90f;
-        previewRotation = Mathf.Repeat(previewRotation + step, 360f);
+        if (bd.tileWidth != bd.tileHeight)
+            previewRotation = Mathf.Repeat(previewRotation + 180f, 360f); // 2x1 등: 180°
+        else
+            previewRotation = Mathf.Repeat(previewRotation + 90f, 360f);  // 정사각형: 90°
 
-        // 회전을 90° 단위로 스냅(부동소수점 오차 방지)
-        int rotIndex = Mathf.RoundToInt(previewRotation / 90f) & 3; // 0,1,2,3
-        previewRotation = rotIndex * 90f;
+        // 사용자 회전에는 긴축 보정 금지
+        _autoAlignPending = false;
 
-        // 현재 회전에서 요구되는 타일 폭/높이(2x1 ↔ 1x2)
-        var size = GetRotatedSize(bd.tileWidth, bd.tileHeight, previewRotation);
-
-        // 가능하면 기존 피벗/드래그 방향을 이용해 타일 집합 재계산 → 프리뷰 재생성
-        if (_pivotTile && _dirTile)
-        {
-            var rectTiles = FindTilesRectangleOnGrid(
-                _pivotTile, size.x, size.y, _dirTile,
-                out _gridU, out _gridV, out _stepU, out _stepV, out _signU, out _signV
-            );
-
-            bool valid = rectTiles != null && rectTiles.Count == size.x * size.y && AllTilesFree(rectTiles);
-            if (valid)
-            {
-                currentTiles = rectTiles;
-                SpawnPreviewOverSelection(selectedBuildingPrefab);
-                if (confirmInstallButton) confirmInstallButton.interactable = true;
-                return;
-            }
-        }
-
-        // 타일 집합을 못 찾았으면, 최소한 프리뷰 모델만 회전해서 보여주기
-        if (previewInstance != null)
-            previewInstance.transform.rotation = Quaternion.Euler(0f, previewRotation, 0f);
+        SpawnPreviewOverSelection(selectedBuildingPrefab);
     }
+
 
 
     void SpawnPreviewOverSelection(GameObject prefab)
@@ -440,17 +447,21 @@ public class TileClickInstaller : MonoBehaviour
         int desiredRot = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f));
         var sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
 
-        // (옵션) 보기 좋게 긴축 맞춤
-        if (autoAlignRotationToSelection && bd.tileWidth != bd.tileHeight)
+        // 🔒 긴축 보정: 클릭할 때마다 1회만
+        if (_autoAlignPending && autoAlignRotationToSelection && bd.tileWidth != bd.tileHeight)
         {
             bool modelLongX = sizeTiles.x >= sizeTiles.y;
             bool gridLongU = lenU >= lenV;
             if (modelLongX != gridLongU)
             {
+                // 긴축 맞춤은 90° 전환(가로↔세로)
                 desiredRot = (desiredRot + 90) % 360;
                 sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
             }
         }
+        // 이번 미리보기에서 보정은 끝 — 다음 클릭 전까진 OFF
+        _autoAlignPending = false;
+
 
         // 4) 프리뷰 한 번만 생성 (앵커는 pivotTile 있으면 그 중심, 없으면 selB.center)
         Vector3 center = selB.center;
