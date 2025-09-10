@@ -901,4 +901,9 @@ public class TileClickInstaller : MonoBehaviour
             }
         return result;
     }
+    // ───── TileClickInstaller 맨 아래쪽에 추가 ─────
+    public Transform CurrentPreviewRoot => previewInstance ? previewInstance.transform : null;
+    public BuildingData CurrentBuildingData
+        => modelInstance ? (modelInstance.GetComponent<BuildingData>() ?? modelInstance.GetComponentInChildren<BuildingData>()) : null;
+
 }

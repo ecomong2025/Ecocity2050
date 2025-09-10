@@ -11403,6 +11403,7 @@ GameObject:
   - component: {fileID: 330585548}
   - component: {fileID: 330585549}
   - component: {fileID: 330585550}
+  - component: {fileID: 330585551}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -11561,6 +11562,36 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 00e298d760029bf4ea9216adb6a1a7c8, type: 2}
+--- !u!114 &330585551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 220c8bb306369514e9c60fc1ce0fdc0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doubleClickThreshold: 0.28
+  maxMoveForClick: 6
+  distanceFactor: 6
+  heightOffsetRatio: 0.25
+  targetFOV: 22
+  lowAngleBias: 0.7
+  lowAngleFactor: 0.45
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  groundClearance: 0.6
+  focusDuration: 0.35
+  returnDuration: 0.28
+  installPanelRef: {fileID: 1247353971}
+  onlyWhileInstallPanelActive: 1
+  cancelKey: 27
+  rightClickToCancel: 1
+  verboseLog: 0
 --- !u!1 &335352331
 GameObject:
   m_ObjectHideFlags: 0

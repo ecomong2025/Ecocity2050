@@ -748,6 +748,9 @@ MonoBehaviour:
   instantCO2Change: 0
   co2PerSecond: 10
   maxCO2Change: 300
+  preferredView: 3
+  cameraDistanceFactorOverride: 0
+  cameraFOVOverride: 0
 --- !u!65 &-8616645298723870958
 BoxCollider:
   m_ObjectHideFlags: 0
