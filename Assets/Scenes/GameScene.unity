@@ -44273,7 +44273,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1421606835}
   - component: {fileID: 1421606836}
-  - component: {fileID: 1421606837}
   m_Layer: 0
   m_Name: BuildingHoverManager
   m_TagString: Untagged
@@ -44310,42 +44309,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contentRoot: {fileID: 856841327}
   overlayName: BuildingLockOverlay
---- !u!114 &1421606837
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1421606834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8c8df5a192d7fb4ab316df7ea1ab70d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disableWhilePlacing: []
-  enableHotkeys: 1
-  requirePlacingForHotkeys: 1
-  rotateKey: 32
-  occupiedMarkerName: __OCCUPIED__
-  footprintPadding: 0.98
-  fillBothAxes: 1
-  tileEdgeChildName: TileEdge
-  tileLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  highlightMat: {fileID: 2100000, guid: c7e2d8f1a5dfb3e47a5a37fe9768b58d, type: 2}
-  highlightValid: {r: 0.2, g: 1, b: 0.4, a: 0.35}
-  highlightInvalid: {r: 1, g: 0.25, b: 0.25, a: 0.35}
-  highlightYOffset: 0.01
-  lineMat: {fileID: 0}
-  gridLinesRoot: {fileID: 0}
-  extraGridLineRenderers: []
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
-  buildingInstallPanel: {fileID: 1247353971}
-  confirmInstallButton: {fileID: 365173976}
-  cancelInstallButton: {fileID: 1228325617}
-  rotateButton: {fileID: 2064277867}
 --- !u!1 &1425803276
 GameObject:
   m_ObjectHideFlags: 0
@@ -46837,7 +46800,7 @@ GameObject:
   - component: {fileID: 1479176197}
   - component: {fileID: 1479176196}
   m_Layer: 0
-  m_Name: GridRoot
+  m_Name: TileRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46865,16 +46828,16 @@ MonoBehaviour:
   tileEdgeChildName: TileEdge
   tileLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
-  highlightMat: {fileID: 0}
+    m_Bits: 64
+  highlightMat: {fileID: 2100000, guid: c7e2d8f1a5dfb3e47a5a37fe9768b58d, type: 2}
   highlightValid: {r: 0.2, g: 1, b: 0.4, a: 0.35}
   highlightInvalid: {r: 1, g: 0.25, b: 0.25, a: 0.35}
   highlightYOffset: 0.01
   lineMat: {fileID: 0}
   gridLinesRoot: {fileID: 0}
   extraGridLineRenderers: []
-  warningPanel: {fileID: 0}
-  confirmButton: {fileID: 0}
+  warningPanel: {fileID: 319495318}
+  confirmButton: {fileID: 365173976}
   buildingInstallPanel: {fileID: 1247353971}
   confirmInstallButton: {fileID: 365173976}
   cancelInstallButton: {fileID: 1228325617}
