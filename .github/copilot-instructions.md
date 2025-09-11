@@ -6,9 +6,9 @@
   - Tags:
     - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Tile, Factory, BikeRoad, EcoPlant, EnergySaving, PublicTransport, tree, bush, school, road, house, apartment, company, hospital, park, EVcharger, RecycleHub, Building
   - Layers:
-    - Default, TransparentFX, Ignore Raycast, Water, UI
+    - Default, TransparentFX, Ignore Raycast, Building, Water, UI, Tile
 - Active game object:
-  - Name: UserMessagePrefab
+  - Name: ResourceCanvas
   - Tag: Untagged
-  - Layer: Default
+  - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

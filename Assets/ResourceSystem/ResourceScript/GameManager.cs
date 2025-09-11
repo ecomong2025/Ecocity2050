@@ -2,6 +2,14 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+
+public struct HUDState
+{
+    public int budget;
+    public int co2;
+    public string satisfaction;
+}
 
 [System.Serializable]
 public class BuildingInfo
@@ -28,6 +36,9 @@ public class BuildingInfo
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
+    // 변경: 이벤트를 클래스 내부로 이동
+    public static event Action<HUDState> OnHUDChanged;
 
     public int budget = 600;
     public int co2 = 0;
@@ -234,7 +245,7 @@ public class GameManager : MonoBehaviour
         int accumulated = 0;
         while (accumulated < maxAmount)
         {
-            yield return new WaitForSeconds(1f); // 5초 간격
+            yield return new WaitForSeconds(3f); // 5초 간격
             int delta = Mathf.Min(perSecond, maxAmount - accumulated);
             co2 += delta;
             accumulated += delta;
@@ -326,6 +337,13 @@ public class GameManager : MonoBehaviour
         }
         if (bubbleController != null)
             bubbleController.ShowBubble(co2);
+
+        // ✅ 프리팹들에 방송
+        OnHUDChanged?.Invoke(new HUDState {
+        budget = budget,
+        co2 = co2,
+        satisfaction = satisfaction
+        });
     }
 
     public string GetSatisfactionLevel()
@@ -349,6 +367,7 @@ public class GameManager : MonoBehaviour
     //퀴즈 관련 버튼 연결 
     public void OpenQuiz()
     {
+        SFXPlayer.Instance.PlayClick();
         gamePanel.SetActive(false);
         quizManager.ResetQuizUI();
         quizMainPanel.SetActive(true);

@@ -73,6 +73,11 @@ public class QuizManager : MonoBehaviour
     private int defaultYear = 2025;
 
     public QuizlimitController quizLimitController; //기회소진 안내 매니저
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip correctClip;
+    public AudioClip incorrectClip;
     public bool IsReady { get; private set; } = false;
 
     private Dictionary<int, int> yearCorrectThreshold = new Dictionary<int, int>
@@ -236,6 +241,8 @@ public class QuizManager : MonoBehaviour
 
     public void OnGameStart()
     {
+        SFXPlayer.Instance.PlayClick();
+
         LoadDailyQuizData(); // 매번 시작할 때 검사
 
         if (dailyQuizCount >= dailyLimit)
@@ -273,11 +280,13 @@ public class QuizManager : MonoBehaviour
 
     public void OnRetryQuiz()
     {
+        SFXPlayer.Instance.PlayClick();
         OnGameStart(); // Retry도 사실상 새 퀴즈 시작
     }
 
     public void OnBackToGame()
     {
+        SFXPlayer.Instance.PlayClick();
         GameManager.Instance.CloseQuiz();
     }
 
@@ -307,6 +316,8 @@ public class QuizManager : MonoBehaviour
 
     void ToggleHint()
     {
+        SFXPlayer.Instance.PlayClick();
+
         isHintVisible = !isHintVisible;
         hintBubble.SetActive(isHintVisible);
 
@@ -318,6 +329,7 @@ public class QuizManager : MonoBehaviour
 
     void OnOptionSelected(int selectedIndex)
     {
+        SFXPlayer.Instance.PlayClick();
         if (isAnswered) return;
         isAnswered = true;
         quizTimer.StopTimer();
@@ -375,6 +387,7 @@ public class QuizManager : MonoBehaviour
 
     void ShowCorrectPanel()
     {
+        SFXPlayer.Instance.PlayCorrect();
         quizPanel.SetActive(false);
         quizResultPanel.SetActive(true);
         correctPanel.SetActive(true);
@@ -383,6 +396,7 @@ public class QuizManager : MonoBehaviour
 
     void ShowIncorrectPanel()
     {
+        SFXPlayer.Instance.PlayIncorrect();
         quizPanel.SetActive(false);
         quizResultPanel.SetActive(true);
         correctPanel.SetActive(false);

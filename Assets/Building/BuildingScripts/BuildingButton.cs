@@ -4,32 +4,17 @@ using UnityEngine.UI;
 public class BuildingButton : MonoBehaviour
 {
     [SerializeField] private string panelNameToClose = "BuildingPanel";
+    [SerializeField] private WarningPanelController warningController; // ★ 여기로 대체!
 
-    private string panelPath = "WarningPanel";
-    private GameObject warningPanel;      
-    private Button confirmButton;         
     private GameObject buildingPrefab;
 
     void Awake()
     {
-        if (warningPanel == null)
+        if (!warningController)
         {
-            var canvas = GetComponentInParent<Canvas>(true);
-            var t = canvas ? canvas.transform.Find(panelPath) : null;
-            if (t) warningPanel = t.gameObject;
+            // 같은 Canvas/계층에서 찾아보기(선택)
+            warningController = FindFirstObjectByType<WarningPanelController>();
         }
-
-        if (confirmButton == null && warningPanel != null)
-            confirmButton = warningPanel.GetComponentInChildren<Button>(true);
-
-        if (confirmButton != null)
-        {
-            confirmButton.onClick.RemoveAllListeners();
-            confirmButton.onClick.AddListener(() => warningPanel.SetActive(false));
-        }
-
-        // 시작은 숨김(선택)
-        if (warningPanel != null) warningPanel.SetActive(false);
     }
 
     void Start()
@@ -39,49 +24,41 @@ public class BuildingButton : MonoBehaviour
         string resourcePath = "Buildings/Prefabs/" + prefabName;
 
         buildingPrefab = Resources.Load<GameObject>(resourcePath);
-
-        if (buildingPrefab == null)
+        if (!buildingPrefab)
         {
             Debug.LogError($"❌ 프리팹을 찾을 수 없습니다: Resources/{resourcePath}.prefab");
             return;
         }
 
-        GetComponent<Button>().onClick.AddListener(OnButtonClick);
-
-        // 확인 버튼 이벤트 연결
-        if (confirmButton != null)
-            confirmButton.onClick.AddListener(() => warningPanel.SetActive(false));
-        
-        if (warningPanel != null)
-            warningPanel.SetActive(false);
+        var btn = GetComponent<Button>();
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(OnButtonClick);
     }
 
     void OnButtonClick()
     {
-        BuildingData data = buildingPrefab.GetComponent<BuildingData>();
-        GameManager gameManager = FindFirstObjectByType<GameManager>();
+        SFXPlayer.Instance?.PlayClick();
 
-        if (data != null && gameManager != null)
+        var data = buildingPrefab.GetComponent<BuildingData>();
+        var gameManager = FindFirstObjectByType<GameManager>();
+
+        // 예산 부족 → 컨트롤러에 Open만 요청
+        if (data && gameManager && gameManager.budget < data.cost)
         {
-            if (gameManager.budget < data.cost)
-            {
-                Debug.Log($"❌ 예산 부족: 현재 예산 {gameManager.budget}, 필요 예산 {data.cost}");
-                if (warningPanel != null)
-                    warningPanel.SetActive(true);   
-                return;
-            }
+            Debug.Log($"❌ 예산 부족: 현재 {gameManager.budget}, 필요 {data.cost}");
+            if (warningController) warningController.Open();
+            else Debug.LogError("WarningPanelController 참조가 없습니다. 인스펙터에 연결하세요.");
+            return;
         }
 
-        if (TileClickInstaller.Instance != null)
+        // 정상 선택
+        if (TileClickInstaller.Instance)
         {
             TileClickInstaller.Instance.SetSelectedBuilding(buildingPrefab);
             Debug.Log($"✅ {buildingPrefab.name} 선택됨");
         }
 
-        GameObject panel = GameObject.Find(panelNameToClose);
-        if (panel != null)
-        {
-            panel.SetActive(false);
-        }
+        var panel = GameObject.Find(panelNameToClose);
+        if (panel) panel.SetActive(false);
     }
 }

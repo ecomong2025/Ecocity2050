@@ -50,7 +50,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d513dc529c955bc43862b5174b946e1b, type: 3}
       propertyPath: m_Name
-      value: BikeLane4
+      value: BikeLane4Prefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d513dc529c955bc43862b5174b946e1b, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d513dc529c955bc43862b5174b946e1b, type: 3}
       propertyPath: m_TagString
@@ -63,6 +67,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d513dc529c955bc43862b5174b946e1b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9085606111660850929}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d513dc529c955bc43862b5174b946e1b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5519779024238975590}
   m_SourcePrefab: {fileID: 100100000, guid: d513dc529c955bc43862b5174b946e1b, type: 3}
 --- !u!1 &4941265349750047277 stripped
 GameObject:
@@ -83,9 +90,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileWidth: 1
   tileHeight: 1
-  cost: 0
+  cost: 20
   maxIncomeAmount: 0
   incomePer5Minutes: 0
-  instantCO2Change: 0
+  instantCO2Change: -10
   co2PerSecond: 0
   maxCO2Change: 0
+--- !u!65 &5519779024238975590
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4941265349750047277}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.019956697, y: 0.01995913, z: 0.0043472247}
+  m_Center: {x: 4.656613e-10, y: -0.0000012177043, z: 0.00018633634}

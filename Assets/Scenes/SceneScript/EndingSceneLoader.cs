@@ -8,16 +8,16 @@ public class EndingSceneLoader : MonoBehaviour
     [Header("Ending Scene Name")]
     public string endingSceneName = "EndingScene";
 
-    [Header("UI ÂüÁ¶")]
+    [Header("UI ì°¸ì¡°")]
     public TMP_Text co2ValueText;          // Co2ValueText
     public TMP_Text satisfactionText;      // SatisfactionText
 
-    [Header("¾À °£ µ¥ÀÌÅÍ °øÀ¯")]
-    public ScenePayload payload;           // Project Ã¢¿¡ ¸¸µç ScenePayload.asset ³Ö±â
+    [Header("ì”¬ ê°„ ë°ì´í„° ê³µìœ ")]
+    public ScenePayload payload;           // Project ì°½ì— ë§Œë“  ScenePayload.asset ë„£ê¸°
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha7)) // ¼ıÀÚ 7 Å°
+        if (Input.GetKeyDown(KeyCode.Alpha7)) // ìˆ«ì 7 í‚¤
         {
             LoadEndingScene();
         }
@@ -25,18 +25,18 @@ public class EndingSceneLoader : MonoBehaviour
 
     public void LoadEndingScene()
     {
-        // ¸¶Áö¸· °ª ½º³À¼¦ ÀúÀå
+        // ë§ˆì§€ë§‰ ê°’ ìŠ¤ëƒ…ìƒ· ì €ì¥
         payload.co2Tons = ParseFloat(co2ValueText.text);
 
-        // ¶óº§ ±×´ë·Î ÀúÀå
+        // ë¼ë²¨ ê·¸ëŒ€ë¡œ ì €ì¥
         payload.citizenSatisfactionLabel = satisfactionText.text.Trim();
 
-        // ÇÊ¿äÇÏ´Ù¸é ¶óº§ ¡æ Á¡¼ö º¯È¯
+        // í•„ìš”í•˜ë‹¤ë©´ ë¼ë²¨ â†’ ì ìˆ˜ ë³€í™˜
         payload.citizenSatisfaction = LabelToScore(payload.citizenSatisfactionLabel);
 
-        payload.aiCityName = ""; // ¿£µù¾À¿¡¼­ GPT API·Î Ã¤¿ìµµ·Ï ³²°ÜµÒ
+        payload.aiCityName = ""; // ì—”ë”©ì”¬ì—ì„œ GPT APIë¡œ ì±„ìš°ë„ë¡ ë‚¨ê²¨ë‘ 
 
-        // ¿£µù ¾À ·Îµå
+        // ì—”ë”© ì”¬ ë¡œë“œ
         SceneManager.LoadScene(endingSceneName);
     }
 
@@ -49,12 +49,12 @@ public class EndingSceneLoader : MonoBehaviour
 
     float LabelToScore(string label)
     {
-        // °£´Ü ¸ÅÇÎ (¿øÇÏ´Â ´ë·Î Á¶Á¤ °¡´É)
-        if (label.Contains("¸Å¿ì ÁÁÀ½")) return 100f;
-        if (label.Contains("ÁÁÀ½")) return 75f;
-        if (label.Contains("º¸Åë")) return 50f;
-        if (label.Contains("³ª»İ")) return 25f;
-        if (label.Contains("¸Å¿ì ³ª»İ")) return 0f;
-        return 50f; // ±âº»°ª
+        // ê°„ë‹¨ ë§¤í•‘ (ì›í•˜ëŠ” ëŒ€ë¡œ ì¡°ì • ê°€ëŠ¥)
+        if (label.Contains("ë§¤ìš° ì¢‹ìŒ")) return 100f;
+        if (label.Contains("ì¢‹ìŒ")) return 75f;
+        if (label.Contains("ë³´í†µ")) return 50f;
+        if (label.Contains("ë‚˜ì¨")) return 25f;
+        if (label.Contains("ë§¤ìš° ë‚˜ì¨")) return 0f;
+        return 50f; // ê¸°ë³¸ê°’
     }
 }

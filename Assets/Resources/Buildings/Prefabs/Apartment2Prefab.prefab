@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 7176688171812939285}
   - component: {fileID: 4934890311973901023}
   - component: {fileID: 8951921541107229197}
-  m_Layer: 0
+  - component: {fileID: -8643689386800413761}
+  - component: {fileID: 6752412800737879634}
+  m_Layer: 3
   m_Name: Apartment2Prefab
   m_TagString: EnergySaving
   m_Icon: {fileID: 0}
@@ -27,13 +29,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6880582033254855434}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071069, y: 0, z: 0, w: 0.7071067}
-  m_LocalPosition: {x: -1.6528612, y: 0, z: 1.4035652}
+  m_LocalRotation: {x: -0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 90}
 --- !u!33 &7176688171812939285
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -120,5 +122,47 @@ MonoBehaviour:
   maxIncomeAmount: 0
   incomePer5Minutes: 0
   instantCO2Change: 0
-  co2PerSecond: 0
+  co2PerSecond: 5
   maxCO2Change: 20
+--- !u!65 &-8643689386800413761
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6880582033254855434}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.021692, y: 0.021682514, z: 0.04418914}
+  m_Center: {x: -0.0007741484, y: 0.00089124497, z: 0.020094931}
+--- !u!65 &6752412800737879634
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6880582033254855434}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.021692, y: 0.021682514, z: 0.04418914}
+  m_Center: {x: -0.0007741484, y: 0.00089124497, z: 0.020094931}

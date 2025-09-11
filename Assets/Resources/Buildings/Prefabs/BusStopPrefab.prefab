@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6529078954601379323}
   - component: {fileID: 3804162994895731767}
   - component: {fileID: 6236489852594654261}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.093
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 4070878071325697691}
   - component: {fileID: 5058155543169971780}
   - component: {fileID: 289636695156927863}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.092
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 76191946142077395}
   - component: {fileID: 42083497477909549}
   - component: {fileID: 6694389627567263157}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.094
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -269,7 +269,7 @@ GameObject:
   - component: {fileID: 5412687850153869901}
   - component: {fileID: 104794497867321410}
   - component: {fileID: 5441203711129384113}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.090
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -355,7 +355,7 @@ GameObject:
   - component: {fileID: 5843768162634811698}
   - component: {fileID: 6716983457252211546}
   - component: {fileID: 7822506761308064319}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.095
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -441,7 +441,7 @@ GameObject:
   - component: {fileID: 2183696309852177381}
   - component: {fileID: 3867767929239353958}
   - component: {fileID: 5931940325155123690}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bus stop FONT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -527,7 +527,7 @@ GameObject:
   - component: {fileID: 4446156774572165353}
   - component: {fileID: 7892637637575728964}
   - component: {fileID: 9150331873156499735}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Curve.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -613,7 +613,7 @@ GameObject:
   - component: {fileID: 4776325778650321785}
   - component: {fileID: 6568166722713632202}
   - component: {fileID: 7495703104071606119}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.089
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -699,7 +699,7 @@ GameObject:
   - component: {fileID: 2253902865889450327}
   - component: {fileID: 5218416974913049039}
   - component: {fileID: 7945754981646534566}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.077
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -785,7 +785,7 @@ GameObject:
   - component: {fileID: 8376403993785203619}
   - component: {fileID: 2483887478822112788}
   - component: {fileID: 6173020060386958291}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.091
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -872,7 +872,9 @@ GameObject:
   - component: {fileID: 7435338384030785252}
   - component: {fileID: 4668921733324712494}
   - component: {fileID: 6899740537510715839}
-  m_Layer: 0
+  - component: {fileID: 1538317469971161896}
+  - component: {fileID: -6441113375354439339}
+  m_Layer: 3
   m_Name: BusStopPrefab
   m_TagString: PublicTransport
   m_Icon: {fileID: 0}
@@ -981,6 +983,48 @@ MonoBehaviour:
   instantCO2Change: 0
   co2PerSecond: 2
   maxCO2Change: 10
+--- !u!65 &1538317469971161896
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6614569475079670779}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.020833556, y: 0.020833546, z: 0.0034576573}
+  m_Center: {x: -0.006927068, y: -0.005054082, z: -0.00051594427}
+--- !u!65 &-6441113375354439339
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6614569475079670779}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.020833556, y: 0.020833546, z: 0.0034576573}
+  m_Center: {x: -0.006927068, y: -0.005054082, z: -0.00051594427}
 --- !u!1 &8362359982581195034
 GameObject:
   m_ObjectHideFlags: 0
@@ -992,7 +1036,7 @@ GameObject:
   - component: {fileID: 823604930833663073}
   - component: {fileID: 5205650425492176093}
   - component: {fileID: 1932546434537243925}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.087
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1078,7 +1122,7 @@ GameObject:
   - component: {fileID: 820714718250734020}
   - component: {fileID: 6789419651813203131}
   - component: {fileID: 6453827397370912141}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.088
   m_TagString: Untagged
   m_Icon: {fileID: 0}

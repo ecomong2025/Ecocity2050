@@ -49,8 +49,6 @@ namespace Ecocity.News
         [Header("Toggles")]
         public bool showOverlay = true;        // 큰 팝업 띄우기
         public bool showBillboard = true;      // 전광판에도 출력하기
-
-        public float holdSeconds = 4f;
         public float fadeSeconds = 0.35f;
 
         string _openaiKey;
@@ -58,6 +56,7 @@ namespace Ecocity.News
 
         public Texture2D lastBillboardTexture; // 마지막 생성된 이미지 저장
         public bool isImageReady = false;      // 이미지 준비 상태
+
 
         // 주제 키워드 리스트와 인덱스 추가
         readonly string[] newsKeywords = { "탄소중립", "재생에너지", "온실가스", "지구온난화", "기후재난" };
@@ -149,6 +148,7 @@ namespace Ecocity.News
         // 전광판 클릭 시 호출: 기존 이미지만 overlay로 보여줌
         public void ShowOverlayWithBillboardImage()
         {
+            SFXPlayer.Instance.PlayClick();
             Texture2D showTexture = lastBillboardTexture;
             if (showTexture == null) return;
 
@@ -156,22 +156,30 @@ namespace Ecocity.News
             // 뉴스 요약(블럽) 1줄로 표시
             if (overlaySummaryText != null && lastNewsPayload != null)
                 overlaySummaryText.text = lastNewsPayload.blurb;
-            StartCoroutine(ShowOverlayRoutine());
+            ShowOverlay(); // 코루틴 대신 즉시 표시
         }
 
-        IEnumerator ShowOverlayRoutine()
+        public void ShowOverlay()
         {
-            if (showOverlay && overlayRoot != null && overlayGroup != null && overlayImage != null)
+            if (overlayRoot != null && overlayGroup != null)
             {
-                if (!overlayRoot.activeSelf) overlayRoot.SetActive(true);
-                overlayGroup.alpha = 0f;
-                overlayImage.texture = lastBillboardTexture;
-
-                yield return StartCoroutine(Fade(true, fadeSeconds, overlayGroup));
-                yield return new WaitForSeconds(holdSeconds);
-                yield return StartCoroutine(Fade(false, fadeSeconds, overlayGroup));
-                overlayRoot.SetActive(false);
+                overlayRoot.SetActive(true);
+                StartCoroutine(Fade(true, fadeSeconds, overlayGroup));
             }
+        }
+
+        public void CloseNewsOverlay()
+        {
+            if (overlayRoot != null && overlayGroup != null)
+            {
+                StartCoroutine(FadeOutAndDeactivate());
+            }
+        }
+
+        private IEnumerator FadeOutAndDeactivate()
+        {
+            yield return StartCoroutine(Fade(false, fadeSeconds, overlayGroup));
+            overlayRoot.SetActive(false);
         }
 
         // -------------------- (A) 네이버 뉴스 --------------------
