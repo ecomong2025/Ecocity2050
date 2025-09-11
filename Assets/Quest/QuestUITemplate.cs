@@ -34,7 +34,6 @@ public class QuestUITemplate : MonoBehaviour
     // 내부 캐시
     private int _cachedYear = -1;
     private readonly string[] _cachedTexts = new string[4];
-    private readonly bool[] _cachedCompleted = new bool[4];
 
     // 🔧 팝업 큐 & 러너 상태
     private readonly Queue<int> _pendingPopupYears = new Queue<int>();
@@ -45,9 +44,6 @@ public class QuestUITemplate : MonoBehaviour
     {
         if (gaugePieces != null && gaugePieces.Length > 0)
             System.Array.Sort(gaugePieces, (a, b) => a.year.CompareTo(b.year));
-
-        for (int i = 0; i < checkMarks.Length; i++)
-            if (checkMarks[i] != null) checkMarks[i].gameObject.SetActive(false);
 
         if (nextYearPanel) nextYearPanel.SetActive(false);
 
@@ -72,10 +68,11 @@ public class QuestUITemplate : MonoBehaviour
                 if (questTexts[i] != null)
                     questTexts[i].text = !string.IsNullOrEmpty(_cachedTexts[i]) ? _cachedTexts[i] : $"Quest{i + 1}";
 
-            // 캐시된 완료 상태를 항상 반영
+            // YearQuestManager의 완료상태만 사용
+            var yqm = FindObjectOfType<YearQuestManager>(true);
+            var completed = yqm != null ? yqm.GetType().GetField("completed", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(yqm) as bool[] : null;
             for (int i = 0; i < checkMarks.Length; i++)
-                if (checkMarks[i] != null)
-                    checkMarks[i].gameObject.SetActive(i < _cachedCompleted.Length && _cachedCompleted[i]);
+                UpdateCheck(i, completed != null && i < completed.Length && completed[i]);
         }
     }
 
@@ -129,10 +126,6 @@ public class QuestUITemplate : MonoBehaviour
         if (!panel) return false;
         if (!panel.activeInHierarchy) return false;
 
-        // CanvasGroup이 있으면 alpha로 가시성 체크
-        var cg = panel.GetComponentInParent<CanvasGroup>();
-        if (cg != null) return cg.alpha > 0.01f;
-
         // active면 열린 것으로 간주
         return true;
     }
@@ -147,7 +140,6 @@ public class QuestUITemplate : MonoBehaviour
         {
             _cachedTexts[i] = (texts != null && i < texts.Length && !string.IsNullOrEmpty(texts[i]))
                                 ? texts[i] : $"Quest{i + 1}";
-            _cachedCompleted[i] = (completed != null && i < completed.Length) && completed[i];
         }
 
         ApplyYearText(year);
@@ -158,18 +150,14 @@ public class QuestUITemplate : MonoBehaviour
             if (questTexts[i] != null)
                 questTexts[i].text = _cachedTexts[i];
 
-            if (checkMarks != null && i < checkMarks.Length && checkMarks[i] != null)
-                checkMarks[i].gameObject.SetActive(_cachedCompleted[i]);
+            // YearQuestManager의 완료상태만 사용
+            UpdateCheck(i, completed != null && i < completed.Length && completed[i]);
         }
     }
 
     public void UpdateCheck(int index, bool on)
     {
         if (index < 0 || index >= checkMarks.Length) return;
-
-        // 캐시에도 반영
-        if (index < _cachedCompleted.Length)
-            _cachedCompleted[index] = on;
 
         var img = checkMarks[index];
         if (img == null)
@@ -178,28 +166,7 @@ public class QuestUITemplate : MonoBehaviour
             return;
         }
 
-        // 체크 이미지 부모 오브젝트가 비활성화되어 있으면 활성화
-        var parent = img.transform.parent;
-        if (parent && !parent.gameObject.activeSelf)
-            parent.gameObject.SetActive(true);
-
-        // 체크 이미지가 비활성화되어 있으면 활성화
-        if (!img.gameObject.activeSelf)
-            img.gameObject.SetActive(true);
-
-        img.enabled = true;
-        var c = img.color; c.a = 1f; img.color = c;
-        img.transform.SetAsLastSibling();
-
-        var cg = img.GetComponentInParent<CanvasGroup>();
-        if (cg && cg.alpha < 1f) cg.alpha = 1f;
-
-        var rt = img.rectTransform;
-        if (rt.rect.width < 4f || rt.rect.height < 4f)
-            rt.sizeDelta = new Vector2(32, 32);
-
-        // 체크 표시 상태 반영
-        img.gameObject.SetActive(on);
+        img.gameObject.SetActive(on); // 체크 표시를 SetActive로 관리
     }
 
     /// <summary>
