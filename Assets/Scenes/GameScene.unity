@@ -16030,8 +16030,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[1]'
-      value: "\uC2DC\uBBFC \uB9CC\uC871\uB3C4 \uC88B\uC74C \uC774\uC0C1 10\uBD84
-        \uC720\uC9C0"
+      value: "\uC2DC\uBBFC \uB9CC\uC871\uB3C4 \uC88B\uC74C \uC774\uC0C1 5\uBD84 \uC720\uC9C0"
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[2]'
