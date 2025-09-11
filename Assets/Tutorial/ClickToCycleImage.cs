@@ -5,6 +5,14 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using System.Collections;
 
+[System.Serializable]
+public class TutorialPage
+{
+    public Sprite sprite;          // 해당 페이지 이미지
+    public Vector2 skipButtonPos;  // Skip 버튼 위치
+    public bool skipButtonActive;  // 버튼 활성화 여부
+}
+
 public class ClickToCycleImage : MonoBehaviour
 {
     [Header("Target (둘 중 하나만 지정)")]
@@ -12,7 +20,7 @@ public class ClickToCycleImage : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer; // 2D Sprite용
 
     [Header("Sprites")]
-    [SerializeField] private Sprite[] sprites;
+    [SerializeField] private TutorialPage[] pages;          // 기존 sprites 대신 TutorialPage 사용
 
     [Header("Options")]
     [SerializeField] private bool loop = true;                     // 마지막 다음에 처음으로
@@ -23,6 +31,9 @@ public class ClickToCycleImage : MonoBehaviour
     [SerializeField] private UnityEvent onFinished;                // 끝났을 때 실행(선택)
     [SerializeField] private string nextSceneName = "";            // 씬 이름 비우면 미사용
     [SerializeField, Range(0f, 3f)] private float sceneDelay = 0f; // 씬 전환 지연
+
+    [Header("UI References")]
+    [SerializeField] private RectTransform skipButton; // Skip 버튼
 
     private int index = 0;
     private bool isFading = false;
@@ -37,18 +48,16 @@ public class ClickToCycleImage : MonoBehaviour
     {
         // 타겟 유효성 검사
         if ((uiImage == null && spriteRenderer == null) || (uiImage != null && spriteRenderer != null))
-        {
             Debug.LogWarning("[ClickToCycleImage] uiImage 또는 spriteRenderer 중 딱 하나만 지정하세요.");
-        }
 
-        if (sprites == null || sprites.Length == 0)
+        if (pages == null || pages.Length == 0)
         {
-            Debug.LogWarning("[ClickToCycleImage] sprites가 비어있습니다.");
+            Debug.LogWarning("[ClickToCycleImage] pages가 비어있습니다.");
             return;
         }
 
-        // 시작 스프라이트 세팅
-        ApplySprite(sprites[0], instant: true);
+        // 시작 페이지 세팅
+        ApplyPage(0);
 
         uiRect = uiImage ? uiImage.rectTransform : null;
         mainCam = Camera.main;
@@ -59,7 +68,7 @@ public class ClickToCycleImage : MonoBehaviour
 
     void Update()
     {
-        if (sprites == null || sprites.Length == 0) return;
+        if (pages == null || pages.Length == 0) return;
 
         if (GetClickedThisFrame())
         {
@@ -75,10 +84,24 @@ public class ClickToCycleImage : MonoBehaviour
                        (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
         if (!pressed) return false;
 
+        // UI 버튼 위 클릭이면 Next() 호출 방지
+        if (skipButton != null)
+        {
+            if (skipButton != null)
+            {
+                Vector2 clickPos = (Input.touchCount > 0) ? (Vector2)Input.GetTouch(0).position : (Vector2)Input.mousePosition;
+                if (RectTransformUtility.RectangleContainsScreenPoint(skipButton, clickPos))
+                    return false;
+            }
+
+            // 클릭 허용
+            return true;
+        }
+
         if (clickAnywhere)
         {
-            SFXPlayer.Instance.PlayClick();  // 클릭 효과음 실행
-            return true;                      // 그다음 함수 종료
+            // SFXPlayer.Instance.PlayClick();  // 클릭 효과음 실행 (필요 시 활성화)
+            return true;
         }
 
         // 특정 대상만 클릭해야 하는 경우
@@ -104,12 +127,12 @@ public class ClickToCycleImage : MonoBehaviour
 
     public void Next()
     {
-        if (isFading || sprites == null || sprites.Length == 0) return;
+        if (isFading || pages == null || pages.Length == 0) return;
 
         int next = index + 1;
 
         // 마지막 다음
-        if (next >= sprites.Length)
+        if (next >= pages.Length)
         {
             if (!loop)
             {
@@ -131,24 +154,35 @@ public class ClickToCycleImage : MonoBehaviour
         index = next;
 
         if (fadeDuration > 0f && (uiImage != null || spriteRenderer != null))
-            StartCoroutine(FadeTo(sprites[index], fadeDuration));
+            StartCoroutine(FadeTo(pages[index].sprite, fadeDuration));
         else
-            ApplySprite(sprites[index], instant: true);
+            ApplyPage(index);
     }
 
-    private void ApplySprite(Sprite s, bool instant = false)
+    /// <summary>이미지 적용 + 버튼 위치/활성화 설정</summary>
+    private void ApplyPage(int idx)
     {
+        var page = pages[idx];
+
+        // 이미지 적용
         if (uiImage != null)
         {
-            uiImage.sprite = s;
-            if (instant && fadeDuration > 0f)
+            uiImage.sprite = page.sprite;
+            if (fadeDuration > 0f)
                 uiImage.color = new Color(uiBaseColor.r, uiBaseColor.g, uiBaseColor.b, 1f);
         }
         else if (spriteRenderer != null)
         {
-            spriteRenderer.sprite = s;
-            if (instant && fadeDuration > 0f)
+            spriteRenderer.sprite = page.sprite;
+            if (fadeDuration > 0f)
                 spriteRenderer.color = new Color(spriteBaseColor.r, spriteBaseColor.g, spriteBaseColor.b, 1f);
+        }
+
+        // Skip 버튼 위치 및 활성화
+        if (skipButton != null)
+        {
+            skipButton.anchoredPosition = page.skipButtonPos;
+            skipButton.gameObject.SetActive(page.skipButtonActive);
         }
     }
 
@@ -206,12 +240,21 @@ public class ClickToCycleImage : MonoBehaviour
         }
 
         isFading = false;
-    }
 
+        // 페이지 적용 후 버튼 위치 및 활성화 갱신
+        ApplyPage(index);
+    }
 
     private IEnumerator LoadSceneAfterDelay(string sceneName, float delay)
     {
         if (delay > 0f) yield return new WaitForSeconds(delay);
         SceneManager.LoadScene(sceneName);
+    }
+
+    /// <summary>Skip 버튼 클릭 이벤트</summary>
+    public void OnSkip()
+    {
+        if (!string.IsNullOrEmpty(nextSceneName))
+            SceneManager.LoadScene(nextSceneName);
     }
 }
