@@ -10676,6 +10676,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   doubleClickThreshold: 0.28
   maxMoveForClick: 6
+  zoomMinFactor: 0.35
+  zoomMaxFactor: 2
+  zoomSpeedMul: 1
   distanceFactor: 6
   heightOffsetRatio: 0.25
   targetFOV: 22

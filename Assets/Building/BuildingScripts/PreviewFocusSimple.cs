@@ -8,6 +8,13 @@ public class PreviewFocusSimple : MonoBehaviour
     [Header("더블클릭")]
     public float doubleClickThreshold = 0.28f;
     public float maxMoveForClick = 6f;
+    [Header("줌 범위 확장(카메라스케일러 제어)")]
+    [Tooltip("목표 거리 대비 최소 줌 배수 (작을수록 더 가까이)")]
+    public float zoomMinFactor = 0.35f;   // 예: 0.35 → 더 가까이
+    [Tooltip("목표 거리 대비 최대 줌 배수 (클수록 더 멀리)")]
+    public float zoomMaxFactor = 3.0f;    // 예: 3.0  → 더 멀리
+    [Tooltip("스크롤 민감도 배수(1=그대로)")]
+    public float zoomSpeedMul = 1.0f;     // 예: 1.25 → 스크롤 더 빠르게
 
     [Header("프레이밍 기본값")]
     public float distanceFactor = 1.4f;
@@ -132,6 +139,15 @@ public class PreviewFocusSimple : MonoBehaviour
         float radius = Mathf.Max(b.extents.x, b.extents.y, b.extents.z);
         float df = (bd.cameraDistanceFactorOverride > 0f) ? bd.cameraDistanceFactorOverride : distanceFactor;
         float dist = Mathf.Max(1f, radius * df);
+        // 줌 범위/속도 확장 (CameraScaler 수정 없이 런타임 제어)
+        var scaler = FindObjectOfType<CameraScaler>();
+        if (scaler)
+        {
+            scaler.minDistance = Mathf.Min(scaler.minDistance, dist * zoomMinFactor);
+            scaler.maxDistance = Mathf.Max(scaler.maxDistance, dist * zoomMaxFactor);
+            scaler.zoomSpeed = Mathf.Max(0.01f, scaler.zoomSpeed * zoomSpeedMul);
+        }
+
         float fovTarget = (bd.cameraFOVOverride > 0f) ? bd.cameraFOVOverride
                           : (targetFOV > 0f ? targetFOV : _cam.fieldOfView);
 
