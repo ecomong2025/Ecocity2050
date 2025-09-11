@@ -45,7 +45,7 @@ public class EndingSceneController : MonoBehaviour
 
         // 표기 포맷
         string co2ValueMsg = $"{co2Tons:0.0} t (max {CO2_MAX:0}) • {co2PercentOfMax:0.0}% of max";
-        string co2ImprovedMsg = $"{co2ImprovedPercent:0.0}% 개선";
+        string co2ImprovedMsg = $"{co2ImprovedPercent:0.0}%";
 
         // 바인딩
         foreach (var t in co2Texts) if (t != null) t.text = co2ValueMsg;
@@ -69,7 +69,7 @@ public class EndingSceneController : MonoBehaviour
         float satisfactionImprovedPercent = Mathf.Clamp01(score01) * 100f;      // 0%~100% (높을수록 좋음)
 
         string satisfactionMsg = $"{label}";
-        string satisfactionImprovedMsg = $"{satisfactionImprovedPercent:0.0}% 개선";
+        string satisfactionImprovedMsg = $"{satisfactionImprovedPercent:0.0}%";
 
         foreach (var t in satisfactionTexts) if (t != null) t.text = satisfactionMsg;
         foreach (var t in satisfactionImprovedTexts) if (t != null) t.text = satisfactionImprovedMsg;
