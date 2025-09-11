@@ -20,7 +20,7 @@ public class KakaoStartManager : MonoBehaviour
 
     private IEnumerator GetKakaoAuthUrl()
     {
-        string backendUrl = "https://ecocity2050-be.onrender.com/api/users/kakao/login/";
+        string backendUrl = "http://127.0.0.1:8000/users/kakao/unity/login/";
 
         using (UnityWebRequest www = UnityWebRequest.Get(backendUrl))
         {
