@@ -99,8 +99,7 @@ public class ClickToCycleImage : MonoBehaviour
         }
 
         if (clickAnywhere)
-        {
-            // SFXPlayer.Instance.PlayClick();  // 클릭 효과음 실행 (필요 시 활성화)
+        {  // 클릭 효과음 실행 (필요 시 활성화)
             return true;
         }
 
@@ -128,6 +127,9 @@ public class ClickToCycleImage : MonoBehaviour
     public void Next()
     {
         if (isFading || pages == null || pages.Length == 0) return;
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
 
         int next = index + 1;
 

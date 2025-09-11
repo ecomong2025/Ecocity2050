@@ -121,11 +121,17 @@ public class SettingManager : MonoBehaviour
         string tutorialSceneName = "TutorialScene";
         try { SceneManager.LoadScene(tutorialSceneName); }
         catch { Debug.LogError("튜토리얼 씬을 찾을 수 없습니다."); }
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
     public void Logout()
     {
         Debug.Log("로그아웃 버튼 클릭됨");
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
     // ===== 패널 열기/닫기 =====
@@ -135,6 +141,9 @@ public class SettingManager : MonoBehaviour
         if (animCo != null) StopCoroutine(animCo);
         settingPanel.SetActive(true);
         animCo = StartCoroutine(AnimatePanel(true));
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
     public void CloseSetting()
@@ -142,6 +151,9 @@ public class SettingManager : MonoBehaviour
         if (settingPanel == null) return;
         if (animCo != null) StopCoroutine(animCo);
         animCo = StartCoroutine(AnimatePanel(false));
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
     IEnumerator AnimatePanel(bool open)

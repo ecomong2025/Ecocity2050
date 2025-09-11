@@ -7,6 +7,8 @@ public class SkipBtn : MonoBehaviour
 
     public void OnSkip()
     {
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
         SceneManager.LoadScene(nextSceneName);
     }
 }
