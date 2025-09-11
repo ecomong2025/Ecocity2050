@@ -60,29 +60,23 @@ public class PreviewFocusSimple : MonoBehaviour
 
     void Update()
     {
-        if (onlyWhileInstallPanelActive)
-        {
-            if (!installPanelRef || !installPanelRef.activeInHierarchy) return;
-        }
+        // 설치 패널이 지정된 경우에만 게이트
+        if (onlyWhileInstallPanelActive && installPanelRef && !installPanelRef.activeInHierarchy)
+            return;
+
+        // 런타임에 한 번 더 찾아보기
+        if (_installer == null) _installer = FindObjectOfType<TileClickInstaller>();
         if (_installer == null) return;
 
-        // 프리뷰 사라지면 자동 복귀
-        if (_isFocused && _installer.CurrentPreviewRoot == null)
-        {
-            StartReturn();
-            return;
-        }
+        // 프리뷰 없어지면 복귀
+        if (_isFocused && _installer.CurrentPreviewRoot == null) { StartReturn(); return; }
 
-        // 입력
         HandleMouse();
 
         if (_isFocused && Time.unscaledTime >= _cancelIgnoreUntil)
-        {
             if (Input.GetKeyDown(cancelKey) || (rightClickToCancel && Input.GetMouseButtonDown(1)))
                 StartReturn();
-        }
     }
-
     void HandleMouse()
     {
         if (IsPointerOnUI()) return;
@@ -97,22 +91,42 @@ public class PreviewFocusSimple : MonoBehaviour
         {
             if (!_maybeClick) return;
             _maybeClick = false;
-            if (Vector2.Distance(Input.mousePosition, _pressPos) > maxMoveForClick) return;
+
+            // DPI 보정된 허용 픽셀
+            float tolPx = maxMoveForClick;
+            if (Screen.dpi > 0f) tolPx = Mathf.Max(maxMoveForClick, 0.08f * Screen.dpi); // 약 2mm
+            if (((Vector2)Input.mousePosition - _pressPos).sqrMagnitude > tolPx * tolPx) return;
 
             float now = Time.unscaledTime;
-            bool isDouble = (now - _lastClickTime) <= doubleClickThreshold;
+
+            // macOS는 약간 여유
+#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+        float dc = Mathf.Max(doubleClickThreshold, 0.35f);
+#else
+            float dc = doubleClickThreshold;
+#endif
+
+            bool isDouble = (now - _lastClickTime) <= dc;
             _lastClickTime = now;
             if (!isDouble) return;
 
-            // 더블클릭: "현재 프리뷰" 기준으로 바로 포커스
             var root = _installer.CurrentPreviewRoot;
             var bd = _installer.CurrentBuildingData;
             if (!root || !bd) return;
 
             if (!TryGetWorldBounds(root, out Bounds b)) return;
-
             StartFocus(root, b, bd);
         }
+    }
+
+    bool IsPointerOnUI()
+    {
+        if (!EventSystem.current) return false;
+#if ENABLE_INPUT_SYSTEM
+    return EventSystem.current.IsPointerOverGameObject(-1); // 마우스 포인터ID=-1
+#else
+        return EventSystem.current.IsPointerOverGameObject();
+#endif
     }
 
     void StartFocus(Transform root, Bounds b, BuildingData bd)
@@ -219,15 +233,6 @@ public class PreviewFocusSimple : MonoBehaviour
         onComplete?.Invoke();
     }
 
-    // ───── helpers ─────
-    bool IsPointerOnUI()
-    {
-        if (!EventSystem.current) return false;
-        if (EventSystem.current.IsPointerOverGameObject()) return true;
-        for (int i = 0; i < Input.touchCount; i++)
-            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(i).fingerId)) return true;
-        return false;
-    }
 
     bool TryGetWorldBounds(Transform root, out Bounds b)
     {

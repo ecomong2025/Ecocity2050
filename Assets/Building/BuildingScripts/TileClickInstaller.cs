@@ -307,7 +307,6 @@ public class TileClickInstaller : MonoBehaviour
             ClearHighlight();
     }
 
-
     // ─────────────────────────────────────────────────────────────
     void HideSelectionLine() { /* 필요 시 선택 라인 끄는 코드 */ }
 
