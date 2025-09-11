@@ -6,7 +6,7 @@ public class WarningPanelController : MonoBehaviour
 {
     [Header("Panel")]
     [SerializeField] private GameObject warningPanel;          // 이 스크립트가 관리할 패널
-    [SerializeField] private Button confirmButton;             // 선택: 확인 버튼(없으면 자동 탐색)
+    [SerializeField] private Button confirmButton;             // 확인 버튼(없으면 자동 탐색)
 
     [Header("Block Targets")]
     [Tooltip("WarningPanel 열릴 때 클릭/레이캐스트를 잠글 UI 루트들")]
