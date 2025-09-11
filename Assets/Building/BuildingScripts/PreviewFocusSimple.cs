@@ -65,6 +65,7 @@ public class PreviewFocusSimple : MonoBehaviour
             if (!installPanelRef || !installPanelRef.activeInHierarchy) return;
         }
         if (_installer == null) return;
+        if (Time.unscaledTime < _cancelIgnoreUntil) return; // ← 더블클릭 직후 잠깐(쿨다운) 입력 막기
 
         // 프리뷰 사라지면 자동 복귀
         if (_isFocused && _installer.CurrentPreviewRoot == null)

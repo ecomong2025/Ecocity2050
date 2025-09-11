@@ -10690,8 +10690,8 @@ MonoBehaviour:
   installPanelRef: {fileID: 1247353971}
   onlyWhileInstallPanelActive: 1
   cancelKey: 27
-  rightClickToCancel: 1
-  verboseLog: 0
+  rightClickToCancel: 0
+  verboseLog: 1
 --- !u!1 &335352331
 GameObject:
   m_ObjectHideFlags: 0
@@ -30183,6 +30183,62 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1035392418}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1036608130
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1036608131}
+  - component: {fileID: 1036608132}
+  m_Layer: 0
+  m_Name: CameraScaler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1036608131
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036608130}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.31598538, y: 0.3596048, z: -0.13088542, w: 0.8681629}
+  m_LocalPosition: {x: -3.5, y: 4.5, z: -3.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1036608132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036608130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f273b90a87224efe8eda709c5e4c799, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamera: {fileID: 330585545}
+  mapSize: 5
+  uiBlockers: []
+  zoomSpeed: 3
+  minDistance: 5
+  maxDistance: 10
+  mapCenter: {x: 0, y: 0, z: 0}
+  panSpeed: 0.0005
+  yawDragSpeed: 0.2
+  yawKeySpeed: 60
+  limitX: {x: -5, y: 5}
+  limitZ: {x: -5, y: 5}
 --- !u!1 &1036710545
 GameObject:
   m_ObjectHideFlags: 0
@@ -60611,7 +60667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51e558da2dc52eb419f52933ca2d217c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraScaler: {fileID: 2096422115}
+  cameraScaler: {fileID: 0}
   yearTileMaps:
   - year: 2025
     tileNumber: 7
@@ -63176,69 +63232,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2089730195}
   m_CullTransparentMesh: 1
---- !u!1 &2096422113
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2096422114}
-  - component: {fileID: 2096422115}
-  m_Layer: 0
-  m_Name: CameraScaler
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2096422114
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2096422113}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.3921022, y: 2.2730222, z: -5.0829244}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2096422115
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2096422113}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f273b90a87224efe8eda709c5e4c799, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainCamera: {fileID: 330585545}
-  mapSize: 5
-  uiBlockers:
-  - {fileID: 370156117}
-  - {fileID: 1519766997}
-  - {fileID: 1338715402}
-  - {fileID: 849468537}
-  - {fileID: 687768036}
-  - {fileID: 430474308}
-  - {fileID: 1242852569}
-  zoomSpeed: 5
-  minDistance: 5
-  maxDistance: 20
-  mapCenter: {x: 0, y: 0, z: 0}
-  panSpeed: 5
-  yawDragSpeed: 0.2
-  yawKeySpeed: 60
-  limitX: {x: -15, y: 15}
-  limitZ: {x: -15, y: 15}
 --- !u!1 &2096917681
 GameObject:
   m_ObjectHideFlags: 0
@@ -65424,7 +65417,7 @@ SceneRoots:
   - {fileID: 1330993325}
   - {fileID: 1132717832}
   - {fileID: 330585546}
-  - {fileID: 2096422114}
+  - {fileID: 1036608131}
   - {fileID: 410087041}
   - {fileID: 759700956}
   - {fileID: 1706812365}
