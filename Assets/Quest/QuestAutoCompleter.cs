@@ -108,15 +108,47 @@ public class QuestAutoCompleter : MonoBehaviour
         }
         if (IsZeroEmission(data) && currentYear == 2025) TryComplete(currentYear, QUEST_SATISFACTION);
         if (prefab.CompareTag("BikeRoad") && currentYear == 2030) TryComplete(currentYear, QUEST_BUILDING);
-        if (prefab.CompareTag("EnergySaving") && currentYear == 2035) TryComplete(currentYear, QUEST_BUILDING);
-        if (prefab.CompareTag("PublicTransport") && currentYear == 2040) TryComplete(currentYear, QUEST_BUILDING);
+        if (prefab.CompareTag("PublicTransport") && currentYear == 2035) TryComplete(currentYear, QUEST_BUILDING);
+        if (prefab.CompareTag("EnergySaving") && currentYear == 2040) TryComplete(currentYear, QUEST_BUILDING);
         if ((prefab.CompareTag("EcoPlant") || prefab.name.Contains("발전소")) && currentYear == 2045) TryComplete(currentYear, QUEST_BUILDING);
 
         // 프리팹의 핵심 이름 (예: "ParkPrefab(Clone)" -> "park")
         string prefabCore = GetPrefabCoreName(prefab);
 
-        // --- 2040: 조언이 등록된 이후, 조언 원문에 설치된 프리팹이 언급되어 있으면 완료 ---
+        // --- 2040: 예산 상담 + 수익성 건물 설치: 조언 이후 설치된 프리팹명이 조언 원문에 포함되면 완료 ---
         if (currentYear == 2040)
+        {
+            if (data != null && data.incomePer5Minutes > 0 && gpt != null && gpt.IsChatCompletedForYear(2040))
+            {
+                if (_pendingAdvice.TryGetValue(currentYear, out var budgetPending) && budgetPending.Count > 0)
+                {
+                    foreach (var advice in budgetPending.ToArray())
+                    {
+                        if (string.IsNullOrWhiteSpace(advice)) continue;
+                        var adviceLower = advice.ToLower();
+
+                        if (!string.IsNullOrEmpty(prefabCore) && adviceLower.Contains(prefabCore))
+                        {
+                            TryComplete(currentYear, QUEST_CHAT);
+                            Debug.Log($"[QuestAutoCompleter] 2040: 조언 매칭(원문 포함). prefabCore='{prefabCore}' advice='{advice}' prefab='{prefab.name}'");
+                            budgetPending.Remove(advice);
+                            return;
+                        }
+                    }
+                    // 등록된 조언은 있으나 매칭된 것이 없음 -> 미완료
+                }
+                else
+                {
+                    // 조언 원문이 없으면 상담 플래그 + 수익성 건물 설치만으로 완료
+                    TryComplete(currentYear, QUEST_CHAT);
+                    Debug.Log($"[QuestAutoCompleter] 2045: 상담 플래그 + 수익성 건물 설치로 완료: {prefab.name}");
+                    return;
+                }
+            }
+        }
+
+        // --- 2045: 조언이 등록된 이후, 조언 원문에 설치된 프리팹이 언급되어 있으면 완료 ---
+        if (currentYear == 2045)
         {
             if (_pendingAdvice.TryGetValue(currentYear, out var pending) && pending.Count > 0)
             {
@@ -132,38 +164,6 @@ public class QuestAutoCompleter : MonoBehaviour
                         pending.Remove(advice);
                         return;
                     }
-                }
-            }
-        }
-
-        // --- 2045: 예산 상담 + 수익성 건물 설치: 조언 이후 설치된 프리팹명이 조언 원문에 포함되면 완료 ---
-        if (currentYear == 2045)
-        {
-            if (data != null && data.incomePer5Minutes > 0 && gpt != null && gpt.IsChatCompletedForYear(2045))
-            {
-                if (_pendingAdvice.TryGetValue(currentYear, out var budgetPending) && budgetPending.Count > 0)
-                {
-                    foreach (var advice in budgetPending.ToArray())
-                    {
-                        if (string.IsNullOrWhiteSpace(advice)) continue;
-                        var adviceLower = advice.ToLower();
-
-                        if (!string.IsNullOrEmpty(prefabCore) && adviceLower.Contains(prefabCore))
-                        {
-                            TryComplete(currentYear, QUEST_CHAT);
-                            Debug.Log($"[QuestAutoCompleter] 2045: 조언 매칭(원문 포함). prefabCore='{prefabCore}' advice='{advice}' prefab='{prefab.name}'");
-                            budgetPending.Remove(advice);
-                            return;
-                        }
-                    }
-                    // 등록된 조언은 있으나 매칭된 것이 없음 -> 미완료
-                }
-                else
-                {
-                    // 조언 원문이 없으면 상담 플래그 + 수익성 건물 설치만으로 완료
-                    TryComplete(currentYear, QUEST_CHAT);
-                    Debug.Log($"[QuestAutoCompleter] 2045: 상담 플래그 + 수익성 건물 설치로 완료: {prefab.name}");
-                    return;
                 }
             }
         }

@@ -124,13 +124,14 @@ public class GPTChatManager : MonoBehaviour
 현재 연도: {currentYear}년
 - 연도가 바뀔 때마다 시대적 상황(기술, 건물, 환경, 교통 등)을 고려한 전략 조언 제공
 - 아래는 연도별 설치 가능한 건물 목록입니다.
+- Road1~4, Shrub1~4, BikeLane1~4는 각각 다른 디자인의 동일 기능 건물입니다. 하나만 설치해도 효과는 같습니다.
 
 [2025]
 주거지: House (예산 -50 / 탄소 +10/5초, 최대 +30)
 수입원: Factory (예산 -150, 수익 +30/5분, 최대 +300 / 탄소 +10/5초, 최대 +300)
 친환경 공간: Park (예산 -100 / 즉시 -50, 이후 -10/5초, 최대 -200)
 나무: Tree (예산 -10 / 즉시 -20)
-교통수단: Road/Road2/Road3/Road4 (예산 -20 / 탄소 +10/5초, 최대 +30)
+교통수단: Road1/Road2/Road3/Road4 (예산 -20 / 탄소 +10/5초, 최대 +30)
 
 [2030]
 주거지: Apartment (예산 -80 / 탄소 +10/5초, 최대 +50)
@@ -155,10 +156,10 @@ public class GPTChatManager : MonoBehaviour
 
 [2045]
 주거지: Apartment3 (예산 -110 / 탄소 +5/5초, 최대 +15)
-수입원: School (예산 -200, 수익 없음 / 탄소 +5/5초, 최대 +50)
-친환경 공간: WindPlant (예산 -350 / 즉시 -50, 이후 -10/5초, 최대 -250)
+친환경 공간: WindPlant (예산 -350 / 즉시 -50, 이후 -10/5초, 최대 -250) (수입원 아님)
 나무: Tree3 (예산 -10 / 즉시 -20)
 교통수단: EVCharger (예산 -60 / 즉시 -20)
+기타: School (예산 -200, 수익 없음 / 탄소 +5/5초, 최대 +50)
 
 역할과 조언 방식:
 1. 현재 설치된 건물들을 분석하여 도시 발전 상태 평가
@@ -349,7 +350,33 @@ public class GPTChatManager : MonoBehaviour
                 break;
 
             case 2040:
-                // 2040년: 봇의 조언과 관련된 건물 설치 체크는 QuestAutoCompleter에서 처리하도록 변경
+                // 2040년: 예산 상담 -> 관련 수익성 건물 키워드 등록하고, 상담 플래그만 세워둠 (건물 설치 시 QuestAutoCompleter가 처리)
+                string[] budgetKeywords = { "예산", "돈", "수익", "재정", "비용", "경제", "수입", "자금" };
+                string combinedText2040 = (userMessage + " " + botMessage).ToLower();
+                var foundBudget = new System.Collections.Generic.List<string>();
+
+                foreach (string keyword in budgetKeywords)
+                {
+                    if (combinedText2040.Contains(keyword.ToLower()))
+                        foundBudget.Add(keyword);
+                }
+
+                if (foundBudget.Count > 0)
+                {
+                    var qa = UnityEngine.Object.FindObjectOfType<QuestAutoCompleter>();
+                    if (qa != null)
+                        // 예산 상담도 '조언 원문'을 저장
+                        qa.RegisterChatAdvice(currentYear, botMessage);
+
+                    // 상담 상태는 내부 플래그만 표시. YearQuestManager에 바로 알리지 않음.
+                    yearChatCompleted[currentYear] = true;
+
+                    Debug.Log($"[GPTChatManager] 2040년 - 예산 상담 감지 및 원문 등록(수익성 건물 설치 대기): {botMessage}");
+                }
+                break;
+            
+            case 2045:
+                // 2045년: 봇의 조언과 관련된 건물 설치 체크는 QuestAutoCompleter에서 처리하도록 변경
                 // 여기서는 조언이 포함된 대화인지만 확인하고, QuestAutoCompleter에 조언 키워드 등록 (대화만으로는 퀘스트 완료하지 않음)
                 string[] adviceKeywords = { "공원", "친환경", "상업", "건설", "설치", "추천", "제안", "에너지", "충전", "탑재" };
                 string botText = (botMessage ?? "").ToLower();
@@ -370,33 +397,7 @@ public class GPTChatManager : MonoBehaviour
                     if (qa != null)
                         qa.RegisterChatAdvice(currentYear, botMessage);
 
-                    Debug.Log($"[GPTChatManager] 2040년 - 조언 대화 감지 및 등록(원문 저장, 건물 설치 대기): {botMessage}");
-                }
-                break;
-
-            case 2045:
-                // 2045년: 예산 상담 -> 관련 수익성 건물 키워드 등록하고, 상담 플래그만 세워둠 (건물 설치 시 QuestAutoCompleter가 처리)
-                string[] budgetKeywords = { "예산", "돈", "수익", "재정", "비용", "경제", "수입", "자금" };
-                string combinedText2045 = (userMessage + " " + botMessage).ToLower();
-                var foundBudget = new System.Collections.Generic.List<string>();
-
-                foreach (string keyword in budgetKeywords)
-                {
-                    if (combinedText2045.Contains(keyword.ToLower()))
-                        foundBudget.Add(keyword);
-                }
-
-                if (foundBudget.Count > 0)
-                {
-                    var qa = UnityEngine.Object.FindObjectOfType<QuestAutoCompleter>();
-                    if (qa != null)
-                        // 예산 상담도 '조언 원문'을 저장
-                        qa.RegisterChatAdvice(currentYear, botMessage);
-
-                    // 상담 상태는 내부 플래그만 표시. YearQuestManager에 바로 알리지 않음.
-                    yearChatCompleted[currentYear] = true;
-
-                    Debug.Log($"[GPTChatManager] 2045년 - 예산 상담 감지 및 원문 등록(수익성 건물 설치 대기): {botMessage}");
+                    Debug.Log($"[GPTChatManager] 2045년 - 조언 대화 감지 및 등록(원문 저장, 건물 설치 대기): {botMessage}");
                 }
                 break;
         }
