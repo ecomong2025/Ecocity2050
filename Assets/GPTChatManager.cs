@@ -38,6 +38,7 @@ public class GPTChoice
     public GPTMessage message;
 }
 
+[DefaultExecutionOrder(200)]
 public class GPTChatManager : MonoBehaviour
 {
     [Header("GPT Settings")]
@@ -123,41 +124,42 @@ public class GPTChatManager : MonoBehaviour
 현재 연도: {currentYear}년
 - 연도가 바뀔 때마다 시대적 상황(기술, 건물, 환경, 교통 등)을 고려한 전략 조언 제공
 - 아래는 연도별 설치 가능한 건물 목록입니다.
+- Road1~4, Shrub1~4, BikeLane1~4는 각각 다른 디자인의 동일 기능 건물입니다. 하나만 설치해도 효과는 같습니다.
 
 [2025]
-주거지: 주택 (예산 -50 / 탄소 +10/5초, 최대 +30)
-수입원: 공장 (예산 -150, 수익 +30/5분, 최대 +300 / 탄소 +10/5초, 최대 +300)
-친환경 공간: 공원 (예산 -100 / 즉시 -50, 이후 -10/5초, 최대 -200)
-나무: 기본 나무 (예산 -10 / 즉시 -20)
-교통수단: 일반 도로 (예산 -20 / 탄소 +10/5초, 최대 +30)
+주거지: House (예산 -50 / 탄소 +10/5초, 최대 +30)
+수입원: Factory (예산 -150, 수익 +30/5분, 최대 +300 / 탄소 +10/5초, 최대 +300)
+친환경 공간: Park (예산 -100 / 즉시 -50, 이후 -10/5초, 최대 -200)
+나무: Tree (예산 -10 / 즉시 -20)
+교통수단: Road1/Road2/Road3/Road4 (예산 -20 / 탄소 +10/5초, 최대 +30)
 
 [2030]
-주거지: 아파트 (예산 -80 / 탄소 +10/5초, 최대 +50)
-수입원: 병원 (예산 -120, 수익 +20/5분, 최대 +120 / 탄소 +5/5초, 최대 +50)
-친환경 공간: 재활용 센터 (예산 -120 / 즉시 -30, 이후 -10/5초, 최대 -100)
-나무: 덤불 (예산 -10 / 즉시 -10)
-교통수단: 자전거 도로 (예산 -20 / 즉시 -10)
+주거지: Apartment (예산 -80 / 탄소 +10/5초, 최대 +50)
+수입원: Hospital (예산 -120, 수익 +20/5분, 최대 +120 / 탄소 +5/5초, 최대 +50)
+친환경 공간: RecycleHub (예산 -120 / 즉시 -30, 이후 -10/5초, 최대 -100)
+나무: Shrub1/Shrub2 (예산 -10 / 즉시 -10)
+교통수단: BikeLane/BikeLane2/BikeLane3/BikeLane4 (예산 -20 / 즉시 -10)
 
 [2035]
-주거지: 에너지 절약형 주택 (예산 -70 / 탄소 +5/5초, 최대 +10)
-수입원: 회사 (예산 -130, 수익 +30/5분, 최대 +240 / 탄소 +10/5초, 최대 +100)
-친환경 공간: 공원2 (예산 -100 / 즉시 -50, 이후 -10/5초, 최대 -200)
-나무: 나무2 (예산 -10 / 즉시 -20)
-교통수단: 버스 정류장 (예산 -50 / 탄소 +2/5초, 최대 +10)
+주거지: House2 (예산 -70 / 탄소 +5/5초, 최대 +10)
+수입원: Company (예산 -130, 수익 +30/5분, 최대 +240 / 탄소 +10/5초, 최대 +100)
+친환경 공간: Park2 (예산 -100 / 즉시 -50, 이후 -10/5초, 최대 -200)
+나무: Tree2 (예산 -10 / 즉시 -20)
+교통수단: BusStop (예산 -50 / 탄소 +2/5초, 최대 +10)
 
 [2040]
-주거지: 에너지 절약형 아파트 (예산 -100 / 탄소 +5/5초, 최대 +20)
-수입원: 스마트 팩토리 (예산 -180, 수익 +30/5분, 최대 +300 / 탄소 +10/5초, 최대 +150)
-친환경 공간: 태양광 발전소 (예산 -300 / 즉시 -50, 이후 -10/5초, 최대 -200)
-나무: 꽃 있는 덤불 (예산 -10 / 즉시 -15)
-교통수단: 지하철 입구 (예산 -80 / 탄소 +1/5초, 최대 +5)
+주거지: Apartment2 (예산 -100 / 탄소 +5/5초, 최대 +20)
+수입원: SmartFactory (예산 -180, 수익 +30/5분, 최대 +300 / 탄소 +10/5초, 최대 +150)
+친환경 공간: SolarPlant (예산 -300 / 즉시 -50, 이후 -10/5초, 최대 -200)
+나무: Shrub3/Shrub4 (예산 -10 / 즉시 -15)
+교통수단: Subway (예산 -80 / 탄소 +1/5초, 최대 +5)
 
 [2045]
-주거지: 에너지 절약형 아파트2 (예산 -110 / 탄소 +5/5초, 최대 +15)
-수입원: 학교 (예산 -200, 수익 없음 / 탄소 +5/5초, 최대 +50)
-친환경 공간: 풍력 발전소 (예산 -350 / 즉시 -50, 이후 -10/5초, 최대 -250)
-나무: 벚꽃 나무 (예산 -10 / 즉시 -20)
-교통수단: 전기차 충전소 (예산 -60 / 즉시 -20)
+주거지: Apartment3 (예산 -110 / 탄소 +5/5초, 최대 +15)
+친환경 공간: WindPlant (예산 -350 / 즉시 -50, 이후 -10/5초, 최대 -250) (수입원 아님)
+나무: Tree3 (예산 -10 / 즉시 -20)
+교통수단: EVCharger (예산 -60 / 즉시 -20)
+기타: School (예산 -200, 수익 없음 / 탄소 +5/5초, 최대 +50)
 
 역할과 조언 방식:
 1. 현재 설치된 건물들을 분석하여 도시 발전 상태 평가
@@ -296,22 +298,20 @@ public class GPTChatManager : MonoBehaviour
     // 연도별 채팅 퀘스트 처리
     private void ProcessChatQuest(string userMessage, string botMessage)
     {
-        int currentYear = YearQuestManager.Instance?.GetCurrentYear() ?? 2025;
+        int currentYear = YearQuestManager.Instance != null ? YearQuestManager.Instance.GetCurrentYear() : 2025;
 
-        // 이미 해당 연도의 채팅 퀘스트를 완료했다면 리턴
         if (yearChatCompleted.ContainsKey(currentYear) && yearChatCompleted[currentYear])
         {
-            Debug.Log($"[GPTChatManager] {currentYear}년 채팅 퀘스트 이미 완료됨");
+            // 이미 완료된 연도면 리턴
             return;
         }
-
-        bool questCompleted = false;
 
         switch (currentYear)
         {
             case 2025:
                 // 2025년: 첫 대화 성공 시 완료
-                questCompleted = true;
+                yearChatCompleted[currentYear] = true;
+                YearQuestManager.Instance?.OnChatCompleted();
                 Debug.Log("[GPTChatManager] 2025년 - 시민과의 첫 대화 완료!");
                 break;
 
@@ -324,7 +324,8 @@ public class GPTChatManager : MonoBehaviour
                 {
                     if (combinedText.Contains(keyword.ToLower()))
                     {
-                        questCompleted = true;
+                        yearChatCompleted[currentYear] = true;
+                        YearQuestManager.Instance?.OnChatCompleted();
                         Debug.Log($"[GPTChatManager] 2030년 - 환경 정책 상담 완료! (키워드: {keyword})");
                         break;
                     }
@@ -340,7 +341,8 @@ public class GPTChatManager : MonoBehaviour
                 {
                     if (combinedText2035.Contains(keyword.ToLower()))
                     {
-                        questCompleted = true;
+                        yearChatCompleted[currentYear] = true;
+                        YearQuestManager.Instance?.OnChatCompleted();
                         Debug.Log($"[GPTChatManager] 2035년 - 도시 발전 계획 논의 완료! (키워드: {keyword})");
                         break;
                     }
@@ -348,44 +350,56 @@ public class GPTChatManager : MonoBehaviour
                 break;
 
             case 2040:
-                // 2040년: 봇의 조언과 관련된 건물 설치 체크는 YearQuestManager에서 처리
-                // 여기서는 조언이 포함된 대화인지만 확인
-                string[] adviceKeywords = { "공원", "친환경", "상업", "건설", "설치", "추천", "제안" };
-                string botText = botMessage.ToLower();
+                // 2040년: 예산 상담 -> 관련 수익성 건물 키워드 등록하고, 상담 플래그만 세워둠 (건물 설치 시 QuestAutoCompleter가 처리)
+                string[] budgetKeywords = { "예산", "돈", "수익", "재정", "비용", "경제", "수입", "자금" };
+                string combinedText2040 = (userMessage + " " + botMessage).ToLower();
+                var foundBudget = new System.Collections.Generic.List<string>();
+
+                foreach (string keyword in budgetKeywords)
+                {
+                    if (combinedText2040.Contains(keyword.ToLower()))
+                        foundBudget.Add(keyword);
+                }
+
+                if (foundBudget.Count > 0)
+                {
+                    var qa = UnityEngine.Object.FindObjectOfType<QuestAutoCompleter>();
+                    if (qa != null)
+                        // 예산 상담도 '조언 원문'을 저장
+                        qa.RegisterChatAdvice(currentYear, botMessage);
+
+                    // 상담 상태는 내부 플래그만 표시. YearQuestManager에 바로 알리지 않음.
+                    yearChatCompleted[currentYear] = true;
+
+                    Debug.Log($"[GPTChatManager] 2040년 - 예산 상담 감지 및 원문 등록(수익성 건물 설치 대기): {botMessage}");
+                }
+                break;
+            
+            case 2045:
+                // 2045년: 봇의 조언과 관련된 건물 설치 체크는 QuestAutoCompleter에서 처리하도록 변경
+                // 여기서는 조언이 포함된 대화인지만 확인하고, QuestAutoCompleter에 조언 키워드 등록 (대화만으로는 퀘스트 완료하지 않음)
+                string[] adviceKeywords = { "공원", "친환경", "상업", "건설", "설치", "추천", "제안", "에너지", "충전", "탑재" };
+                string botText = (botMessage ?? "").ToLower();
+                var foundKeywords = new System.Collections.Generic.List<string>();
 
                 foreach (string keyword in adviceKeywords)
                 {
                     if (botText.Contains(keyword.ToLower()))
                     {
-                        questCompleted = true;
-                        Debug.Log($"[GPTChatManager] 2040년 - 조언 대화 완료! (키워드: {keyword})");
-                        break;
+                        foundKeywords.Add(keyword);
                     }
                 }
-                break;
 
-            case 2045:
-                // 2045년: 예산 관리 관련 키워드 포함 시 완료
-                string[] budgetKeywords = { "예산", "돈", "수익", "재정", "비용", "경제", "수입", "자금" };
-                string combinedText2045 = (userMessage + " " + botMessage).ToLower();
-
-                foreach (string keyword in budgetKeywords)
+                if (foundKeywords.Count > 0)
                 {
-                    if (combinedText2045.Contains(keyword.ToLower()))
-                    {
-                        questCompleted = true;
-                        Debug.Log($"[GPTChatManager] 2045년 - 예산 관리 상담 완료! (키워드: {keyword})");
-                        break;
-                    }
+                    // GPT가 조언한 '원문' 전체(botMessage)를 QuestAutoCompleter에 등록하도록 변경
+                    var qa = UnityEngine.Object.FindObjectOfType<QuestAutoCompleter>();
+                    if (qa != null)
+                        qa.RegisterChatAdvice(currentYear, botMessage);
+
+                    Debug.Log($"[GPTChatManager] 2045년 - 조언 대화 감지 및 등록(원문 저장, 건물 설치 대기): {botMessage}");
                 }
                 break;
-        }
-
-        // 퀘스트 완료 처리
-        if (questCompleted)
-        {
-            yearChatCompleted[currentYear] = true;
-            YearQuestManager.Instance?.OnChatCompleted();
         }
     }
 
