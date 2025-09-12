@@ -80,7 +80,7 @@ public class DisasterManager : MonoBehaviour
         GameManager.Instance.StopIncomeForBuilding(buildingToDestroy.transform);
 
         // 뉴스 패널에 재난 뉴스 출력
-        GPTNewsGenerator.Instance.ShowDisasterNews(selectedDisaster, buildingToDestroy.name);
+        GPTNewsGenerator.Instance.ShowDisasterNews(selectedDisaster);
 
         // ✅ 효과음 재생
         PlayCollapseSfx();
