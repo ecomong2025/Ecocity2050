@@ -10681,7 +10681,7 @@ MonoBehaviour:
   zoomSpeedMul: 1
   distanceFactor: 6
   heightOffsetRatio: 0.25
-  targetFOV: 22
+  targetFOV: 60
   lowAngleBias: 0.7
   lowAngleFactor: 0.45
   groundLayer:
@@ -10693,7 +10693,6 @@ MonoBehaviour:
   installPanelRef: {fileID: 1247353971}
   onlyWhileInstallPanelActive: 1
   cancelKey: 27
-  rightClickToCancel: 0
   verboseLog: 1
 --- !u!1 &335352331
 GameObject:
@@ -30242,7 +30241,7 @@ MonoBehaviour:
   minDistance: 5
   maxDistance: 10
   mapCenter: {x: 0, y: 0, z: 0}
-  panSpeed: 0.0005
+  panSpeed: 1
   yawDragSpeed: 0.2
   yawKeySpeed: 60
   limitX: {x: -5, y: 5}
@@ -60675,7 +60674,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51e558da2dc52eb419f52933ca2d217c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraScaler: {fileID: 0}
+  cameraScaler: {fileID: 1036608132}
   yearTileMaps:
   - year: 2025
     tileNumber: 7

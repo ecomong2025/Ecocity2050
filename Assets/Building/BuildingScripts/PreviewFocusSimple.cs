@@ -5,42 +5,42 @@ using System.Collections;
 [DisallowMultipleComponent]
 public class PreviewFocusSimple : MonoBehaviour
 {
-    [Header("´õºíÅ¬¸¯")]
+    [Header("å ì™ì˜™å ì™ì˜™í´å ì™ì˜™")]
     public float doubleClickThreshold = 0.28f;
     public float maxMoveForClick = 6f;
-    [Header("ÁÜ ¹üÀ§ È®Àå(Ä«¸Ş¶ó½ºÄÉÀÏ·¯ Á¦¾î)")]
-    [Tooltip("¸ñÇ¥ °Å¸® ´ëºñ ÃÖ¼Ò ÁÜ ¹è¼ö (ÀÛÀ»¼ö·Ï ´õ °¡±îÀÌ)")]
-    public float zoomMinFactor = 0.35f;   // ¿¹: 0.35 ¡æ ´õ °¡±îÀÌ
-    [Tooltip("¸ñÇ¥ °Å¸® ´ëºñ ÃÖ´ë ÁÜ ¹è¼ö (Å¬¼ö·Ï ´õ ¸Ö¸®)")]
-    public float zoomMaxFactor = 3.0f;    // ¿¹: 3.0  ¡æ ´õ ¸Ö¸®
-    [Tooltip("½ºÅ©·Ñ ¹Î°¨µµ ¹è¼ö(1=±×´ë·Î)")]
-    public float zoomSpeedMul = 1.0f;     // ¿¹: 1.25 ¡æ ½ºÅ©·Ñ ´õ ºü¸£°Ô
+    [Header("å ì™ì˜™ å ì™ì˜™å ì™ì˜™ í™•å ì™ì˜™(ì¹´å ìŒ¨ë°ì˜™å ì™ì˜™å ì‹¹ë¤„ì˜™ å ì™ì˜™å ì™ì˜™)")]
+    [Tooltip("å ì™ì˜™í‘œ å ì‹ ëªŒì˜™ å ì™ì˜™å ï¿½ å ìŒì‡½ì˜™ å ì™ì˜™ å ì™ì˜™å ï¿½ (å ì™ì˜™å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™)")]
+    public float zoomMinFactor = 0.35f;   // å ì™ì˜™: 0.35 å ì™ì˜™ å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™
+    [Tooltip("å ì™ì˜™í‘œ å ì‹ ëªŒì˜™ å ì™ì˜™å ï¿½ å ìŒëŒì˜™ å ì™ì˜™ å ì™ì˜™å ï¿½ (í´å ì™ì˜™å ì™ì˜™ å ì™ì˜™ å ìŒëªŒì˜™)")]
+    public float zoomMaxFactor = 3.0f;    // å ì™ì˜™: 3.0  å ì™ì˜™ å ì™ì˜™ å ìŒëªŒì˜™
+    [Tooltip("å ì™ì˜™í¬å ì™ì˜™ å ì‹¸ê³¤ì˜™å ì™ì˜™ å ì™ì˜™å ï¿½(1=å ìŒ“ëŒì˜™å ï¿½)")]
+    public float zoomSpeedMul = 1.0f;     // å ì™ì˜™: 1.25 å ì™ì˜™ å ì™ì˜™í¬å ì™ì˜™ å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™
 
-    [Header("ÇÁ·¹ÀÌ¹Ö ±âº»°ª")]
+    [Header("å ì™ì˜™å ì™ì˜™å ì‹±ë±„ì˜™ å ì©ë³¸å ì™ì˜™")]
     public float distanceFactor = 1.4f;
-    public float heightOffsetRatio = 0.25f;   // Å¸±ê ¹Ù¿îÁî ³ôÀÌÀÇ ÀÏºÎ¸¸Å­ À§·Î
-    [Tooltip("0ÀÌ¸é ÇöÀç FOV À¯Áö")]
+    public float heightOffsetRatio = 0.25f;   // íƒ€å ì™ì˜™ å ìŒ•ìš¸ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ì‹¹ë¶€ëªŒì˜™í¼ å ì™ì˜™å ì™ì˜™
+    [Tooltip("0å ì‹±ëªŒì˜™ å ì™ì˜™å ì™ì˜™ FOV å ì™ì˜™å ì™ì˜™")]
     public float targetFOV = 22f;
 
-    [Header("Àú°¢ ¿É¼Ç")]
+    [Header("å ì™ì˜™å ì™ì˜™ å ì‹¬ì‡½ì˜™")]
     [Range(0f, 1f)] public float lowAngleBias = 0.7f;
-    public float lowAngleFactor = 0.45f;      // radius ´ëºñ ¾Æ·¡·Î ´ç±è
+    public float lowAngleFactor = 0.45f;      // radius å ì™ì˜™å ï¿½ å ì‹£ë¤„ì˜™å ì™ì˜™ å ì™ì˜™å ï¿½
     public LayerMask groundLayer = ~0;
     public float groundClearance = 0.6f;
 
-    [Header("Æ®À©")]
+    [Header("íŠ¸å ì™ì˜™")]
     public float focusDuration = 0.35f;
     public float returnDuration = 0.28f;
 
-    [Header("ÆĞ³Î °ÔÀÌÆ®")]
-    public GameObject installPanelRef;        // ¼³Ä¡ ÆĞ³Î(ÄÑÁ® ÀÖÀ» ¶§¸¸ µ¿ÀÛ½ÃÅ°°í ½ÍÀ¸¸é ÇÒ´ç)
+    [Header("å ì‹»ë†‚ì˜™ å ì™ì˜™å ì™ì˜™íŠ¸")]
+    public GameObject installPanelRef;        // å ì™ì˜™ì¹˜ å ì‹»ë†‚ì˜™(å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ìŒœì™ì˜™í‚¤å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ìŒ€ëŒì˜™)
     public bool onlyWhileInstallPanelActive = true;
 
-    [Header("Ãë¼Ò ÀÔ·Â")]
+    [Header("ì·¨ì†Œ ì…ë ¥")]
     public KeyCode cancelKey = KeyCode.Escape;
-    public bool rightClickToCancel = true;
+    // ìš°í´ë¦­ìœ¼ë¡œ ì·¨ì†Œí•˜ë˜ ë™ì‘ì„ ì œê±°í–ˆìŠµë‹ˆë‹¤.
 
-    [Header("µğ¹ö±×")]
+    [Header("å ì™ì˜™å ì™ì˜™å ï¿½")]
     public bool verboseLog = false;
 
     Camera _cam;
@@ -72,21 +72,21 @@ public class PreviewFocusSimple : MonoBehaviour
             if (!installPanelRef || !installPanelRef.activeInHierarchy) return;
         }
         if (_installer == null) return;
-        if (Time.unscaledTime < _cancelIgnoreUntil) return; // ¡ç ´õºíÅ¬¸¯ Á÷ÈÄ Àá±ñ(Äğ´Ù¿î) ÀÔ·Â ¸·±â
+        if (Time.unscaledTime < _cancelIgnoreUntil) return; // å ì™ì˜™ å ì™ì˜™å ì™ì˜™í´å ì™ì˜™ å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ï¿½(å ì™ì˜™ç‰Ÿå ï¿½) å ìŒ‰ë¤„ì˜™ å ì™ì˜™å ì™ì˜™
 
-        // ÇÁ¸®ºä »ç¶óÁö¸é ÀÚµ¿ º¹±Í
+        // å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™å ï¿½ å ìŒ˜ë“¸ì˜™ å ì™ì˜™å ì™ì˜™
         if (_isFocused && _installer.CurrentPreviewRoot == null)
         {
             StartReturn();
             return;
         }
 
-        // ÀÔ·Â
+        // å ìŒ‰ë¤„ì˜™
         HandleMouse();
 
         if (_isFocused && Time.unscaledTime >= _cancelIgnoreUntil)
         {
-            if (Input.GetKeyDown(cancelKey) || (rightClickToCancel && Input.GetMouseButtonDown(1)))
+            if (Input.GetKeyDown(cancelKey))
                 StartReturn();
         }
     }
@@ -112,7 +112,7 @@ public class PreviewFocusSimple : MonoBehaviour
             _lastClickTime = now;
             if (!isDouble) return;
 
-            // ´õºíÅ¬¸¯: "ÇöÀç ÇÁ¸®ºä" ±âÁØÀ¸·Î ¹Ù·Î Æ÷Ä¿½º
+            // å ì™ì˜™å ì™ì˜™í´å ì™ì˜™: "å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™" å ì™ì˜™å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ìŒ•ë¤„ì˜™ å ì™ì˜™ì»¤å ì™ì˜™
             var root = _installer.CurrentPreviewRoot;
             var bd = _installer.CurrentBuildingData;
             if (!root || !bd) return;
@@ -132,14 +132,14 @@ public class PreviewFocusSimple : MonoBehaviour
         _rotBefore = _cam.transform.rotation;
         _fovBefore = _cam.fieldOfView;
 
-        // Å¸±ê Áß½É(¾à°£ À§)
+        // íƒ€å ì™ì˜™ å ìŒ©ì™ì˜™(å ì…ê°„ å ì™ì˜™)
         Vector3 center = b.center + Vector3.up * (b.size.y * heightOffsetRatio);
 
-        // °Å¸®/FOV ¿À¹ö¶óÀÌµå
+        // å ì‹ ëªŒì˜™/FOV å ì™ì˜™å ì™ì˜™å ì™ì˜™å ì‹±ë“¸ì˜™
         float radius = Mathf.Max(b.extents.x, b.extents.y, b.extents.z);
         float df = (bd.cameraDistanceFactorOverride > 0f) ? bd.cameraDistanceFactorOverride : distanceFactor;
         float dist = Mathf.Max(1f, radius * df);
-        // ÁÜ ¹üÀ§/¼Óµµ È®Àå (CameraScaler ¼öÁ¤ ¾øÀÌ ·±Å¸ÀÓ Á¦¾î)
+        // å ì™ì˜™ å ì™ì˜™å ì™ì˜™/å ìŒˆë“¸ì˜™ í™•å ì™ì˜™ (CameraScaler å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™ å ì™ì˜™íƒ€å ì™ì˜™ å ì™ì˜™å ì™ì˜™)
         var scaler = FindObjectOfType<CameraScaler>();
         if (scaler)
         {
@@ -151,7 +151,7 @@ public class PreviewFocusSimple : MonoBehaviour
         float fovTarget = (bd.cameraFOVOverride > 0f) ? bd.cameraFOVOverride
                           : (targetFOV > 0f ? targetFOV : _cam.fieldOfView);
 
-        // ¹æÇâ: °Ç¹° "·ÎÄÃ Ãà" ±âÁØ
+        // å ì™ì˜™å ì™ì˜™: å ì‹¤ë±„ì˜™ "å ì™ì˜™å ì™ì˜™ å ì™ì˜™" å ì™ì˜™å ì™ì˜™
         Vector3 camPos;
         Quaternion camRot;
 
@@ -163,24 +163,24 @@ public class PreviewFocusSimple : MonoBehaviour
         }
         else
         {
-            Vector3 dir = root.forward; // ±âº» Front
+            Vector3 dir = root.forward; // å ì©ë³¸ Front
             switch (bd.preferredView)
             {
                 case BuildingData.PreferredView.Back: dir = -root.forward; break;
                 case BuildingData.PreferredView.Left: dir = -root.right; break;
                 case BuildingData.PreferredView.Right: dir = root.right; break;
-                    // Front´Â À§ÀÇ ±âº»°ª
+                    // Frontå ì™ì˜™ å ì™ì˜™å ì™ì˜™ å ì©ë³¸å ì™ì˜™
             }
             dir.y = 0f; if (dir.sqrMagnitude < 1e-5f) dir = Vector3.forward; dir.Normalize();
 
             Vector3 basePos = center - dir * dist + Vector3.up * Mathf.Min(radius * 0.35f, 6f);
 
-            // Àú°¢(¿øÇÏ¸é 0À¸·Î ²¨µµ µÊ)
+            // å ì™ì˜™å ì™ì˜™(å ì™ì˜™å ì‹¹ëªŒì˜™ 0å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™ å ì™ì˜™)
             float desiredLowY = center.y - (radius * Mathf.Max(0f, lowAngleFactor));
             Vector3 lowPos = new Vector3(basePos.x, desiredLowY, basePos.z);
             camPos = Vector3.Lerp(basePos, lowPos, Mathf.Clamp01(lowAngleBias));
 
-            // Áö¸é ¹æÁö
+            // å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™
             if (Physics.Raycast(new Vector3(camPos.x, camPos.y + 50f, camPos.z),
                                 Vector3.down, out var hitG, 200f, groundLayer, QueryTriggerInteraction.Ignore))
             {
@@ -236,7 +236,7 @@ public class PreviewFocusSimple : MonoBehaviour
         onComplete?.Invoke();
     }
 
-    // ¦¡¦¡¦¡¦¡¦¡ helpers ¦¡¦¡¦¡¦¡¦¡
+    // å ì™ì˜™å ì™ì˜™å ì™ì˜™å ì™ì˜™å ì™ì˜™ helpers å ì™ì˜™å ì™ì˜™å ì™ì˜™å ì™ì˜™å ì™ì˜™
     bool IsPointerOnUI()
     {
         if (!EventSystem.current) return false;

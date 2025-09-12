@@ -8,9 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Building, Water, UI, Tile
 - Active game object:
-  - Names:
-    - ResourceCanvas
-    - YearQuestManager
-  - Tag: Untagged
+  - Name: Main Camera
+  - Tag: MainCamera
   - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
