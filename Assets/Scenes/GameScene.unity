@@ -14938,7 +14938,7 @@ PrefabInstance:
       objectReference: {fileID: 322516968}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: currentYear
-      value: 2025
+      value: 2045
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: quizManager
@@ -30231,7 +30231,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 330585545}
   mapSize: 5
-  uiBlockers: []
+  uiBlockers:
+  - {fileID: 370156117}
+  - {fileID: 1519766997}
+  - {fileID: 1338715402}
+  - {fileID: 849468537}
+  - {fileID: 687768036}
+  - {fileID: 1425803276}
   zoomSpeed: 3
   minDistance: 5
   maxDistance: 10
