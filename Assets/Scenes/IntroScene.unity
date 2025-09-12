@@ -591,7 +591,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f125e7a36b04e444b8bf72fb22f45c4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isLoggedIn: 0
+  currentUser:
+    id: 0
+    username: 
+    email: 
+    first_name: 
+    last_name: 
+  isLoggedIn: 1
 --- !u!1 &558107426
 GameObject:
   m_ObjectHideFlags: 0

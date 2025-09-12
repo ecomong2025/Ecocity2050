@@ -36791,7 +36791,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Jiwon Han
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: a80e488167b884bd5b9e6629908580e6, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: bd814b91aef25804096ad9246b048a73, type: 2}
   m_sharedMaterial: {fileID: 3741270068833466700, guid: a80e488167b884bd5b9e6629908580e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -36857,7 +36857,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1218363401
