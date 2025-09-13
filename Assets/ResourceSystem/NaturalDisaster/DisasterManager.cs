@@ -8,43 +8,94 @@ public class DisasterManager : MonoBehaviour
     [SerializeField] private AudioClip collapseSfx;
     [SerializeField, Range(0f, 1f)] private float collapseVolume = 1f;
 
-    public float normalDisasterInterval = 300f;  // 나쁨 → 5분
-    public float severeDisasterInterval = 180f;  // 매우 나쁨 → 3분
+    // 요구사항: '나쁨' 10초, '매우 나쁨' 5초
+    public float normalDisasterInterval = 10f;
+    public float severeDisasterInterval = 5f;
 
     private GameManager gameManager;
+    private Coroutine _disasterCoroutine;
+    private float _currentInterval = -1f;
+
+    void Awake()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+        if (gameManager == null)
+            Debug.LogError("[DisasterManager] GameManager를 찾을 수 없습니다.");
+    }
+
+    void OnEnable()
+    {
+        GameManager.OnSatisfactionChanged += OnSatisfactionChanged;
+    }
+
+    void OnDisable()
+    {
+        GameManager.OnSatisfactionChanged -= OnSatisfactionChanged;
+        StopDisasterTimer();
+    }
 
     void Start()
     {
-        gameManager = FindFirstObjectByType<GameManager>();
-        if (gameManager == null)
-        {
-            Debug.LogError("GameManager를 찾을 수 없습니다.");
-            return;
-        }
-
-        StartCoroutine(DisasterRoutine());
+        // 시작 시 현재 상태에 따라 타이머 시작
+        if (gameManager != null)
+            UpdateTimerForStatus(gameManager.GetSatisfactionLevel());
     }
 
-    IEnumerator DisasterRoutine()
+    // 이벤트 핸들러: 만족도 변화 시 호출
+    private void OnSatisfactionChanged(string newStatus)
+    {
+        UpdateTimerForStatus(newStatus);
+    }
+
+    private void UpdateTimerForStatus(string status)
+    {
+        if (status == "매우 나쁨")
+        {
+            StartDisasterTimer(severeDisasterInterval);
+        }
+        else if (status == "나쁨")
+        {
+            StartDisasterTimer(normalDisasterInterval);
+        }
+        else
+        {
+            StopDisasterTimer();
+        }
+    }
+
+    private void StartDisasterTimer(float interval)
+    {
+        if (_disasterCoroutine != null && Mathf.Approximately(_currentInterval, interval))
+            return; // 이미 같은 간격으로 동작 중
+
+        StopDisasterTimer();
+        _currentInterval = interval;
+        _disasterCoroutine = StartCoroutine(DisasterLoop(interval));
+        Debug.Log($"[DisasterManager] 재난 타이머 시작 interval={interval}s");
+    }
+
+    private void StopDisasterTimer()
+    {
+        if (_disasterCoroutine != null)
+        {
+            StopCoroutine(_disasterCoroutine);
+            _disasterCoroutine = null;
+            _currentInterval = -1f;
+            Debug.Log("[DisasterManager] 재난 타이머 중지");
+        }
+    }
+
+    private IEnumerator DisasterLoop(float interval)
     {
         while (true)
         {
-            string status = gameManager.GetSatisfactionLevel();
+            yield return new WaitForSeconds(interval);
 
-            if (status == "매우 나쁨")
-            {
-                yield return new WaitForSeconds(severeDisasterInterval);
+            // 재난 발생 시점에 최신 만족도 확인 — 여전히 나쁨 계열이면 발생
+            if (gameManager == null) yield break;
+            string status = gameManager.GetSatisfactionLevel();
+            if (status == "나쁨" || status == "매우 나쁨")
                 TriggerDisaster();
-            }
-            else if (status == "나쁨")
-            {
-                yield return new WaitForSeconds(normalDisasterInterval);
-                TriggerDisaster();
-            }
-            else
-            {
-                yield return new WaitForSeconds(30f);
-            }
         }
     }
 
@@ -64,7 +115,7 @@ public class DisasterManager : MonoBehaviour
 
         if (tilesWithBuildings.Count == 0)
         {
-            Debug.Log("재난으로 제거할 건물이 없습니다.");
+            Debug.Log("[DisasterManager] 재난으로 제거할 건물이 없습니다.");
             return;
         }
 
@@ -76,35 +127,36 @@ public class DisasterManager : MonoBehaviour
 
         Debug.Log($"🚨 {selectedDisaster} 발생! {buildingToDestroy.name} 건물이 파괴됩니다...");
 
-        // 재난 발생 시 수입 코루틴 중지
-        GameManager.Instance.StopIncomeForBuilding(buildingToDestroy.transform);
+        // 재난 발생 시 수입 코루틴 중지 (GameManager.Instance 가 있으면 호출)
+        if (GameManager.Instance != null)
+            GameManager.Instance.StopIncomeForBuilding(buildingToDestroy.transform);
 
-        // 뉴스 패널에 재난 뉴스 출력
-        GPTNewsGenerator.Instance.ShowDisasterNews(selectedDisaster, buildingToDestroy.name);
+        // 뉴스 출력 (있으면)
+        if (GPTNewsGenerator.Instance != null)
+            GPTNewsGenerator.Instance.ShowDisasterNews(selectedDisaster);
 
-        // ✅ 효과음 재생
+        // 효과음
         PlayCollapseSfx();
 
+        // 깜박이고 파괴 — 파괴 후 그 자리는 빈 상태(다시 설치 가능)
         StartCoroutine(BlinkAndDestroy(buildingToDestroy, 2f, 6));
     }
 
     IEnumerator BlinkAndDestroy(GameObject building, float duration, int blinkCount)
     {
-        Renderer[] renderers = building.GetComponentsInChildren<Renderer>();
+        if (building == null) yield break;
+
+        Renderer[] renderers = building.GetComponentsInChildren<Renderer>(true);
 
         for (int i = 0; i < blinkCount; i++)
         {
-            foreach (Renderer r in renderers)
-                r.enabled = false;
-
+            foreach (Renderer r in renderers) if (r != null) r.enabled = false;
             yield return new WaitForSeconds(duration / (blinkCount * 2));
-
-            foreach (Renderer r in renderers)
-                r.enabled = true;
-
+            foreach (Renderer r in renderers) if (r != null) r.enabled = true;
             yield return new WaitForSeconds(duration / (blinkCount * 2));
         }
 
+        // 건물 오브젝트 제거 — 타일은 비워지므로 다시 설치 가능
         Destroy(building);
     }
 
@@ -120,7 +172,6 @@ public class DisasterManager : MonoBehaviour
         }
         else
         {
-            // 폴백: 카메라 위치에서 재생
             var cam = Camera.main;
             AudioSource.PlayClipAtPoint(collapseSfx, cam ? cam.transform.position : Vector3.zero, collapseVolume);
         }
@@ -134,7 +185,6 @@ public class DisasterManager : MonoBehaviour
             if (data != null)
                 return data;
 
-            // 자식의 자식도 검사
             BuildingData nested = FindBuildingDataInChildren(child);
             if (nested != null)
                 return nested;

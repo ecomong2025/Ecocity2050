@@ -36,8 +36,6 @@ public class WarningPanelController : MonoBehaviour
             confirmButton.onClick.RemoveAllListeners();
             confirmButton.onClick.AddListener(Close);
         }
-
-        if (warningPanel) warningPanel.SetActive(false);
     }
 
     void OnDisable()

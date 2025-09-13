@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     // 변경: 이벤트를 클래스 내부로 이동
     public static event Action<HUDState> OnHUDChanged;
+    public static event Action<string> OnSatisfactionChanged; // 전달값: 새로운 만족도 문자열
 
     public int budget = 600;
     public int co2 = 0;
@@ -346,6 +347,9 @@ public class GameManager : MonoBehaviour
         co2 = co2,
         satisfaction = satisfaction
         });
+
+        // 만족도 변경 지점
+        OnSatisfactionChanged?.Invoke(satisfaction);
     }
 
     public string GetSatisfactionLevel()

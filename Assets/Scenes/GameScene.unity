@@ -10495,7 +10495,6 @@ GameObject:
   - component: {fileID: 330585548}
   - component: {fileID: 330585549}
   - component: {fileID: 330585550}
-  - component: {fileID: 330585551}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -10654,38 +10653,6 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 00e298d760029bf4ea9216adb6a1a7c8, type: 2}
---- !u!114 &330585551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 220c8bb306369514e9c60fc1ce0fdc0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  doubleClickThreshold: 0.28
-  maxMoveForClick: 6
-  zoomMinFactor: 0.35
-  zoomMaxFactor: 2
-  zoomSpeedMul: 1
-  distanceFactor: 6
-  heightOffsetRatio: 0.25
-  targetFOV: 60
-  lowAngleBias: 0.7
-  lowAngleFactor: 0.45
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  groundClearance: 0.6
-  focusDuration: 0.35
-  returnDuration: 0.28
-  installPanelRef: {fileID: 1247353971}
-  onlyWhileInstallPanelActive: 1
-  cancelKey: 27
-  verboseLog: 1
 --- !u!1 &335352331
 GameObject:
   m_ObjectHideFlags: 0
@@ -14929,7 +14896,7 @@ PrefabInstance:
       objectReference: {fileID: 322516968}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: currentYear
-      value: 2045
+      value: 2025
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: quizManager
@@ -20573,7 +20540,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -20760,7 +20727,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -29474,7 +29441,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -30231,13 +30198,13 @@ MonoBehaviour:
   - {fileID: 1425803276}
   zoomSpeed: 3
   minDistance: 5
-  maxDistance: 10
+  maxDistance: 20
   mapCenter: {x: 0, y: 0, z: 0}
   panSpeed: 1
   yawDragSpeed: 0.2
   yawKeySpeed: 60
-  limitX: {x: -5, y: 5}
-  limitZ: {x: -5, y: 5}
+  limitX: {x: -15, y: 15}
+  limitZ: {x: -15, y: 15}
 --- !u!1 &1036710545
 GameObject:
   m_ObjectHideFlags: 0
@@ -32443,7 +32410,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
