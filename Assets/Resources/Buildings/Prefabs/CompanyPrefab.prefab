@@ -88,14 +88,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecd912cb32aac4abab6ab47663c4c703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileWidth: 2
-  tileHeight: 1
+  tileWidth: 1
+  tileHeight: 2
   cost: 130
   maxIncomeAmount: 240
   incomePer5Minutes: 30
   instantCO2Change: 0
   co2PerSecond: 10
   maxCO2Change: 100
+  preferredView: 0
+  cameraDistanceFactorOverride: 0
+  cameraFOVOverride: 0
 --- !u!65 &3852528693072252347
 BoxCollider:
   m_ObjectHideFlags: 0
