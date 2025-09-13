@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class QuizlimitController : MonoBehaviour
 {
     public GameObject quizLimitPanel;
-    public GameObject quizPanel;
     public GameObject gamePanel;
     public Button okButton;
 
@@ -23,17 +22,13 @@ public class QuizlimitController : MonoBehaviour
 
     public void ShowLimitPanel()
     {
-        if (quizPanel != null) quizPanel.SetActive(false);
-        if (gamePanel != null && !gamePanel.activeSelf) gamePanel.SetActive(true);
-
-        var mainCanvas = gamePanel != null ? gamePanel.transform.Find("MainCanvas") : null;
-        if (mainCanvas != null && !mainCanvas.gameObject.activeSelf)
-            mainCanvas.gameObject.SetActive(true);
+        if (gamePanel != null && !gamePanel.activeSelf)
+            gamePanel.SetActive(true);
 
         if (quizLimitPanel != null)
             quizLimitPanel.SetActive(true);
 
-        // 🔹 blockTargets에 있는 GameObject들을 차단
+        // 🔹 blockTargets에 있는 GameObject 차단
         cachedGroups.Clear();
         foreach (var go in blockTargets)
         {

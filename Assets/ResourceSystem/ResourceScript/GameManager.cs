@@ -57,7 +57,9 @@ public class GameManager : MonoBehaviour
     public CitizenGroupController citizenGroupController;
 
     public QuizManager quizManager;
-    public TalkBubbleController bubbleController; 
+    public TalkBubbleController bubbleController;
+
+    public QuizlimitController quizLimitController;
 
     // 건물별 수입 코루틴 관리용 딕셔너리
     private Dictionary<Transform, Coroutine> incomeCoroutines = new Dictionary<Transform, Coroutine>();
@@ -364,10 +366,20 @@ public class GameManager : MonoBehaviour
         else return 0.1f;
     }
 
-    //퀴즈 관련 버튼 연결 
+    //퀴즈 관련 버튼 연결
     public void OpenQuiz()
     {
         SFXPlayer.Instance.PlayClick();
+
+        // 1️⃣ 퀴즈 제한 체크
+        if (!quizManager.CanPlayQuiz())
+        {
+            // 제한 초과 시 바로 패널 띄우기
+            quizLimitController.ShowLimitPanel();
+            return; // 함수 종료, 퀴즈 UI는 열리지 않음
+        }
+
+        // 2️⃣ 제한 미달이면 기존 로직 실행
         gamePanel.SetActive(false);
         quizManager.ResetQuizUI();
         quizMainPanel.SetActive(true);

@@ -58,21 +58,20 @@ public class QuizManager : MonoBehaviour
     private bool isAnswered = false;
 
     // 퀘스트 관련
-    private int quizCorrectCount = 0;  // 지금까지 맞춘 퀴즈 개수
-    private int quizQuestIndex = 2;    // 퀴즈 관련 퀘스트 인덱스
-    private int completeThreshold = 2; // 몇 개 맞추면 퀘스트 완료 처리할지 기준
+    private int quizCorrectCount = 0;
+    private int quizQuestIndex = 2;
+    private int completeThreshold = 2;
 
     // 하루 제한 관련
     private int dailyQuizCount = 0;
-    private int dailyLimit = 5;  // 하루 5개
+    private int dailyLimit = 5;
     private DateTime lastResetTime;
 
-    // 이미 푼 퀴즈 인덱스
     private HashSet<int> usedQuizIndices = new HashSet<int>();
 
     private int defaultYear = 2025;
 
-    public QuizlimitController quizLimitController; //기회소진 안내 매니저
+    public QuizlimitController quizLimitController;
 
     [Header("Audio")]
     public AudioSource audioSource;
@@ -81,14 +80,14 @@ public class QuizManager : MonoBehaviour
     public bool IsReady { get; private set; } = false;
 
     private Dictionary<int, int> yearCorrectThreshold = new Dictionary<int, int>
-{
-    {2025, 2},
-    {2030, 3},
-    {2035, 4},
-    {2040, 5},
-    {2045, 6},
-    {2050, 7}
-};
+    {
+        {2025, 2},
+        {2030, 3},
+        {2035, 4},
+        {2040, 5},
+        {2045, 6},
+        {2050, 7}
+    };
 
     void Start()
     {
@@ -135,8 +134,6 @@ public class QuizManager : MonoBehaviour
             }
 
             quizDataArray = wrapper.items.ToList();
-
-            // 확인 로그
             foreach (var y in quizDataArray)
             {
                 Debug.Log($"Year: {y.year}, Quiz count: {y.quiz?.Count}");
@@ -163,11 +160,9 @@ public class QuizManager : MonoBehaviour
         }
         else
         {
-            // 경고 대신 그냥 무시
             Debug.Log($"{year}년 데이터 없음, 필터링 건너뜀");
         }
     }
-
 
     [System.Serializable]
     private class Wrapper<T>
@@ -175,27 +170,19 @@ public class QuizManager : MonoBehaviour
         public T[] items;
     }
 
-    string FixJson(string value)
-    {
-        return "{\"items\":" + value + "}";
-    }
-
     public void UpdateYearQuiz(int year)
     {
         FilterQuizByYear(year);
-        ResetQuizCorrectCount(); // 정답 카운트 초기화
+        ResetQuizCorrectCount();
 
         completeThreshold = yearCorrectThreshold.ContainsKey(year) ? yearCorrectThreshold[year] : 2;
     }
 
-
-
-    // 하루 제한 불러오기
     private void LoadDailyQuizData()
     {
         dailyQuizCount = PlayerPrefs.GetInt("DailyQuizCount", 0);
-
         string timeStr = PlayerPrefs.GetString("LastResetTime", "");
+
         if (string.IsNullOrEmpty(timeStr))
         {
             lastResetTime = DateTime.UtcNow;
@@ -205,8 +192,8 @@ public class QuizManager : MonoBehaviour
 
         lastResetTime = DateTime.Parse(timeStr, null, System.Globalization.DateTimeStyles.RoundtripKind);
 
-        // 테스트용: 30초 후 초기화
-        if ((DateTime.UtcNow - lastResetTime).TotalSeconds >= 30)
+        // 제한 도달 후 30초가 지났으면 초기화
+        if (dailyQuizCount >= dailyLimit && (DateTime.UtcNow - lastResetTime).TotalSeconds >= 30)
         {
             ResetDailyQuizCount();
         }
@@ -215,7 +202,7 @@ public class QuizManager : MonoBehaviour
     private void SaveDailyQuizData()
     {
         PlayerPrefs.SetInt("DailyQuizCount", dailyQuizCount);
-        PlayerPrefs.SetString("LastResetTime", lastResetTime.ToString("o")); // Roundtrip format
+        PlayerPrefs.SetString("LastResetTime", lastResetTime.ToString("o"));
         PlayerPrefs.Save();
     }
 
@@ -243,7 +230,7 @@ public class QuizManager : MonoBehaviour
     {
         SFXPlayer.Instance.PlayClick();
 
-        LoadDailyQuizData(); // 매번 시작할 때 검사
+        LoadDailyQuizData();
 
         if (dailyQuizCount >= dailyLimit)
         {
@@ -253,7 +240,6 @@ public class QuizManager : MonoBehaviour
             return;
         }
 
-        // 푼 적 없는 문제 찾기
         List<int> availableIndices = Enumerable.Range(0, filteredQuizzes.Count)
                                                .Where(i => !usedQuizIndices.Contains(i))
                                                .ToList();
@@ -277,11 +263,17 @@ public class QuizManager : MonoBehaviour
         quizTimer.StartTimer();
         isAnswered = false;
     }
+    //게임패널 퀴즈 버튼 연결용
+    public bool CanPlayQuiz()
+    {
+        LoadDailyQuizData();  // 현재 일일 카운트와 제한 체크용
+        return dailyQuizCount < dailyLimit;
+    }
 
     public void OnRetryQuiz()
     {
         SFXPlayer.Instance.PlayClick();
-        OnGameStart(); // Retry도 사실상 새 퀴즈 시작
+        OnGameStart();
     }
 
     public void OnBackToGame()
@@ -289,7 +281,6 @@ public class QuizManager : MonoBehaviour
         SFXPlayer.Instance.PlayClick();
         GameManager.Instance.CloseQuiz();
     }
-
 
     void DisplayQuiz(int index)
     {
@@ -337,6 +328,10 @@ public class QuizManager : MonoBehaviour
         QuizItem quiz = filteredQuizzes[currentQuizIndex];
 
         dailyQuizCount++;
+        if (dailyQuizCount >= dailyLimit)
+        {
+            lastResetTime = DateTime.UtcNow; // 제한 도달 시각 기록
+        }
         SaveDailyQuizData();
 
         if (selectedIndex == quiz.answerIndex)
@@ -345,9 +340,7 @@ public class QuizManager : MonoBehaviour
             GameManager.Instance.AddBudget(30);
             ShowCorrectPanel();
 
-            quizCorrectCount++;  // 맞춘 개수 증가
-
-            // 연도에 맞는 퀴스트 완료
+            quizCorrectCount++;
             int year = YearQuestManager.Instance.GetCurrentYear();
             if (quizCorrectCount >= completeThreshold)
             {
@@ -365,7 +358,6 @@ public class QuizManager : MonoBehaviour
         }
     }
 
-    // 퀴즈 개수 초기화
     public void ResetQuizCorrectCount()
     {
         quizCorrectCount = 0;
@@ -379,6 +371,10 @@ public class QuizManager : MonoBehaviour
         Debug.Log("⏰ 시간 초과 오답 처리");
 
         dailyQuizCount++;
+        if (dailyQuizCount >= dailyLimit)
+        {
+            lastResetTime = DateTime.UtcNow;
+        }
         SaveDailyQuizData();
 
         ShowIncorrectPanel();
