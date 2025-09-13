@@ -148,7 +148,9 @@ namespace Ecocity.News
         // 전광판 클릭 시 호출: 기존 이미지만 overlay로 보여줌
         public void ShowOverlayWithBillboardImage()
         {
-            SFXPlayer.Instance.PlayClick();
+            if (SFXPlayer.Instance != null)
+                SFXPlayer.Instance.PlayClick();
+
             Texture2D showTexture = lastBillboardTexture;
             if (showTexture == null) return;
 
@@ -172,6 +174,9 @@ namespace Ecocity.News
         {
             if (overlayRoot != null && overlayGroup != null)
             {
+                if (SFXPlayer.Instance != null)
+                    SFXPlayer.Instance.PlayClick();
+
                 StartCoroutine(FadeOutAndDeactivate());
             }
         }

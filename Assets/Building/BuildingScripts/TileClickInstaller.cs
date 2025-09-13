@@ -233,6 +233,9 @@ public class TileClickInstaller : MonoBehaviour
             isDragging = true;
             dragStartTile = tile;
             ClearHighlight();
+
+            if (SFXPlayer.Instance != null)
+                SFXPlayer.Instance.PlayClick();
         }
 
         // ── 드래그 중 ──
@@ -383,7 +386,9 @@ public class TileClickInstaller : MonoBehaviour
     public void CloseWarningPanel()
     {
         if (warningPanel) warningPanel.SetActive(false);
-        SFXPlayer.Instance?.PlayClick();
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
     public void SetSelectedBuilding(GameObject prefab)
@@ -400,7 +405,9 @@ public class TileClickInstaller : MonoBehaviour
         TogglePlacementFX(true);
         SuppressUINavEvents(true);
         SetExternalHotkeysEnabled(false);
-        SFXPlayer.Instance?.PlayClick();
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
     void RotatePreview()
@@ -418,6 +425,9 @@ public class TileClickInstaller : MonoBehaviour
         _autoAlignPending = false;
 
         SpawnPreviewOverSelection(selectedBuildingPrefab);
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
 
@@ -642,7 +652,9 @@ public class TileClickInstaller : MonoBehaviour
         TogglePlacementFX(false);
         SuppressUINavEvents(false);
         SetExternalHotkeysEnabled(true);
-        SFXPlayer.Instance?.PlayClick();
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
     void ClosePlacementUI()
@@ -680,7 +692,9 @@ public class TileClickInstaller : MonoBehaviour
         TogglePlacementFX(false);
         SuppressUINavEvents(false);
         SetExternalHotkeysEnabled(true);
-        SFXPlayer.Instance?.PlayClick();
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
     // GameManager에서 호출할 수 있게 public 유지
@@ -716,6 +730,7 @@ public class TileClickInstaller : MonoBehaviour
 
     bool TryGetTileUnderMouse(out GameObject tile)
     {
+
         tile = null;
         var cam = Camera.main;
         if (!cam) return false;
