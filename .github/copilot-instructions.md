@@ -8,7 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Building, Water, UI, Tile
 - Active game object:
-  - Name: Contents (TMP)
-  - Tag: Untagged
-  - Layer: UI
+  - Name: Main Camera
+  - Tag: MainCamera
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

@@ -5,42 +5,42 @@ using System.Collections;
 [DisallowMultipleComponent]
 public class PreviewFocusSimple : MonoBehaviour
 {
-    [Header("占쏙옙占쏙옙클占쏙옙")]
+    [Header("더블클릭 설정")]
     public float doubleClickThreshold = 0.28f;
     public float maxMoveForClick = 6f;
-    [Header("占쏙옙 占쏙옙占쏙옙 확占쏙옙(카占쌨띰옙占쏙옙占싹뤄옙 占쏙옙占쏙옙)")]
-    [Tooltip("占쏙옙표 占신몌옙 占쏙옙占� 占쌍쇽옙 占쏙옙 占쏙옙占� (占쏙옙占쏙옙占쏙옙占쏙옙 占쏙옙 占쏙옙占쏙옙占쏙옙)")]
-    public float zoomMinFactor = 0.35f;   // 占쏙옙: 0.35 占쏙옙 占쏙옙 占쏙옙占쏙옙占쏙옙
-    [Tooltip("占쏙옙표 占신몌옙 占쏙옙占� 占쌍댐옙 占쏙옙 占쏙옙占� (클占쏙옙占쏙옙 占쏙옙 占쌍몌옙)")]
-    public float zoomMaxFactor = 3.0f;    // 占쏙옙: 3.0  占쏙옙 占쏙옙 占쌍몌옙
-    [Tooltip("占쏙옙크占쏙옙 占싸곤옙占쏙옙 占쏙옙占�(1=占쌓댐옙占�)")]
-    public float zoomSpeedMul = 1.0f;     // 占쏙옙: 1.25 占쏙옙 占쏙옙크占쏙옙 占쏙옙 占쏙옙占쏙옙占쏙옙
 
-    [Header("占쏙옙占쏙옙占싱뱄옙 占썩본占쏙옙")]
+    [Header("미리보기 포커스 설정 (설치 패널 사용 중에만 활성화 권장)")]
+    [Tooltip("카메라 최소 줌 배율(작을수록 더 가깝게)")]
+    public float zoomMinFactor = 0.35f;
+    [Tooltip("카메라 최대 줌 배율(클수록 더 멀리)")]
+    public float zoomMaxFactor = 3.0f;
+    [Tooltip("줌 속도 곱셈 계수(1 = 기본)")]
+    public float zoomSpeedMul = 1.0f;
+
+    [Header("포커스 기본값")]
     public float distanceFactor = 1.4f;
-    public float heightOffsetRatio = 0.25f;   // 타占쏙옙 占쌕울옙占쏙옙 占쏙옙占쏙옙占쏙옙 占싹부몌옙큼 占쏙옙占쏙옙
-    [Tooltip("0占싱몌옙 占쏙옙占쏙옙 FOV 占쏙옙占쏙옙")]
+    public float heightOffsetRatio = 0.25f;   // 바운드 상단에서 카메라 높이 오프셋 비율
+    [Tooltip("0이면 카메라 FOV 그대로 사용")]
     public float targetFOV = 22f;
 
-    [Header("占쏙옙占쏙옙 占심쇽옙")]
+    [Header("시점 보정")]
     [Range(0f, 1f)] public float lowAngleBias = 0.7f;
-    public float lowAngleFactor = 0.45f;      // radius 占쏙옙占� 占싣뤄옙占쏙옙 占쏙옙占�
+    public float lowAngleFactor = 0.45f;      // 낮은 각도 보정용 반지름 비율
     public LayerMask groundLayer = ~0;
     public float groundClearance = 0.6f;
 
-    [Header("트占쏙옙")]
+    [Header("시간")]
     public float focusDuration = 0.35f;
     public float returnDuration = 0.28f;
 
-    [Header("占싻놂옙 占쏙옙占쏙옙트")]
-    public GameObject installPanelRef;        // 占쏙옙치 占싻놂옙(占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쌜쏙옙키占쏙옙 占쏙옙占쏙옙占쏙옙 占쌀댐옙)
+    [Header("설치 패널 연동")]
+    public GameObject installPanelRef;        // 설치 패널 참조 (활성화 여부로 동작 제어 가능)
     public bool onlyWhileInstallPanelActive = true;
 
     [Header("취소 입력")]
     public KeyCode cancelKey = KeyCode.Escape;
-    // 우클릭으로 취소하던 동작을 제거했습니다.
 
-    [Header("占쏙옙占쏙옙占�")]
+    [Header("로그")]
     public bool verboseLog = false;
 
     Camera _cam;
@@ -49,6 +49,7 @@ public class PreviewFocusSimple : MonoBehaviour
     Vector3 _posBefore;
     Quaternion _rotBefore;
     float _fovBefore;
+    CameraScaler _scalerRef; // CameraScaler 참조 (포커스 중 입력 충돌 방지용)
 
     float _lastClickTime = -999f;
     Vector2 _pressPos;
@@ -63,6 +64,7 @@ public class PreviewFocusSimple : MonoBehaviour
         _cam = GetComponent<Camera>();
         if (!_cam) _cam = Camera.main;
         _installer = FindObjectOfType<TileClickInstaller>();
+        _scalerRef = FindObjectOfType<CameraScaler>();
     }
 
     void Update()
@@ -72,17 +74,35 @@ public class PreviewFocusSimple : MonoBehaviour
             if (!installPanelRef || !installPanelRef.activeInHierarchy) return;
         }
         if (_installer == null) return;
-        if (Time.unscaledTime < _cancelIgnoreUntil) return; // 占쏙옙 占쏙옙占쏙옙클占쏙옙 占쏙옙占쏙옙 占쏙옙占�(占쏙옙牟占�) 占쌉뤄옙 占쏙옙占쏙옙
+        if (Time.unscaledTime < _cancelIgnoreUntil) return; // 짧은 시간 동안 취소 입력 무시
 
-        // 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙占� 占쌘듸옙 占쏙옙占쏙옙
+        // 스크롤이 들어오면 무조건 CameraScaler 기능으로 복귀
+        float scrollImmediate = Input.GetAxis("Mouse ScrollWheel");
+        if (Mathf.Abs(scrollImmediate) > 0.0001f)
+        {
+            // 즉시 CameraScaler 활성화
+            if (_scalerRef != null && !_scalerRef.enabled) _scalerRef.enabled = true;
+            // 포커스 중이면 복귀 시작
+            if (_isFocused || _isFocusing)
+            {
+                StartReturn();
+                return;
+            }
+            // 포커스 중이 아니면 그냥 바로 반환(입력은 CameraScaler가 처리)
+            return;
+        }
+
+        // 포커스가 유지 중인데 미리보기 루트가 사라지면 복귀
         if (_isFocused && _installer.CurrentPreviewRoot == null)
         {
             StartReturn();
             return;
         }
 
-        // 占쌉뤄옙
+        // 입력 처리
         HandleMouse();
+
+        // (스크롤 처리는 위에서 즉시 처리)
 
         if (_isFocused && Time.unscaledTime >= _cancelIgnoreUntil)
         {
@@ -112,7 +132,7 @@ public class PreviewFocusSimple : MonoBehaviour
             _lastClickTime = now;
             if (!isDouble) return;
 
-            // 占쏙옙占쏙옙클占쏙옙: "占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙" 占쏙옙占쏙옙占쏙옙占쏙옙 占쌕뤄옙 占쏙옙커占쏙옙
+            // 더블클릭: 현재 설치 미리보기의 루트와 빌딩 데이터를 사용하여 포커스 시작
             var root = _installer.CurrentPreviewRoot;
             var bd = _installer.CurrentBuildingData;
             if (!root || !bd) return;
@@ -127,19 +147,22 @@ public class PreviewFocusSimple : MonoBehaviour
     {
         StopAllCoroutines();
 
+        // 포커스 시작 시 CameraScaler 비활성화하여 입력 충돌 방지
+        if (_scalerRef != null) _scalerRef.enabled = false;
+
         _isFocusing = true;
         _posBefore = _cam.transform.position;
         _rotBefore = _cam.transform.rotation;
         _fovBefore = _cam.fieldOfView;
 
-        // 타占쏙옙 占쌩쏙옙(占썅간 占쏙옙)
+        // 바운드 중심(상단 오프셋 포함)
         Vector3 center = b.center + Vector3.up * (b.size.y * heightOffsetRatio);
 
-        // 占신몌옙/FOV 占쏙옙占쏙옙占쏙옙占싱듸옙
+        // 카메라 거리 및 FOV 계산
         float radius = Mathf.Max(b.extents.x, b.extents.y, b.extents.z);
         float df = (bd.cameraDistanceFactorOverride > 0f) ? bd.cameraDistanceFactorOverride : distanceFactor;
         float dist = Mathf.Max(1f, radius * df);
-        // 占쏙옙 占쏙옙占쏙옙/占쌈듸옙 확占쏙옙 (CameraScaler 占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙타占쏙옙 占쏙옙占쏙옙)
+        // CameraScaler에 최소/최대 거리와 줌 속도를 조정하여 포커스 시 적절한 줌 범위를 확보
         var scaler = FindObjectOfType<CameraScaler>();
         if (scaler)
         {
@@ -151,7 +174,7 @@ public class PreviewFocusSimple : MonoBehaviour
         float fovTarget = (bd.cameraFOVOverride > 0f) ? bd.cameraFOVOverride
                           : (targetFOV > 0f ? targetFOV : _cam.fieldOfView);
 
-        // 占쏙옙占쏙옙: 占실뱄옙 "占쏙옙占쏙옙 占쏙옙" 占쏙옙占쏙옙
+        // 카메라 목표 위치/회전 계산
         Vector3 camPos;
         Quaternion camRot;
 
@@ -163,24 +186,23 @@ public class PreviewFocusSimple : MonoBehaviour
         }
         else
         {
-            Vector3 dir = root.forward; // 占썩본 Front
+            Vector3 dir = root.forward; // 기본 Front
             switch (bd.preferredView)
             {
                 case BuildingData.PreferredView.Back: dir = -root.forward; break;
                 case BuildingData.PreferredView.Left: dir = -root.right; break;
                 case BuildingData.PreferredView.Right: dir = root.right; break;
-                    // Front占쏙옙 占쏙옙占쏙옙 占썩본占쏙옙
             }
             dir.y = 0f; if (dir.sqrMagnitude < 1e-5f) dir = Vector3.forward; dir.Normalize();
 
             Vector3 basePos = center - dir * dist + Vector3.up * Mathf.Min(radius * 0.35f, 6f);
 
-            // 占쏙옙占쏙옙(占쏙옙占싹몌옙 0占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙)
+            // 낮은 각도 보정
             float desiredLowY = center.y - (radius * Mathf.Max(0f, lowAngleFactor));
             Vector3 lowPos = new Vector3(basePos.x, desiredLowY, basePos.z);
             camPos = Vector3.Lerp(basePos, lowPos, Mathf.Clamp01(lowAngleBias));
 
-            // 占쏙옙占쏙옙 占쏙옙占쏙옙
+            // 지면 충돌 방지: 레이캐스트로 지면 높이를 확인하고 카메라 높이 보정
             if (Physics.Raycast(new Vector3(camPos.x, camPos.y + 50f, camPos.z),
                                 Vector3.down, out var hitG, 200f, groundLayer, QueryTriggerInteraction.Ignore))
             {
@@ -206,6 +228,9 @@ public class PreviewFocusSimple : MonoBehaviour
 
     void StartReturn()
     {
+        // 즉시 CameraScaler 활성화(스크롤 후 즉시 카메라 컨트롤 복구 목적)
+        if (_scalerRef != null && !_scalerRef.enabled) _scalerRef.enabled = true;
+
         StopAllCoroutines();
         StartCoroutine(TweenCamera(_cam.transform.position, _posBefore,
                                    _cam.transform.rotation, _rotBefore,
@@ -213,6 +238,7 @@ public class PreviewFocusSimple : MonoBehaviour
                                    {
                                        _isFocused = false;
                                        _isFocusing = false;
+                                       // 복귀 완료 시 상태 정리(스케일러는 이미 활성화됨)
                                    }));
     }
 
@@ -236,7 +262,7 @@ public class PreviewFocusSimple : MonoBehaviour
         onComplete?.Invoke();
     }
 
-    // 占쏙옙占쏙옙占쏙옙占쏙옙占쏙옙 helpers 占쏙옙占쏙옙占쏙옙占쏙옙占쏙옙
+    // 입력/유틸 헬퍼
     bool IsPointerOnUI()
     {
         if (!EventSystem.current) return false;
