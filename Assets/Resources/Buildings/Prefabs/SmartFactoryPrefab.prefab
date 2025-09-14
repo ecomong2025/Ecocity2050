@@ -513,12 +513,12 @@ MonoBehaviour:
   positionOffset: {x: 0.9, y: 0, z: 0}
   tileWidth: 2
   tileHeight: 4
-  cost: 0
-  maxIncomeAmount: 0
-  incomePer5Minutes: 0
+  cost: 180
+  maxIncomeAmount: 300
+  incomePer5Minutes: 30
   instantCO2Change: 0
-  co2PerSecond: 0
-  maxCO2Change: 0
+  co2PerSecond: 10
+  maxCO2Change: 150
   preferredView: 1
   cameraDistanceFactorOverride: 0
   cameraFOVOverride: 0
