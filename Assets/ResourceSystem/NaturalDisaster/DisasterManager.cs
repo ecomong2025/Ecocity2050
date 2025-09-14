@@ -156,7 +156,10 @@ public class DisasterManager : MonoBehaviour
             yield return new WaitForSeconds(duration / (blinkCount * 2));
         }
 
-        // 건물 오브젝트 제거 — 타일은 비워지므로 다시 설치 가능
+        // 🔹 파괴 직전: 타일 점유 해제(마커 제거)
+        FreeTilesForBuilding(building);
+
+        // 🔹 건물 오브젝트 제거 — 타일은 비워지므로 다시 설치 가능
         Destroy(building);
     }
 
@@ -176,6 +179,63 @@ public class DisasterManager : MonoBehaviour
             AudioSource.PlayClipAtPoint(collapseSfx, cam ? cam.transform.position : Vector3.zero, collapseVolume);
         }
     }
+
+    // ─────────────────────────────────────────────
+    // 점유 해제 유틸
+
+    /// <summary>
+    /// 건물 루트에서 BuildingFootprint를 찾아 모든 타일의 점유 마커를 제거.
+    /// 없으면 부모 타일(태그 "Tile")을 찾아 대표 마커만 제거(폴백).
+    /// </summary>
+    void FreeTilesForBuilding(GameObject buildingRoot)
+    {
+        if (!buildingRoot) return;
+
+        // 1) 우선 BuildingFootprint가 있으면 공식 API로 해제
+        var fp = buildingRoot.GetComponent<BuildingFootprint>() ??
+                 buildingRoot.GetComponentInChildren<BuildingFootprint>() ??
+                 buildingRoot.GetComponentInParent<BuildingFootprint>();
+
+        if (fp != null)
+        {
+            fp.ReleaseAll();
+            return;
+        }
+
+        // 2) (폴백) Footprint가 없을 때: 부모 타일 기준으로 마커 제거 시도
+        var tile = FindTileAncestor(buildingRoot.transform);
+        if (tile != null)
+        {
+            // 기본 마커명과, 설치기에서 사용하는 마커명 둘 다 시도
+            TryRemoveMarker(tile, "__OCCUPIED__");
+            string installerMarker = (TileClickInstaller.Instance != null)
+                ? TileClickInstaller.Instance.occupiedMarkerName
+                : "__OCCUPIED__";
+            if (installerMarker != "__OCCUPIED__")
+                TryRemoveMarker(tile, installerMarker);
+        }
+    }
+
+    Transform FindTileAncestor(Transform t)
+    {
+        var cur = t;
+        while (cur != null)
+        {
+            if (cur.CompareTag("Tile")) return cur;
+            cur = cur.parent;
+        }
+        return null;
+    }
+
+    void TryRemoveMarker(Transform tile, string markerName)
+    {
+        if (!tile || string.IsNullOrEmpty(markerName)) return;
+        var mark = tile.Find(markerName);
+        if (mark) Destroy(mark.gameObject);
+    }
+
+    // ─────────────────────────────────────────────
+    // 탐색 유틸
 
     BuildingData FindBuildingDataInChildren(Transform parent)
     {
