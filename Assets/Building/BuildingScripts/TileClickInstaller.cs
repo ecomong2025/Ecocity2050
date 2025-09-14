@@ -388,6 +388,9 @@ public class TileClickInstaller : MonoBehaviour
             SuppressUINavEvents(true);
             SetExternalHotkeysEnabled(false);
 
+            // Confirm 버튼은 최소 1개 이상 쌓일 때까지 비활성화
+            if (confirmInstallButton) confirmInstallButton.interactable = false;
+
             Debug.Log("[Installer] 연속 설치 ON (프리뷰 누적 모드)");
         }
         else
@@ -399,7 +402,6 @@ public class TileClickInstaller : MonoBehaviour
 
         if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
     }
-
 
 
     // ─────────────────────────────────────────────────────────────
