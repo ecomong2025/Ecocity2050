@@ -2,14 +2,133 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+// ⬇ 클래스 맨 위 namespace/using 아래 어딘가 적당한 곳에 추가
+[System.Serializable]
+public class PreviewBatchItem
+{
+    public GameObject root;              // 프리뷰 부모(회전/스케일 기준)
+    public GameObject model;             // 실제 모델(자식)
+    public List<GameObject> tiles;       // 점유할 타일들
+    public int rotation;                 // 0/90/180/270
+}
 
 public class TileClickInstaller : MonoBehaviour
 {
+    [SerializeField] bool adoptCurrentSelectionOnContinue = true; // 연속 시작 시 현재 선택 자동 채택
+
+    // ⬇ TileClickInstaller 멤버 필드 영역 어딘가에 추가
+    // “연속 프리뷰 쌓기”를 위한 대기열
+    readonly List<PreviewBatchItem> pendingPreviews = new();
+
+    // 연속 모드에서 “기존 프리뷰 들”을 남겨두고 새 프리뷰를 추가할지 여부
+    // (true: 남겨두고 계속 추가 ← 요구사항에 맞춤)
+    [SerializeField] bool multiPreviewAppendMode = true;
+    // ⬇ 클래스 안에 새로 추가
+    PreviewBatchItem SpawnSinglePreview(List<GameObject> tiles, GameObject prefab, int desiredRot)
+    {
+        if (tiles == null || tiles.Count == 0 || prefab == null) return null;
+
+        var bd = prefab.GetComponent<BuildingData>() ?? prefab.GetComponentInChildren<BuildingData>();
+        if (bd == null) { Debug.LogWarning("[Installer] BuildingData 누락"); return null; }
+
+        // 선택 영역 바운즈
+        Bounds selB = tiles[0].GetComponent<Renderer>().bounds;
+        for (int i = 1; i < tiles.Count; i++)
+            selB.Encapsulate(tiles[i].GetComponent<Renderer>().bounds);
+
+        // 프리뷰 부모
+        var root = new GameObject("BuildingPreviewParent");
+        root.transform.SetPositionAndRotation(
+            new Vector3(selB.center.x, selB.max.y, selB.center.z),
+            Quaternion.Euler(0f, desiredRot, 0f)
+        );
+
+        // 모델 생성
+        var model = Instantiate(prefab, root.transform);
+        model.name = "BuildingModel";
+        model.SetActive(false);
+
+        // 스케일 맞춤 (기존 SpawnPreviewOverSelection 로직 축약)
+        if (!TryGetModelBounds(model, out Bounds modelBounds))
+        {
+            Destroy(root);
+            Debug.LogError("[Installer] 프리팹에 렌더러/콜라이더/메시가 없습니다.");
+            return null;
+        }
+
+        // 타일 크기 → 목표 사이즈
+        var sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
+        Vector3 targetSize = (_stepU > 0f && _stepV > 0f)
+            ? new Vector3(sizeTiles.x * _stepU * footprintPadding,
+                          selB.size.y,
+                          sizeTiles.y * _stepV * footprintPadding)
+            : new Vector3(selB.size.x * footprintPadding, selB.size.y, selB.size.z * footprintPadding);
+
+        var originalScale = model.transform.localScale;
+
+        if (bd.tileWidth != bd.tileHeight)
+        {
+            // 가로세로 비 다른 타입: 균등 스케일
+            model.transform.localScale = originalScale;
+            if (modelBounds.size.x > 0f && modelBounds.size.z > 0f)
+            {
+                float s = Mathf.Min(targetSize.x / modelBounds.size.x, targetSize.z / modelBounds.size.z);
+                model.transform.localScale = originalScale * s;
+            }
+        }
+        else
+        {
+            if (fillBothAxes)
+            {
+                model.transform.localScale = originalScale;
+                if (modelBounds.size.x > 0f && modelBounds.size.z > 0f)
+                {
+                    float sx = targetSize.x / modelBounds.size.x;
+                    float sz = targetSize.z / modelBounds.size.z;
+                    float sy = Mathf.Min(sx, sz);
+                    model.transform.localScale = new Vector3(originalScale.x * sx, originalScale.y * sy, originalScale.z * sz);
+                }
+            }
+            else
+            {
+                model.transform.localScale = originalScale;
+                if (modelBounds.size.x > 0f && modelBounds.size.z > 0f)
+                {
+                    float s = Mathf.Min(targetSize.x / modelBounds.size.x, targetSize.z / modelBounds.size.z);
+                    model.transform.localScale = originalScale * s;
+                }
+            }
+        }
+
+        // 바닥/중심 정렬
+        if (TryGetModelBounds(model, out Bounds mb))
+        {
+            Vector3 deltaWorld = new Vector3(
+                selB.center.x - mb.center.x,
+                selB.max.y - mb.min.y,
+                selB.center.z - mb.center.z
+            );
+            model.transform.position += deltaWorld;
+        }
+
+        model.SetActive(true);
+
+        return new PreviewBatchItem
+        {
+            root = root,
+            model = model,
+            tiles = new List<GameObject>(tiles),
+            rotation = desiredRot
+        };
+    }
+
     // ─────────────────────────────────────────────────────────────
     // Hotkey / 외부 UI 입력 격리(선택)
     [Header("Hotkey Isolation (optional)")]
     [Tooltip("설치 중에는 여기 들어있는 컴포넌트들의 enabled를 꺼서 전역 핫키가 반응하지 않게 합니다. (예: PauseMenu, PanelToggler 등)")]
     public Behaviour[] disableWhilePlacing;
+    [SerializeField] bool continuousPlacement = false;   // 기존
+    [SerializeField] bool endAfterNextInstall = false;   // ✅ 다음 설치 1회 후 종료(무장)
 
     void SetExternalHotkeysEnabled(bool on)
     {
@@ -45,6 +164,43 @@ public class TileClickInstaller : MonoBehaviour
     [SerializeField]
     [Tooltip("긴축 자동 보정 (사용자 회전 우선, 기본 off)")]
     bool autoAlignRotationToSelection = false;
+    // ───────── Continuous Placement ─────────
+
+
+    public bool IsContinuousPlacement => continuousPlacement;
+
+    public void SetContinuousPlacement(bool on)
+    {
+        continuousPlacement = on;
+    }
+
+    public void ToggleContinuousPlacement()
+    {
+        continuousPlacement = !continuousPlacement;
+    }
+
+    // “현재 선택된 애로 계속 설치”를 강제로 켜는 편의 함수
+    public void EnableContinuousPlacement()
+    {
+        if (selectedBuildingPrefab == null)
+        {
+            Debug.LogWarning("[Installer] 현재 선택된 건물이 없습니다!");
+            return;
+        }
+        continuousPlacement = true;
+
+        // UI/효과 유지
+        buildingInstallPanel?.SetActive(true);
+        TogglePlacementFX(true);
+        SuppressUINavEvents(true);
+        SetExternalHotkeysEnabled(false);
+
+        // 선택 영역이 남아있다면 프리뷰 다시 띄우기 (옵션)
+        if (currentTiles != null && currentTiles.Count > 0)
+            SpawnPreviewOverSelection(selectedBuildingPrefab);
+
+        Debug.Log("[Installer] 연속 설치 모드 ON (현재 빌딩으로 계속 설치)");
+    }
 
     // ─────────────────────────────────────────────────────────────
     // Placement / Grid / Highlight
@@ -171,6 +327,7 @@ public class TileClickInstaller : MonoBehaviour
         foreach (var lr in _gridLineRenderers) if (lr) lr.enabled = on;
         foreach (var r in _gridRenderers) if (r) r.enabled = on;
     }
+    
 
     bool IsPlacingNow()
     {
@@ -178,6 +335,74 @@ public class TileClickInstaller : MonoBehaviour
                && buildingInstallPanel != null
                && buildingInstallPanel.activeInHierarchy;
     }
+    // 연속 설치 버튼을 누를 때 호출
+    public void OnContinuousButtonClicked()
+    {
+        if (selectedBuildingPrefab == null)
+        {
+            Debug.LogWarning("[Installer] 현재 선택된 건물이 없습니다!");
+            return;
+        }
+
+        if (!continuousPlacement)
+        {
+            // ✅ 연속 모드 '처음' 진입
+            // (1) 대기열 깨끗이 (이전 흔적 방지)
+            DiscardAllPendingPreviews();
+
+            // (2) 선택 채택 모드면: 현재 선택/프리뷰를 '첫 항목'으로 변환
+            if (adoptCurrentSelectionOnContinue && currentTiles != null && currentTiles.Count > 0)
+            {
+                // 현재 회전값 기준으로 항목 생성(긴축 1회 보정은 Spawn 쪽 로직이 처리)
+                int desiredRot = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f));
+                var item = SpawnSinglePreview(currentTiles, selectedBuildingPrefab, desiredRot);
+                if (item != null)
+                {
+                    pendingPreviews.Add(item);
+                    if (confirmInstallButton) confirmInstallButton.interactable = true;
+                }
+
+                // 기존 싱글 프리뷰는 제거(겹침 방지)
+                if (previewInstance != null) { Destroy(previewInstance); previewInstance = null; }
+                modelInstance = null;
+                // 다음 선택을 위해 비워둠
+                currentTiles = null;
+                ClearHighlight();
+            }
+            else
+            {
+                // 선택 비우고 들어가고 싶을 때(기존 동작 유지)
+                if (previewInstance != null) { Destroy(previewInstance); previewInstance = null; }
+                modelInstance = null;
+                currentTiles = null;
+                ClearHighlight();
+                if (confirmInstallButton) confirmInstallButton.interactable = false; // 아직 대기열 없음
+            }
+
+            // (3) 연속 모드 ON & UI 고정
+            continuousPlacement = true;
+            endAfterNextInstall = false;
+
+            buildingInstallPanel?.SetActive(true);
+            TogglePlacementFX(true);
+            SuppressUINavEvents(true);
+            SetExternalHotkeysEnabled(false);
+
+            // Confirm 버튼은 최소 1개 이상 쌓일 때까지 비활성화
+            if (confirmInstallButton) confirmInstallButton.interactable = false;
+
+            Debug.Log("[Installer] 연속 설치 ON (프리뷰 누적 모드)");
+        }
+        else
+        {
+            // 누적 모드 유지 (다음 설치 1회 종료 옵션은 누적 UX와 충돌하므로 비활성화)
+            endAfterNextInstall = false;
+            Debug.Log("[Installer] 연속 설치 유지 (일괄 배치 대기)");
+        }
+
+        if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
+    }
+
 
     // ─────────────────────────────────────────────────────────────
     void Awake()
@@ -233,6 +458,9 @@ public class TileClickInstaller : MonoBehaviour
             isDragging = true;
             dragStartTile = tile;
             ClearHighlight();
+
+            if (SFXPlayer.Instance != null)
+                SFXPlayer.Instance.PlayClick();
         }
 
         // ── 드래그 중 ──
@@ -383,7 +611,9 @@ public class TileClickInstaller : MonoBehaviour
     public void CloseWarningPanel()
     {
         if (warningPanel) warningPanel.SetActive(false);
-        SFXPlayer.Instance?.PlayClick();
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
     public void SetSelectedBuilding(GameObject prefab)
@@ -400,7 +630,9 @@ public class TileClickInstaller : MonoBehaviour
         TogglePlacementFX(true);
         SuppressUINavEvents(true);
         SetExternalHotkeysEnabled(false);
-        SFXPlayer.Instance?.PlayClick();
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
     void RotatePreview()
@@ -417,17 +649,91 @@ public class TileClickInstaller : MonoBehaviour
         // 사용자 회전에는 긴축 보정 금지
         _autoAlignPending = false;
 
-        SpawnPreviewOverSelection(selectedBuildingPrefab);
+        // ⬇ 연속 프리뷰 모드에서는 "이미 누적된 프리뷰"를 건드리지 않음.
+        //     단, 드래그 직후 currentTiles가 살아있을 때만 그 선택에 한해 새 프리뷰 1개를 더 얹는다.
+        if (!(IsContinuousPlacement && multiPreviewAppendMode && currentTiles == null))
+            SpawnPreviewOverSelection(selectedBuildingPrefab);
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
 
+
+    // ⬇ 모두 설치(연속 모드일 때)
+    void FinalizeAllPendingPreviews()
+    {
+        if (pendingPreviews.Count == 0) return;
+
+        var gm = FindObjectOfType<GameManager>();
+
+        foreach (var item in pendingPreviews)
+        {
+            if (item == null || item.root == null || item.model == null || item.tiles == null || item.tiles.Count == 0) continue;
+
+            var buildingData = item.model.GetComponent<BuildingData>() ?? item.model.GetComponentInChildren<BuildingData>();
+            if (buildingData == null) continue;
+
+            // 태그
+            if (item.root.tag != "Building")
+            {
+                try { item.root.tag = "Building"; }
+                catch { /* ignore */ }
+            }
+
+            // 첫 타일 밑으로 귀속
+            item.root.transform.SetParent(item.tiles[0].transform, true);
+
+            // 점유 마커
+            foreach (var t in item.tiles)
+                if (t && t.transform.Find(occupiedMarkerName) == null)
+                    new GameObject(occupiedMarkerName).transform.SetParent(t.transform, false);
+
+            // footprint
+            var footprint = item.root.AddComponent<BuildingFootprint>();
+            footprint.Init(item.tiles, occupiedMarkerName);
+
+            // GameManager 반영(기존 ConfirmInstall과 동일)
+            int totalCO2Impact = buildingData.instantCO2Change;
+            if (buildingData.co2PerSecond != 0) totalCO2Impact += buildingData.maxCO2Change;
+            int incomePerMinute = (buildingData.incomePer5Minutes > 0) ? buildingData.incomePer5Minutes / 5 : 0;
+
+            gm?.AddBuilding(
+                selectedBuildingPrefab.name.Replace("Prefab", ""),
+                buildingData.cost,
+                totalCO2Impact,
+                incomePerMinute,
+                item.root.transform.position,
+                item.root
+            );
+
+            gm?.ApplyBuildingCost(
+                buildingData.cost,
+                buildingData.instantCO2Change,
+                buildingData.co2PerSecond,
+                buildingData.maxCO2Change,
+                buildingData.incomePer5Minutes,
+                buildingData.transform,
+                buildingData.maxIncomeAmount
+            );
+
+            YearQuestManager.Instance?.OnBuildingInstalled(selectedBuildingPrefab, buildingData);
+            NotifyCitizensOfNewBuilding();
+            FindObjectOfType<CitizenGroupController>()?.OnBuildingInstalled(item.root.transform.position);
+        }
+
+        pendingPreviews.Clear();
+    }
+
+    void DiscardAllPendingPreviews()
+    {
+        foreach (var item in pendingPreviews)
+            if (item != null && item.root != null) Destroy(item.root);
+        pendingPreviews.Clear();
+    }
 
 
     void SpawnPreviewOverSelection(GameObject prefab)
     {
-        // 1) 기존 프리뷰 제거
-        if (previewInstance != null) Destroy(previewInstance);
-        modelInstance = null;
-
         var bd = prefab.GetComponent<BuildingData>() ?? prefab.GetComponentInChildren<BuildingData>();
         if (bd == null || currentTiles == null || currentTiles.Count == 0)
         {
@@ -435,36 +741,77 @@ public class TileClickInstaller : MonoBehaviour
             return;
         }
 
-        // 2) 선택 영역 바운즈
-        Bounds selB = currentTiles[0].GetComponent<Renderer>().bounds;
-        for (int i = 1; i < currentTiles.Count; i++)
-            selB.Encapsulate(currentTiles[i].GetComponent<Renderer>().bounds);
+        // ─── 연속 프리뷰 모드: 누적 추가 ───
+        if (IsContinuousPlacement && multiPreviewAppendMode)
+        {
+            int desiredRot = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f));
 
-        float lenU = (_stepU > 0f) ? _stepU * Mathf.Max(1, Mathf.RoundToInt(selB.size.x / _stepU)) : selB.size.x;
-        float lenV = (_stepV > 0f) ? _stepV * Mathf.Max(1, Mathf.RoundToInt(selB.size.z / _stepV)) : selB.size.z;
+            // (선택) 긴축 보정 1회 적용
+            if (_autoAlignPending && autoAlignRotationToSelection && bd.tileWidth != bd.tileHeight)
+            {
+                // selection long axis 계산
+                Bounds selB = currentTiles[0].GetComponent<Renderer>().bounds;
+                for (int i = 1; i < currentTiles.Count; i++)
+                    selB.Encapsulate(currentTiles[i].GetComponent<Renderer>().bounds);
+
+                float lenU = (_stepU > 0f) ? _stepU * Mathf.Max(1, Mathf.RoundToInt(selB.size.x / _stepU)) : selB.size.x;
+                float lenV = (_stepV > 0f) ? _stepV * Mathf.Max(1, Mathf.RoundToInt(selB.size.z / _stepV)) : selB.size.z;
+
+                var sizeTilesTmp = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
+                bool modelLongX = sizeTilesTmp.x >= sizeTilesTmp.y;
+                bool gridLongU = lenU >= lenV;
+                if (modelLongX != gridLongU)
+                    desiredRot = (desiredRot + 90) % 360;
+
+                _autoAlignPending = false; // 이번 선택에만 1회
+            }
+
+            var item = SpawnSinglePreview(currentTiles, prefab, desiredRot);
+            if (item != null)
+            {
+                pendingPreviews.Add(item);
+                buildingInstallPanel?.SetActive(true);
+                if (confirmInstallButton) confirmInstallButton.interactable = pendingPreviews.Count > 0;
+            }
+
+            // 다음 선택을 위해 현재 선택은 비움(하이라이트도 클리어)
+            currentTiles = null;
+            ClearHighlight();
+            return;
+        }
+
+        // ─── 일반(싱글) 모드: 기존 동작 유지 ───
+        // 1) 기존 프리뷰 제거
+        if (previewInstance != null) Destroy(previewInstance);
+        modelInstance = null;
+
+        // 2) 선택 영역 바운즈
+        Bounds selB2 = currentTiles[0].GetComponent<Renderer>().bounds;
+        for (int i = 1; i < currentTiles.Count; i++)
+            selB2.Encapsulate(currentTiles[i].GetComponent<Renderer>().bounds);
+
+        float lenU2 = (_stepU > 0f) ? _stepU * Mathf.Max(1, Mathf.RoundToInt(selB2.size.x / _stepU)) : selB2.size.x;
+        float lenV2 = (_stepV > 0f) ? _stepV * Mathf.Max(1, Mathf.RoundToInt(selB2.size.z / _stepV)) : selB2.size.z;
 
         // 3) 회전: 사용자 입력이 기본
-        int desiredRot = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f));
-        var sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
+        int desiredRot2 = Mathf.RoundToInt(Mathf.Repeat(previewRotation, 360f));
+        var sizeTiles2 = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot2);
 
         // 🔒 긴축 보정: 클릭할 때마다 1회만
         if (_autoAlignPending && autoAlignRotationToSelection && bd.tileWidth != bd.tileHeight)
         {
-            bool modelLongX = sizeTiles.x >= sizeTiles.y;
-            bool gridLongU = lenU >= lenV;
-            if (modelLongX != gridLongU)
+            bool modelLongX2 = sizeTiles2.x >= sizeTiles2.y;
+            bool gridLongU2 = lenU2 >= lenV2;
+            if (modelLongX2 != gridLongU2)
             {
-                // 긴축 맞춤은 90° 전환(가로↔세로)
-                desiredRot = (desiredRot + 90) % 360;
-                sizeTiles = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot);
+                desiredRot2 = (desiredRot2 + 90) % 360;
+                sizeTiles2 = GetRotatedSize(bd.tileWidth, bd.tileHeight, desiredRot2);
             }
         }
-        // 이번 미리보기에서 보정은 끝 — 다음 클릭 전까진 OFF
         _autoAlignPending = false;
 
-
-        // 4) 프리뷰 한 번만 생성 (앵커는 pivotTile 있으면 그 중심, 없으면 selB.center)
-        Vector3 center = selB.center;
+        // 4) 프리뷰(싱글) 생성
+        Vector3 center = selB2.center;
         if (_pivotTile != null)
         {
             var pr = _pivotTile.GetComponent<Renderer>();
@@ -473,8 +820,8 @@ public class TileClickInstaller : MonoBehaviour
 
         previewInstance = new GameObject("BuildingPreviewParent");
         previewInstance.transform.SetPositionAndRotation(
-            new Vector3(center.x, selB.max.y, center.z),
-            Quaternion.Euler(0f, desiredRot, 0f)
+            new Vector3(center.x, selB2.max.y, center.z),
+            Quaternion.Euler(0f, desiredRot2, 0f)
         );
 
         // 5) 모델 생성
@@ -495,12 +842,11 @@ public class TileClickInstaller : MonoBehaviour
 
         // 7) 타일 크기에 맞춘 스케일
         Vector3 targetSize = (_stepU > 0f && _stepV > 0f)
-            ? new Vector3(sizeTiles.x * _stepU * footprintPadding, selB.size.y, sizeTiles.y * _stepV * footprintPadding)
-            : new Vector3(selB.size.x * footprintPadding, selB.size.y, selB.size.z * footprintPadding);
+            ? new Vector3(sizeTiles2.x * _stepU * footprintPadding, selB2.size.y, sizeTiles2.y * _stepV * footprintPadding)
+            : new Vector3(selB2.size.x * footprintPadding, selB2.size.y, selB2.size.z * footprintPadding);
 
         if (bd.tileWidth != bd.tileHeight)
         {
-            // Uniform 스케일 = 원래 스케일 × 보정
             modelInstance.transform.localScale = originalScale;
             if (modelBounds.size.x > 0f && modelBounds.size.z > 0f)
             {
@@ -518,9 +864,7 @@ public class TileClickInstaller : MonoBehaviour
                     float sx = targetSize.x / modelBounds.size.x;
                     float sz = targetSize.z / modelBounds.size.z;
                     float sy = Mathf.Min(sx, sz);
-                    modelInstance.transform.localScale = new Vector3(originalScale.x * sx,
-                                                                     originalScale.y * sy,
-                                                                     originalScale.z * sz);
+                    modelInstance.transform.localScale = new Vector3(originalScale.x * sx, originalScale.y * sy, originalScale.z * sz);
                 }
             }
             else
@@ -535,7 +879,7 @@ public class TileClickInstaller : MonoBehaviour
         }
 
         // 8) 중심/바닥 정렬
-        AlignPreviewToSelection(selB);
+        AlignPreviewToSelection(selB2);
 
         // 9) 표시
         modelInstance.SetActive(true);
@@ -544,10 +888,11 @@ public class TileClickInstaller : MonoBehaviour
 
         // 10) 자동보정 ON이면 최종 회전을 previewRotation에 동기화
         if (autoAlignRotationToSelection)
-            previewRotation = desiredRot;
+            previewRotation = desiredRot2;
 
-        Debug.Log($"[SpawnPreview] prevRot={previewRotation}, desiredRot={desiredRot}, sizeTiles={sizeTiles}, origScale={originalScale}");
+        Debug.Log($"[SpawnPreview] prevRot={previewRotation}, desiredRot={desiredRot2}, sizeTiles={sizeTiles2}, origScale={originalScale}");
     }
+
 
 
     void ResizeToFitUniform(GameObject building, Vector3 targetSize, Bounds _unused)
@@ -583,6 +928,27 @@ public class TileClickInstaller : MonoBehaviour
 
     public void ConfirmInstall()
     {
+        // ⬇ 연속 프리뷰 모드: 대기열 일괄 설치
+        if (IsContinuousPlacement && multiPreviewAppendMode)
+        {
+            if (pendingPreviews.Count > 0)
+                FinalizeAllPendingPreviews();
+
+            // 모드/상태 종료
+            continuousPlacement = false;
+            endAfterNextInstall = false;
+
+            ClosePlacementUI();
+            TogglePlacementFX(false);
+            SuppressUINavEvents(false);
+            SetExternalHotkeysEnabled(true);
+            GameManager.Instance?.CompletePlacing();
+
+            if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
+            return;
+        }
+
+        // ⬇ 이하: 기존 단일 설치 로직 (원본 유지)
         if (previewInstance == null || currentTiles == null) return;
 
         GameManager gameManager = FindObjectOfType<GameManager>();
@@ -632,18 +998,19 @@ public class TileClickInstaller : MonoBehaviour
 
         YearQuestManager.Instance?.OnBuildingInstalled(selectedBuildingPrefab, buildingData);
         NotifyCitizensOfNewBuilding();
-
-        var citizenController = FindObjectOfType<CitizenGroupController>();
-        citizenController?.OnBuildingInstalled(previewInstance.transform.position);
-
+        FindObjectOfType<CitizenGroupController>()?.OnBuildingInstalled(previewInstance.transform.position);
         GameManager.Instance?.CompletePlacing();
 
+        // 단일 모드 종료 루틴
         ClosePlacementUI();
         TogglePlacementFX(false);
         SuppressUINavEvents(false);
         SetExternalHotkeysEnabled(true);
-        SFXPlayer.Instance?.PlayClick();
+
+        if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
     }
+
+
 
     void ClosePlacementUI()
     {
@@ -657,7 +1024,7 @@ public class TileClickInstaller : MonoBehaviour
 
     void DiscardPreviewAndCloseUI()
     {
-        if (previewInstance) Destroy(previewInstance);
+        
         previewInstance = null;
         modelInstance = null;
         currentTiles = null;
@@ -674,14 +1041,36 @@ public class TileClickInstaller : MonoBehaviour
 
     public void CancelInstall()
     {
+        // ⬇ 연속 프리뷰 모드: 전부 폐기
+        if (IsContinuousPlacement && multiPreviewAppendMode)
+        {
+            DiscardAllPendingPreviews();
+
+            continuousPlacement = false;
+            endAfterNextInstall = false;
+
+            DiscardPreviewAndCloseUI();
+            GameManager.Instance?.CancelPlacing();
+            TogglePlacementFX(false);
+            SuppressUINavEvents(false);
+            SetExternalHotkeysEnabled(true);
+
+            if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
+            return;
+        }
+
+        // ⬇ 기존 단일 취소 동작
         if (previewInstance != null) Destroy(previewInstance);
         DiscardPreviewAndCloseUI();
         GameManager.Instance?.CancelPlacing();
         TogglePlacementFX(false);
         SuppressUINavEvents(false);
         SetExternalHotkeysEnabled(true);
-        SFXPlayer.Instance?.PlayClick();
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayClick();
     }
+
 
     // GameManager에서 호출할 수 있게 public 유지
     public void ClearSelection()
@@ -716,6 +1105,7 @@ public class TileClickInstaller : MonoBehaviour
 
     bool TryGetTileUnderMouse(out GameObject tile)
     {
+
         tile = null;
         var cam = Camera.main;
         if (!cam) return false;

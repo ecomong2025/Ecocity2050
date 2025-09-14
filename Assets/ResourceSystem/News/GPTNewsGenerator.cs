@@ -26,7 +26,28 @@ public class GPTNewsGenerator : MonoBehaviour
     void Start()
     {
         LoadAPIKey();
-        StartCoroutine(CheckSatisfactionRoutine());
+    }
+
+    void OnEnable()
+    {
+        GameManager.OnSatisfactionChanged += OnSatisfactionChanged;
+    }
+
+    void OnDisable()
+    {
+        GameManager.OnSatisfactionChanged -= OnSatisfactionChanged;
+    }
+
+    private void OnSatisfactionChanged(string newLevel)
+    {
+        if (newLevel == "나쁨" || newLevel == "매우 나쁨")
+        {
+            if (lastSatisfaction != newLevel)
+            {
+                lastSatisfaction = newLevel;
+                StartCoroutine(RequestNews(newLevel));
+            }
+        }
     }
 
     private void LoadAPIKey()
@@ -53,85 +74,21 @@ public class GPTNewsGenerator : MonoBehaviour
         }
     }
 
-    IEnumerator CheckSatisfactionRoutine()
+    public void ShowDisasterNews(string disasterType)
     {
-        // 1) GameManager 준비될 때까지 대기 (빌드에서 중요)
-        while (GameManager.Instance == null)
-            yield return null;
-
-        // 2) API 키 준비될 때까지 잠깐 대기 (없으면 요청 실패)
-        int apiWait = 0;
-        while (string.IsNullOrEmpty(apiKey) && apiWait < 100) // 최대 ~10초 대기
-        {
-            yield return new WaitForSeconds(0.1f);
-            apiWait++;
-        }
-        if (string.IsNullOrEmpty(apiKey))
-            Debug.LogWarning("[뉴스] API 키가 비어 있습니다. Resources/api_key.* 가 빌드에 포함됐는지 확인하세요.");
-
-        // 3) 첫 실행 즉시 상태 확인 및 필요 시 트리거
-        string currentSatisfaction = SafeGetSatisfaction();
-        lastSatisfaction = ""; // 이전값 초기화
-        if (currentSatisfaction == "나쁨" || currentSatisfaction == "매우 나쁨")
-        {
-            lastSatisfaction = currentSatisfaction; // 중복 방지
-            yield return StartCoroutine(RequestNews(currentSatisfaction));
-            yield return StartCoroutine(AnimateNewsPanel());
-        }
-        else
-        {
-            lastSatisfaction = currentSatisfaction;
-        }
-
-        // 4) 이후 주기적 체크
-        while (true)
-        {
-            currentSatisfaction = SafeGetSatisfaction();
-
-            if ((currentSatisfaction == "나쁨" || currentSatisfaction == "매우 나쁨")
-                && lastSatisfaction != currentSatisfaction)
-            {
-                lastSatisfaction = currentSatisfaction;
-                yield return StartCoroutine(RequestNews(currentSatisfaction));
-                yield return StartCoroutine(AnimateNewsPanel());
-            }
-            else if (currentSatisfaction != "나쁨" && currentSatisfaction != "매우 나쁨")
-            {
-                lastSatisfaction = currentSatisfaction;
-            }
-
-            yield return new WaitForSeconds(1f);
-        }
-    }
-
-    // NRE 방지용 안전 래퍼
-    private string SafeGetSatisfaction()
-    {
-        try
-        {
-            return GameManager.Instance != null ? GameManager.Instance.GetSatisfactionLevel() : "";
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning($"[뉴스] 만족도 조회 실패: {e.Message}");
-            return "";
-        }
-    }
-
-    public void ShowDisasterNews(string disasterType, string buildingName)
-    {
-        StartCoroutine(RequestDisasterNews(disasterType, buildingName));
+        StartCoroutine(RequestDisasterNews(disasterType));
     }
     
-    IEnumerator RequestDisasterNews(string disasterType, string buildingName)
+    IEnumerator RequestDisasterNews(string disasterType)
     {
+        // 응답을 엄격히 제한하여 항상 '완전한 문장' 두 줄(제목/본문)로 나오게 함
         string prompt =
-            $"재난 종류는 '{disasterType}'이고, 설치된 건물이 붕괴되었습니다." +
-            "뉴스 제목은 18자 이내, 내용은 30자 이내로 작성하고, 두 줄로 출력하세요. " +
-            "첫 줄은 제목, 둘째 줄은 내용입니다. " +
-            "내용 문장은 반드시 완전한 문장으로 작성하고, 종결어미는 '~습니다.' 또는 '~니다.'로 끝내세요. " +
-            "예시:\n" +
-            $"{disasterType} 발생!\n" +
+            "다음 규칙을 반드시 지켜 출력하세요.\n" +
+            "- 출력은 '정확히 두 줄'입니다. 첫 줄은 뉴스 헤드라인(최대 30자), 둘째 줄은 본문(최대 40자)입니다.\n" +
+            "- 제목과 본문 모두 한국어의 자연스러운 완전 문장으로 작성하세요.\n\n" +
+            $"요청 정보: 재난종류='{disasterType}'" +
+            "예시(참고용, 실제 출력은 정확히 두 줄):\n" +
+            $"건물에서 {disasterType} 발생!.\n" +
             $"탄소배출량 증가로 인한 {disasterType} 발생으로 건물이 붕괴되었습니다.";
 
         string apiUrl = "https://api.openai.com/v1/chat/completions";
@@ -164,11 +121,14 @@ public class GPTNewsGenerator : MonoBehaviour
                 string title = lines.Length > 0 ? lines[0].Trim() : "";
                 string body = lines.Length > 1 ? lines[1].Trim() : "";
 
-                if (title.Length > 18) title = title.Substring(0, 18);
-                if (body.Length > 30) body = body.Substring(0, 30);
+                if (title.Length > 30) title = title.Substring(0, 30);
+                if (body.Length > 40) body = body.Substring(0, 40);
 
                 if (titleText != null) titleText.text = title;
                 if (contentText != null) contentText.text = body;
+
+                // 뉴스 생성 성공 시 팝업 표시
+                StartCoroutine(AnimateNewsPanel());
 
                 yield return StartCoroutine(AnimateNewsPanel()); // 애니메이션으로 뉴스 패널 표시
             }
@@ -182,13 +142,13 @@ public class GPTNewsGenerator : MonoBehaviour
     IEnumerator RequestNews(string satisfaction)
     {
         string prompt =
-            $"탄소 배출량 증가로 시민 만족도가 '{satisfaction}'로 하락했습니다. " +
-            "뉴스 제목은 18자 이내, 내용은 30자 이내로 작성하고, 두 줄로 출력하세요. " +
-            "첫 줄은 제목, 둘째 줄은 내용입니다. " +
-            "내용 문장은 반드시 완전한 문장으로 작성하고, 종결어미는 '~습니다.' 또는 '~니다.'로 끝내세요. " +
-            "예시:\n" +
-            "탄소 배출 급증 시민 불만 증가\n" +
-            "탄소배출량 증가로 시민 만족도가 하락했습니다.";
+            "다음 규칙을 반드시 지켜 출력하세요.\n" +
+            "- 출력은 '정확히 두 줄'입니다. 첫 줄은 뉴스 헤드라인(최대 30자), 둘째 줄은 본문(최대 40자)입니다.\n" +
+            "- 제목과 본문 모두 한국어의 자연스러운 완전 문장으로 작성하세요.\n\n" +
+            $"요청 정보: 시민 만족도가 '{satisfaction}'로 하락했습니다. 탄소 배출이 원인입니다.\n" +
+            "예시(참고용, 실제 출력은 정확히 두 줄):\n" +
+            "탄소 배출 급증 시민 불만 증가!\n" +
+            "탄소배출량 증가로 시민 만족도가 '{satisfaction}'로 하락했습니다.";
 
         string apiUrl = "https://api.openai.com/v1/chat/completions";
 
@@ -220,8 +180,15 @@ public class GPTNewsGenerator : MonoBehaviour
                 string title = lines.Length > 0 ? lines[0].Trim() : "";
                 string body = lines.Length > 1 ? lines[1].Trim() : "";
 
+                if (title.Length > 30) title = title.Substring(0, 30);
+                if (body.Length > 40) body = body.Substring(0, 40);
+
                 if (titleText != null) titleText.text = title;
                 if (contentText != null) contentText.text = body;
+
+                // 뉴스 생성 성공 시 팝업 표시
+                StartCoroutine(AnimateNewsPanel());
+                yield return StartCoroutine(AnimateNewsPanel());
             }
             else
             {

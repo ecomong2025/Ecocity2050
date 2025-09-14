@@ -5,10 +5,10 @@ public class SFXPlayer : MonoBehaviour
     public static SFXPlayer Instance;
 
     [Header("Audio Clips")]
-    public AudioClip clickClip;       // ¹öÆ° Å¬¸¯
-    public AudioClip correctClip;     // Á¤´ä
-    public AudioClip incorrectClip;   // ¿À´ä
-    // ÇÊ¿äÇÏ¸é Ãß°¡ Å¬¸³ ´õ µî·Ï °¡´É
+    public AudioClip clickClip;       // ë²„íŠ¼ í´ë¦­
+    public AudioClip correctClip;     // ì„±ê³µ
+    public AudioClip incorrectClip;   // ì‹¤íŒ¨
+    public AudioClip popupOpenClip;   // íŒì—… ì˜¤í”ˆ ì‚¬ìš´ë“œ (ì¶”ê°€)
 
     private AudioSource audioSource;
 
@@ -17,26 +17,41 @@ public class SFXPlayer : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
+        // AudioSourceê°€ ì—†ìœ¼ë©´ ìë™ ì¶”ê°€
         audioSource = GetComponent<AudioSource>();
-        DontDestroyOnLoad(gameObject); // ¾À ÀüÈ¯¿¡µµ À¯Áö
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
+        audioSource.loop = false;
+
+        DontDestroyOnLoad(gameObject); // ì”¬ ì „í™˜ ìœ ì§€
     }
 
-    public void PlayClick() => audioSource.PlayOneShot(clickClip);
-    public void PlayCorrect() => audioSource.PlayOneShot(correctClip);
-    public void PlayIncorrect() => audioSource.PlayOneShot(incorrectClip);
+    public void PlayClick() { if (clickClip != null) audioSource.PlayOneShot(clickClip); }
+    public void PlayCorrect() { if (correctClip != null) audioSource.PlayOneShot(correctClip); }
+    public void PlayIncorrect() { if (incorrectClip != null) audioSource.PlayOneShot(incorrectClip); }
 
-    // ÀÏ¹İÀûÀÎ Àç»ı¿ë
-    public void PlaySFX(AudioClip clip)
+    // ì¼ë°˜ SFX ì¬ìƒ
+    public void PlaySFX(AudioClip clip, float volume = 1f)
     {
-        if (clip != null)
-            audioSource.PlayOneShot(clip);
+        if (clip != null && audioSource != null)
+            audioSource.PlayOneShot(clip, Mathf.Clamp01(volume));
     }
 
-    //º¼·ıÁ¶Àı¿ë
+    // íŒì—… ì˜¤í”ˆ ì „ìš© ì¬ìƒ (popupOpenClip ìš°ì„ )
+    public void PlayPopupOpen(float volume = 1f)
+    {
+        if (audioSource == null) return;
+        if (popupOpenClip != null) audioSource.PlayOneShot(popupOpenClip, Mathf.Clamp01(volume));
+    }
+
+    // ë³¼ë¥¨ ì„¤ì •
     public void SetVolume(float volume)
     {
         if (audioSource != null)
-            audioSource.volume = volume;
+            audioSource.volume = Mathf.Clamp01(volume);
     }
 }
 

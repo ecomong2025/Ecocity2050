@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     // 변경: 이벤트를 클래스 내부로 이동
     public static event Action<HUDState> OnHUDChanged;
+    public static event Action<string> OnSatisfactionChanged; // 전달값: 새로운 만족도 문자열
 
     public int budget = 600;
     public int co2 = 0;
@@ -57,7 +58,9 @@ public class GameManager : MonoBehaviour
     public CitizenGroupController citizenGroupController;
 
     public QuizManager quizManager;
-    public TalkBubbleController bubbleController; 
+    public TalkBubbleController bubbleController;
+
+    public QuizlimitController quizLimitController;
 
     // 건물별 수입 코루틴 관리용 딕셔너리
     private Dictionary<Transform, Coroutine> incomeCoroutines = new Dictionary<Transform, Coroutine>();
@@ -245,7 +248,7 @@ public class GameManager : MonoBehaviour
         int accumulated = 0;
         while (accumulated < maxAmount)
         {
-            yield return new WaitForSeconds(3f); // 5초 간격
+            yield return new WaitForSeconds(5f); // 5초 간격
             int delta = Mathf.Min(perSecond, maxAmount - accumulated);
             co2 += delta;
             accumulated += delta;
@@ -261,7 +264,7 @@ public class GameManager : MonoBehaviour
         {
             if (buildingTransform == null) yield break;
 
-            yield return new WaitForSeconds(5f); // 5초 간격 (5분이면 300f)
+            yield return new WaitForSeconds(30f); // 30초 간격
 
             if (buildingTransform == null) yield break;
 
@@ -344,6 +347,9 @@ public class GameManager : MonoBehaviour
         co2 = co2,
         satisfaction = satisfaction
         });
+
+        // 만족도 변경 지점
+        OnSatisfactionChanged?.Invoke(satisfaction);
     }
 
     public string GetSatisfactionLevel()
@@ -364,10 +370,20 @@ public class GameManager : MonoBehaviour
         else return 0.1f;
     }
 
-    //퀴즈 관련 버튼 연결 
+    //퀴즈 관련 버튼 연결
     public void OpenQuiz()
     {
         SFXPlayer.Instance.PlayClick();
+
+        // 1️⃣ 퀴즈 제한 체크
+        if (!quizManager.CanPlayQuiz())
+        {
+            // 제한 초과 시 바로 패널 띄우기
+            quizLimitController.ShowLimitPanel();
+            return; // 함수 종료, 퀴즈 UI는 열리지 않음
+        }
+
+        // 2️⃣ 제한 미달이면 기존 로직 실행
         gamePanel.SetActive(false);
         quizManager.ResetQuizUI();
         quizMainPanel.SetActive(true);
