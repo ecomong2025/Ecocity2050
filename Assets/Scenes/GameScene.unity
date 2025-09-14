@@ -14909,7 +14909,7 @@ PrefabInstance:
       objectReference: {fileID: 322516968}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: currentYear
-      value: 2040
+      value: 2025
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: quizManager
@@ -45048,6 +45048,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8c8df5a192d7fb4ab316df7ea1ab70d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  adoptCurrentSelectionOnContinue: 1
+  multiPreviewAppendMode: 1
   disableWhilePlacing: []
   continuousPlacement: 0
   endAfterNextInstall: 0
