@@ -10,6 +10,8 @@ public class TileClickInstaller : MonoBehaviour
     [Header("Hotkey Isolation (optional)")]
     [Tooltip("설치 중에는 여기 들어있는 컴포넌트들의 enabled를 꺼서 전역 핫키가 반응하지 않게 합니다. (예: PauseMenu, PanelToggler 등)")]
     public Behaviour[] disableWhilePlacing;
+    [SerializeField] bool continuousPlacement = false;   // 기존
+    [SerializeField] bool endAfterNextInstall = false;   // ✅ 다음 설치 1회 후 종료(무장)
 
     void SetExternalHotkeysEnabled(bool on)
     {
@@ -45,6 +47,43 @@ public class TileClickInstaller : MonoBehaviour
     [SerializeField]
     [Tooltip("긴축 자동 보정 (사용자 회전 우선, 기본 off)")]
     bool autoAlignRotationToSelection = false;
+    // ───────── Continuous Placement ─────────
+
+
+    public bool IsContinuousPlacement => continuousPlacement;
+
+    public void SetContinuousPlacement(bool on)
+    {
+        continuousPlacement = on;
+    }
+
+    public void ToggleContinuousPlacement()
+    {
+        continuousPlacement = !continuousPlacement;
+    }
+
+    // “현재 선택된 애로 계속 설치”를 강제로 켜는 편의 함수
+    public void EnableContinuousPlacement()
+    {
+        if (selectedBuildingPrefab == null)
+        {
+            Debug.LogWarning("[Installer] 현재 선택된 건물이 없습니다!");
+            return;
+        }
+        continuousPlacement = true;
+
+        // UI/효과 유지
+        buildingInstallPanel?.SetActive(true);
+        TogglePlacementFX(true);
+        SuppressUINavEvents(true);
+        SetExternalHotkeysEnabled(false);
+
+        // 선택 영역이 남아있다면 프리뷰 다시 띄우기 (옵션)
+        if (currentTiles != null && currentTiles.Count > 0)
+            SpawnPreviewOverSelection(selectedBuildingPrefab);
+
+        Debug.Log("[Installer] 연속 설치 모드 ON (현재 빌딩으로 계속 설치)");
+    }
 
     // ─────────────────────────────────────────────────────────────
     // Placement / Grid / Highlight
@@ -171,12 +210,48 @@ public class TileClickInstaller : MonoBehaviour
         foreach (var lr in _gridLineRenderers) if (lr) lr.enabled = on;
         foreach (var r in _gridRenderers) if (r) r.enabled = on;
     }
+    
 
     bool IsPlacingNow()
     {
         return selectedBuildingPrefab != null
                && buildingInstallPanel != null
                && buildingInstallPanel.activeInHierarchy;
+    }
+    // 연속 설치 버튼을 누를 때 호출
+    public void OnContinuousButtonClicked()
+    {
+        if (selectedBuildingPrefab == null)
+        {
+            Debug.LogWarning("[Installer] 현재 선택된 건물이 없습니다!");
+            return;
+        }
+
+        if (!continuousPlacement)
+        {
+            // ① 연속 설치 시작
+            continuousPlacement = true;
+            endAfterNextInstall = false;
+
+            buildingInstallPanel?.SetActive(true);
+            TogglePlacementFX(true);
+            SuppressUINavEvents(true);
+            SetExternalHotkeysEnabled(false);
+
+            // 선택 영역이 남아있다면 프리뷰 재생성(선택적)
+            if (currentTiles != null && currentTiles.Count > 0)
+                SpawnPreviewOverSelection(selectedBuildingPrefab);
+
+            Debug.Log("[Installer] 연속 설치 ON");
+        }
+        else
+        {
+            // ② 이미 연속 설치 중: 다음 설치 1회 후 종료 무장
+            endAfterNextInstall = true;
+            Debug.Log("[Installer] '다음 설치 1회 후 종료' 무장됨");
+        }
+
+        if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -543,23 +618,14 @@ public class TileClickInstaller : MonoBehaviour
                 }
             }
         }
-        // 7) 타일 크기에 맞춘 스케일 (기존 스케일 계산 끝난 뒤)
-        if (bd)
-        {
-            modelInstance.transform.localScale *= bd.scaleOverride;
-        }
 
-        // 8) 중심/바닥 정렬 + 위치보정
-        if (TryGetModelBounds(modelInstance, out Bounds scaledBounds))
-        {
-            AlignPreviewToSelection(selB, scaledBounds, bd);
-        }
+        // 8) 중심/바닥 정렬
+        AlignPreviewToSelection(selB);
 
         // 9) 표시
         modelInstance.SetActive(true);
         buildingInstallPanel?.SetActive(true);
         if (confirmInstallButton) confirmInstallButton.interactable = true;
-
 
         // 10) 자동보정 ON이면 최종 회전을 previewRotation에 동기화
         if (autoAlignRotationToSelection)
@@ -589,30 +655,16 @@ public class TileClickInstaller : MonoBehaviour
         t.localScale = new Vector3(sx, sy, sz);
     }
 
-    // AlignPreviewToSelection 교체 버전
-    void AlignPreviewToSelection(Bounds selectionBounds, Bounds modelBounds, BuildingData bd)
+    void AlignPreviewToSelection(Bounds selectionBounds)
     {
-        // 1) 기본적으로 selectionBounds의 중앙/바닥에 정렬
+        if (!TryGetModelBounds(modelInstance, out Bounds b)) return;
         Vector3 deltaWorld = new Vector3(
-            selectionBounds.center.x - modelBounds.center.x,
-            selectionBounds.max.y - modelBounds.min.y,
-            selectionBounds.center.z - modelBounds.center.z
+            selectionBounds.center.x - b.center.x,
+            selectionBounds.max.y - b.min.y,
+            selectionBounds.center.z - b.center.z
         );
         modelInstance.transform.position += deltaWorld;
-
-        // 2) BuildingData.positionOffset을 적용 (옵션)
-        if (bd && bd.positionOffset != Vector3.zero)
-        {
-            Vector3 worldOffset =
-                modelInstance.transform.right.normalized * bd.positionOffset.x +
-                modelInstance.transform.up.normalized * bd.positionOffset.y +
-                modelInstance.transform.forward.normalized * bd.positionOffset.z;
-
-            modelInstance.transform.position += worldOffset;
-        }
     }
-
-
 
     public void ConfirmInstall()
     {
@@ -625,6 +677,7 @@ public class TileClickInstaller : MonoBehaviour
                                     modelInstance.GetComponentInChildren<BuildingData>();
         if (buildingData == null) return;
 
+        // --- 설치 본처리(기존 코드 그대로) ---
         if (previewInstance.tag != "Building")
         {
             try { previewInstance.tag = "Building"; }
@@ -665,20 +718,86 @@ public class TileClickInstaller : MonoBehaviour
 
         YearQuestManager.Instance?.OnBuildingInstalled(selectedBuildingPrefab, buildingData);
         NotifyCitizensOfNewBuilding();
-
-        var citizenController = FindObjectOfType<CitizenGroupController>();
-        citizenController?.OnBuildingInstalled(previewInstance.transform.position);
-
+        FindObjectOfType<CitizenGroupController>()?.OnBuildingInstalled(previewInstance.transform.position);
         GameManager.Instance?.CompletePlacing();
+        // --- 설치 본처리 끝 ---
 
+        // ✅ 여기서만 연속 설치 분기
+        if (IsContinuousPlacement)
+        {
+            
+            previewInstance = null;
+            modelInstance = null;
+            currentTiles = null;
+
+            // 계속 설치 대기: UI/그리드 유지
+            buildingInstallPanel?.SetActive(true);
+            TogglePlacementFX(true);
+            SuppressUINavEvents(true);
+            SetExternalHotkeysEnabled(false);
+
+            if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
+            return;
+        }
+
+        // 일반 모드: 닫기
         ClosePlacementUI();
         TogglePlacementFX(false);
         SuppressUINavEvents(false);
         SetExternalHotkeysEnabled(true);
 
-        if (SFXPlayer.Instance != null)
-            SFXPlayer.Instance.PlayClick();
+        if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
+
+        // --- 설치 본처리 끝 ---
+
+        // 연속 설치가 아닐 때만 배치 종료 신호
+        if (!IsContinuousPlacement)
+            GameManager.Instance?.CompletePlacing();
+
+        if (IsContinuousPlacement)
+        {
+            if (endAfterNextInstall)
+            {
+                // ③ 버튼을 다시 눌러 무장된 상태였다면: 이번 설치로 종료
+                continuousPlacement = false;
+                endAfterNextInstall = false;
+
+                // 일반 종료 루틴
+                ClosePlacementUI();
+                TogglePlacementFX(false);
+                SuppressUINavEvents(false);
+                SetExternalHotkeysEnabled(true);
+                GameManager.Instance?.CompletePlacing();
+
+                if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
+                return;
+            }
+
+            // ④ 계속 설치 유지: 프리뷰/선택만 정리하고 UI/그리드는 유지
+            previewInstance = null;
+            modelInstance = null;
+            currentTiles = null;
+            ClearHighlight();
+
+            buildingInstallPanel?.SetActive(true);
+            TogglePlacementFX(true);
+            SuppressUINavEvents(true);
+            SetExternalHotkeysEnabled(false);
+
+            if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
+            return;
+        }
+
+        // (연속 설치가 아니면 아래 일반 종료로 내려옴)
+        ClosePlacementUI();
+        TogglePlacementFX(false);
+        SuppressUINavEvents(false);
+        SetExternalHotkeysEnabled(true);
+        if (SFXPlayer.Instance != null) SFXPlayer.Instance.PlayClick();
+
+
     }
+
 
     void ClosePlacementUI()
     {
@@ -692,7 +811,7 @@ public class TileClickInstaller : MonoBehaviour
 
     void DiscardPreviewAndCloseUI()
     {
-        if (previewInstance) Destroy(previewInstance);
+        
         previewInstance = null;
         modelInstance = null;
         currentTiles = null;
