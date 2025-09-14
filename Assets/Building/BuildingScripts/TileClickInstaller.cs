@@ -543,14 +543,23 @@ public class TileClickInstaller : MonoBehaviour
                 }
             }
         }
+        // 7) 타일 크기에 맞춘 스케일 (기존 스케일 계산 끝난 뒤)
+        if (bd)
+        {
+            modelInstance.transform.localScale *= bd.scaleOverride;
+        }
 
-        // 8) 중심/바닥 정렬
-        AlignPreviewToSelection(selB);
+        // 8) 중심/바닥 정렬 + 위치보정
+        if (TryGetModelBounds(modelInstance, out Bounds scaledBounds))
+        {
+            AlignPreviewToSelection(selB, scaledBounds, bd);
+        }
 
         // 9) 표시
         modelInstance.SetActive(true);
         buildingInstallPanel?.SetActive(true);
         if (confirmInstallButton) confirmInstallButton.interactable = true;
+
 
         // 10) 자동보정 ON이면 최종 회전을 previewRotation에 동기화
         if (autoAlignRotationToSelection)
@@ -580,16 +589,30 @@ public class TileClickInstaller : MonoBehaviour
         t.localScale = new Vector3(sx, sy, sz);
     }
 
-    void AlignPreviewToSelection(Bounds selectionBounds)
+    // AlignPreviewToSelection 교체 버전
+    void AlignPreviewToSelection(Bounds selectionBounds, Bounds modelBounds, BuildingData bd)
     {
-        if (!TryGetModelBounds(modelInstance, out Bounds b)) return;
+        // 1) 기본적으로 selectionBounds의 중앙/바닥에 정렬
         Vector3 deltaWorld = new Vector3(
-            selectionBounds.center.x - b.center.x,
-            selectionBounds.max.y - b.min.y,
-            selectionBounds.center.z - b.center.z
+            selectionBounds.center.x - modelBounds.center.x,
+            selectionBounds.max.y - modelBounds.min.y,
+            selectionBounds.center.z - modelBounds.center.z
         );
         modelInstance.transform.position += deltaWorld;
+
+        // 2) BuildingData.positionOffset을 적용 (옵션)
+        if (bd && bd.positionOffset != Vector3.zero)
+        {
+            Vector3 worldOffset =
+                modelInstance.transform.right.normalized * bd.positionOffset.x +
+                modelInstance.transform.up.normalized * bd.positionOffset.y +
+                modelInstance.transform.forward.normalized * bd.positionOffset.z;
+
+            modelInstance.transform.position += worldOffset;
+        }
     }
+
+
 
     public void ConfirmInstall()
     {

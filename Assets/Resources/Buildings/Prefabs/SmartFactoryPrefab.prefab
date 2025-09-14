@@ -26,11 +26,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7e0ebabba00852e4ab8ef9a6933c7a00, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7e0ebabba00852e4ab8ef9a6933c7a00, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.771
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7e0ebabba00852e4ab8ef9a6933c7a00, type: 3}
       propertyPath: m_LocalPosition.z
@@ -509,14 +509,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecd912cb32aac4abab6ab47663c4c703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileWidth: 1
-  tileHeight: 2
-  cost: 180
-  maxIncomeAmount: 300
-  incomePer5Minutes: 30
+  scaleOverride: 1.8
+  positionOffset: {x: 0.9, y: 0, z: 0}
+  tileWidth: 2
+  tileHeight: 4
+  cost: 0
+  maxIncomeAmount: 0
+  incomePer5Minutes: 0
   instantCO2Change: 0
-  co2PerSecond: 10
-  maxCO2Change: 150
-  preferredView: 0
+  co2PerSecond: 0
+  maxCO2Change: 0
+  preferredView: 1
   cameraDistanceFactorOverride: 0
   cameraFOVOverride: 0
