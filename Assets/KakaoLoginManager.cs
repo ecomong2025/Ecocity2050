@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement; // 씬 전환용
 
-
 [Serializable]
 public class KakaoUser
 {
@@ -59,6 +58,7 @@ public class KakaoLoginManager : MonoBehaviour
 
     private string currentState;
     private Coroutine pollCoroutine;
+    private KakaoUser currentUser; // 현재 로그인된 사용자 정보 저장
 
     void Start()
     {
@@ -178,6 +178,9 @@ public class KakaoLoginManager : MonoBehaviour
                             UpdateStatus($"로그인 완료: {response.message}");
                             currentState = "";
 
+                            // 로그인 성공 콜백 호출
+                            OnKakaoLoginSuccess(response.user.id.ToString());
+
                             if (pollCoroutine != null)
                             {
                                 StopCoroutine(pollCoroutine);
@@ -215,6 +218,8 @@ public class KakaoLoginManager : MonoBehaviour
 
     void DisplayUserInfo(KakaoUser user)
     {
+        currentUser = user; // 현재 사용자 정보 저장
+
         if (userNameText != null)
         {
             string displayName = $"{user.first_name} {user.last_name}".Trim();
@@ -263,6 +268,11 @@ public class KakaoLoginManager : MonoBehaviour
         }
 
         currentState = "";
+        currentUser = null;
+
+        // PlayerPrefs에서 사용자 ID 제거
+        PlayerPrefs.DeleteKey("KakaoUserId");
+        PlayerPrefs.Save();
 
         if (UserDataManager.Instance != null)
             UserDataManager.Instance.ClearUserData();
@@ -275,5 +285,63 @@ public class KakaoLoginManager : MonoBehaviour
     {
         if (pollCoroutine != null)
             StopCoroutine(pollCoroutine);
+    }
+
+    // ========== 추가된 메서드들 ==========
+
+    /// <summary>
+    /// 현재 로그인된 사용자의 ID를 반환
+    /// </summary>
+    public string GetCurrentUserId()
+    {
+        if (IsLoggedIn())
+        {
+            return PlayerPrefs.GetString("KakaoUserId", "");
+        }
+        return "";
+    }
+
+    /// <summary>
+    /// 로그인 상태 확인
+    /// </summary>
+    public bool IsLoggedIn()
+    {
+        return !string.IsNullOrEmpty(PlayerPrefs.GetString("KakaoUserId", "")) && currentUser != null;
+    }
+
+    /// <summary>
+    /// 로그인 성공 시 호출되는 콜백
+    /// </summary>
+    private void OnKakaoLoginSuccess(string userId)
+    {
+        // 사용자 ID 저장
+        PlayerPrefs.SetString("KakaoUserId", userId);
+        PlayerPrefs.Save();
+
+        Debug.Log($"카카오 로그인 성공: User ID = {userId}");
+
+        // GameSceneLoader에 로그인 성공 알림
+        var gameSceneLoader = FindObjectOfType<GameSceneLoader>();
+        if (gameSceneLoader != null)
+        {
+            gameSceneLoader.OnKakaoLoginSuccess();
+        }
+    }
+
+    /// <summary>
+    /// 현재 로그인된 사용자 정보 반환
+    /// </summary>
+    public KakaoUser GetCurrentUser()
+    {
+        return currentUser;
+    }
+
+    /// <summary>
+    /// 사용자 ID를 직접 설정 (테스트용)
+    /// </summary>
+    public void SetUserId(string userId)
+    {
+        PlayerPrefs.SetString("KakaoUserId", userId);
+        PlayerPrefs.Save();
     }
 }

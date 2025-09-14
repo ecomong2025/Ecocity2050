@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 using UnityEngine.Networking;
 using System.Collections;
@@ -21,12 +21,12 @@ public class NameCityRes
 
 public class CityNameFetcher : MonoBehaviour
 {
-    [Header("µ¥ÀÌÅÍ ¼Ò½º")]
-    public ScenePayload payload;   // GameScene¿¡¼­ Ã¤¿öµĞ ScenePayload.asset
+    [Header("ë°ì´í„° ì†ŒìŠ¤")]
+    public ScenePayload payload;   // GameSceneì—ì„œ ì±„ì›Œë‘” ScenePayload.asset
 
-    [Header("¼­¹ö ¿£µåÆ÷ÀÎÆ® (Django´Â ½½·¡½Ã ÇÊ¼ö)")]
-    // ·ÎÄÃ Å×½ºÆ®¸é "http://127.0.0.1:8000/name-city/" ·Î ¹Ù²ã¼­ Å×½ºÆ®ÇÏ¼¼¿ä.
-    [SerializeField] private string endpoint = "https://ecocity2050-be.onrender.com/name-city/";
+    [Header("ì„œë²„ ì—”ë“œí¬ì¸íŠ¸ (DjangoëŠ” ìŠ¬ë˜ì‹œ í•„ìˆ˜)")]
+    // ë¡œì»¬ í…ŒìŠ¤íŠ¸ë©´ "http://127.0.0.1:8000/name-city/" ë¡œ ë°”ê¿”ì„œ í…ŒìŠ¤íŠ¸í•˜ì„¸ìš”.
+    [SerializeField] private string endpoint = "http://127.0.0.1:8000/name-city/";
 
     [Header("UI")]
     public TMP_Text cityNameText;
@@ -38,7 +38,7 @@ public class CityNameFetcher : MonoBehaviour
 
     IEnumerator FetchCoroutine()
     {
-        cityNameText.text = "µµ½Ã ÀÌ¸§ »ı¼º Áß¡¦";
+        cityNameText.text = "ë„ì‹œ ì´ë¦„ ìƒì„± ì¤‘â€¦";
 
         var reqObj = new NameCityReq
         {
@@ -61,34 +61,34 @@ public class CityNameFetcher : MonoBehaviour
 
             yield return uwr.SendWebRequest();
 
-            // 200~299¸¸ ¼º°øÀ¸·Î °£ÁÖ
+            // 200~299ë§Œ ì„±ê³µìœ¼ë¡œ ê°„ì£¼
             if (uwr.result == UnityWebRequest.Result.Success && uwr.responseCode >= 200 && uwr.responseCode < 300)
             {
                 var text = uwr.downloadHandler.text;
                 NameCityRes res = null;
                 try { res = JsonUtility.FromJson<NameCityRes>(text); }
-                catch { /* ÆÄ½Ì ½ÇÆĞ ½Ã ¾Æ·¡ Ã³¸® */ }
+                catch { /* íŒŒì‹± ì‹¤íŒ¨ ì‹œ ì•„ë˜ ì²˜ë¦¬ */ }
 
                 if (res != null && !string.IsNullOrEmpty(res.cityName))
                 {
                     payload.aiCityName = res.cityName;
-                    cityNameText.text = $"AI µµ½Ã ÀÌ¸§: {payload.aiCityName}";
+                    cityNameText.text = $"AI ë„ì‹œ ì´ë¦„: {payload.aiCityName}";
                 }
                 else
                 {
-                    cityNameText.text = $"ÆÄ½Ì ½ÇÆĞ\nÀÀ´ä: {text}";
+                    cityNameText.text = $"íŒŒì‹± ì‹¤íŒ¨\nì‘ë‹µ: {text}";
                 }
             }
             else
             {
-                // ¼­¹ö°¡ ¿¡·¯ º»¹®À» ÁÙ ¶§ ³»¿ëÀ» °°ÀÌ º¸¿©ÁÖÀÚ
+                // ì„œë²„ê°€ ì—ëŸ¬ ë³¸ë¬¸ì„ ì¤„ ë•Œ ë‚´ìš©ì„ ê°™ì´ ë³´ì—¬ì£¼ì
                 var body = uwr.downloadHandler != null ? uwr.downloadHandler.text : "";
-                cityNameText.text = $"¿¡·¯ {uwr.responseCode} / {uwr.result}\n{uwr.error}\n{body}";
+                cityNameText.text = $"ì—ëŸ¬ {uwr.responseCode} / {uwr.result}\n{uwr.error}\n{body}";
             }
         }
     }
 
-    // Django´Â º¸Åë ½½·¡½Ã°¡ ÇÊ¿äÇÏ¹Ç·Î ¹æÁö¿ë
+    // DjangoëŠ” ë³´í†µ ìŠ¬ë˜ì‹œê°€ í•„ìš”í•˜ë¯€ë¡œ ë°©ì§€ìš©
     private string EnsureTrailingSlash(string url)
     {
         if (string.IsNullOrEmpty(url)) return url;

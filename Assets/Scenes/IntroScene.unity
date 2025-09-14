@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &143665974
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1440,6 +1440,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815894966}
   m_CullTransparentMesh: 1
+--- !u!1 &823571690
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 823571691}
+  - component: {fileID: 823571692}
+  m_Layer: 0
+  m_Name: GameDataManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &823571691
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 823571690}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &823571692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 823571690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e84966c8d8543b941be02bb7f2baffbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentPayload: {fileID: 0}
 --- !u!1 &840150348
 GameObject:
   m_ObjectHideFlags: 0
@@ -2194,9 +2239,9 @@ MonoBehaviour:
   startButton: {fileID: 1922421687}
   continueButton: {fileID: 1275507478}
   tutorialButton: {fileID: 1297637822}
-  fakeLoadTime: 3
   kakaoButton: {fileID: 840150348}
   nullInfo: {fileID: 701813488}
+  fakeLoadTime: 3
 --- !u!114 &1170095389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2414,12 +2459,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1232600443}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 722.2586, y: 374.9247, z: -3.5236752}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -237.7414, y: -165.07529, z: -3.5236752}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1333308638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1232600445
 MonoBehaviour:
@@ -2719,6 +2764,7 @@ MonoBehaviour:
   clickClip: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
   correctClip: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
   incorrectClip: {fileID: 8300000, guid: a1b7382d1e471f9479f571cf1d2891c9, type: 3}
+  popupOpenClip: {fileID: 0}
 --- !u!82 &1296187529
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3033,6 +3079,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1316679664}
   - component: {fileID: 1316679665}
+  - component: {fileID: 1316679666}
   m_Layer: 0
   m_Name: KakaoStartManager
   m_TagString: Untagged
@@ -3067,6 +3114,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d0b15dff16fbd8448a395e4be11eb0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1316679666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316679663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a3ed5d32bd3d444c9f928a7c1c8980d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  userNameText: {fileID: 143665975}
+  loginButton: {fileID: 840150350}
+  statusText: {fileID: 0}
+  baseUrl: http://127.0.0.1:8000
 --- !u!1 &1333308634
 GameObject:
   m_ObjectHideFlags: 0
@@ -3162,6 +3225,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 143665974}
+  - {fileID: 1232600444}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3764,6 +3828,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1685375370}
   m_CullTransparentMesh: 1
+--- !u!1 &1690372384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1690372385}
+  - component: {fileID: 1690372386}
+  m_Layer: 0
+  m_Name: SaveGameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1690372385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1690372384}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1690372386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1690372384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 874dba0688c1d4949b67a268ff4e7fc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseUrl: http://127.0.0.1:8000
 --- !u!1 &1790710396
 GameObject:
   m_ObjectHideFlags: 0
@@ -5843,5 +5952,6 @@ SceneRoots:
   - {fileID: 1316679664}
   - {fileID: 1296187527}
   - {fileID: 1333308638}
-  - {fileID: 1232600444}
   - {fileID: 350956967}
+  - {fileID: 823571691}
+  - {fileID: 1690372385}

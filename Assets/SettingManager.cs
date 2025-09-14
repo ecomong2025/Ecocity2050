@@ -31,6 +31,7 @@ public class SettingManager : MonoBehaviour
 
     private bool isBGMOn = true;
     private bool isSFXOn = true;
+    private string previousScene; // 이전 씬 정보 저장
 
     public static SettingManager Instance { get; private set; }
 
@@ -69,6 +70,9 @@ public class SettingManager : MonoBehaviour
 
         if (settingPanel != null)
             settingPanel.SetActive(false);
+
+        // 현재 씬 이름 저장
+        previousScene = SceneManager.GetActiveScene().name;
     }
 
     void SetupButtons()
@@ -118,12 +122,29 @@ public class SettingManager : MonoBehaviour
 
     public void OpenTutorial()
     {
-        string tutorialSceneName = "TutorialScene";
-        try { SceneManager.LoadScene(tutorialSceneName); }
-        catch { Debug.LogError("튜토리얼 씬을 찾을 수 없습니다."); }
-
         if (SFXPlayer.Instance != null)
             SFXPlayer.Instance.PlayClick();
+
+        // 현재 씬이 게임 씬인 경우에만 게임 데이터 자동 저장
+        if (previousScene == "GameScene" && GameDataManager.Instance != null)
+        {
+            GameDataManager.Instance.AutoSave();
+        }
+
+        // 튜토리얼로 이동할 때 이전 씬 정보를 저장
+        PlayerPrefs.SetString("PreviousScene", previousScene);
+        PlayerPrefs.SetInt("FromSettings", 1); // 세팅에서 온다는 플래그
+        PlayerPrefs.Save();
+
+        string tutorialSceneName = "TutorialScene";
+        try
+        {
+            SceneManager.LoadScene(tutorialSceneName);
+        }
+        catch
+        {
+            Debug.LogError("튜토리얼 씬을 찾을 수 없습니다.");
+        }
     }
 
     public void Logout()
@@ -132,6 +153,107 @@ public class SettingManager : MonoBehaviour
 
         if (SFXPlayer.Instance != null)
             SFXPlayer.Instance.PlayClick();
+
+        StartCoroutine(LogoutProcess());
+    }
+
+    private IEnumerator LogoutProcess()
+    {
+        // 1. 게임 데이터 저장 (로그인된 상태에서만)
+        if (GameDataManager.Instance != null && GameDataManager.Instance.IsUserLoggedIn())
+        {
+            Debug.Log("로그아웃 전 게임 데이터 저장 중...");
+
+            bool saveCompleted = false;
+            string saveResult = "";
+
+            GameDataManager.Instance.SaveCurrentGame((success, message) =>
+            {
+                saveCompleted = true;
+                saveResult = message;
+
+                if (success)
+                {
+                    Debug.Log("로그아웃 전 데이터 저장 성공: " + message);
+                }
+                else
+                {
+                    Debug.LogWarning("로그아웃 전 데이터 저장 실패: " + message);
+                }
+            });
+
+            // 저장 완료 대기 (최대 5초)
+            float waitTime = 0f;
+            while (!saveCompleted && waitTime < 5f)
+            {
+                yield return new WaitForSeconds(0.1f);
+                waitTime += 0.1f;
+            }
+        }
+
+        // 2. 로컬에 JSON으로 현재 게임 데이터 백업 저장
+        if (GameDataManager.Instance != null && GameDataManager.Instance.currentPayload != null)
+        {
+            try
+            {
+                string jsonData = JsonUtility.ToJson(GameDataManager.Instance.currentPayload, true);
+                string timestamp = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+                string fileName = $"GameBackup_{timestamp}.json";
+
+                // Application.persistentDataPath에 저장
+                string filePath = System.IO.Path.Combine(Application.persistentDataPath, fileName);
+                System.IO.File.WriteAllText(filePath, jsonData);
+
+                Debug.Log($"게임 데이터 로컬 백업 완료: {filePath}");
+
+                // 백업 파일 정보를 PlayerPrefs에 저장
+                PlayerPrefs.SetString("LastBackupFile", fileName);
+                PlayerPrefs.SetString("LastBackupPath", filePath);
+                PlayerPrefs.Save();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"로컬 백업 저장 실패: {e.Message}");
+            }
+        }
+
+        // 3. 카카오 로그아웃 처리
+        var kakaoManager = FindObjectOfType<KakaoLoginManager>();
+        if (kakaoManager != null)
+        {
+            kakaoManager.Logout();
+        }
+
+        // 4. 현재 세션의 GameDataManager 데이터만 초기화 (저장은 유지)
+        if (GameDataManager.Instance != null)
+        {
+            Debug.Log("현재 세션 데이터 초기화 (저장된 데이터는 유지)");
+            GameDataManager.Instance.currentPayload = null;
+        }
+
+        // 5. 씬 전환 관련 PlayerPrefs 초기화
+        PlayerPrefs.DeleteKey("FromTutorial");
+        PlayerPrefs.DeleteKey("FromSettings");
+        PlayerPrefs.DeleteKey("PreviousScene");
+        PlayerPrefs.DeleteKey("LoadFromSave");
+        PlayerPrefs.DeleteKey("StartNewGame");
+        PlayerPrefs.Save();
+
+        // 6. 인트로 씬으로 이동
+        Debug.Log("인트로 씬으로 이동합니다.");
+
+        // 인트로 씬 이름을 실제 씬 이름으로 변경해주세요
+        string introSceneName = "IntroScene"; // 또는 실제 인트로 씬 이름
+
+        try
+        {
+            SceneManager.LoadScene(introSceneName);
+        }
+        catch
+        {
+            Debug.LogError($"인트로 씬 '{introSceneName}'을 찾을 수 없습니다. GameSceneLoader 씬으로 이동합니다.");
+            SceneManager.LoadScene("GameSceneLoader"); // 대체 씬
+        }
     }
 
     // ===== 패널 열기/닫기 =====
@@ -144,6 +266,9 @@ public class SettingManager : MonoBehaviour
 
         if (SFXPlayer.Instance != null)
             SFXPlayer.Instance.PlayClick();
+
+        // 현재 씬 정보 업데이트
+        previousScene = SceneManager.GetActiveScene().name;
     }
 
     public void CloseSetting()
@@ -227,4 +352,3 @@ public class SettingManager : MonoBehaviour
     public bool IsBGMOn() => isBGMOn;
     public bool IsSFXOn() => isSFXOn;
 }
-
