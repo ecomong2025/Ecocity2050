@@ -14909,7 +14909,7 @@ PrefabInstance:
       objectReference: {fileID: 322516968}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: currentYear
-      value: 2025
+      value: 2045
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: quizManager

@@ -66,9 +66,9 @@ public class QuizManager : MonoBehaviour
     private int dailyQuizCount = 0;
     private int dailyLimit = 5;
     private DateTime lastResetTime;
+    private bool isCooldownActive = false; // 🔹 30초 제한 상태
 
     private HashSet<int> usedQuizIndices = new HashSet<int>();
-
     private int defaultYear = 2025;
 
     public QuizlimitController quizLimitController;
@@ -186,15 +186,30 @@ public class QuizManager : MonoBehaviour
         {
             lastResetTime = DateTime.UtcNow;
             SaveDailyQuizData();
+            isCooldownActive = false;
             return;
         }
 
         lastResetTime = DateTime.Parse(timeStr, null, System.Globalization.DateTimeStyles.RoundtripKind);
 
-        // 제한 도달 후 30초가 지났으면 초기화
-        if (dailyQuizCount >= dailyLimit && (DateTime.UtcNow - lastResetTime).TotalSeconds >= 30)
+        double secondsSinceLast = (DateTime.UtcNow - lastResetTime).TotalSeconds;
+
+        if (dailyQuizCount >= dailyLimit)
         {
-            ResetDailyQuizCount();
+            if (secondsSinceLast >= 30)
+            {
+                ResetDailyQuizCount();
+                isCooldownActive = false;
+            }
+            else
+            {
+                isCooldownActive = true;
+                Debug.Log($"⏱ 제한 중: {30 - secondsSinceLast:F1}초 남음");
+            }
+        }
+        else
+        {
+            isCooldownActive = false;
         }
     }
 
@@ -210,6 +225,7 @@ public class QuizManager : MonoBehaviour
         dailyQuizCount = 0;
         lastResetTime = DateTime.UtcNow;
         SaveDailyQuizData();
+        isCooldownActive = false;
         Debug.Log("퀴즈 제한이 초기화되었습니다.");
     }
 
@@ -231,7 +247,7 @@ public class QuizManager : MonoBehaviour
 
         LoadDailyQuizData();
 
-        if (dailyQuizCount >= dailyLimit)
+        if (!CanPlayQuiz())
         {
             Debug.Log("오늘은 더 이상 퀴즈를 풀 수 없습니다!");
             quizMainPanel.SetActive(false);
@@ -263,10 +279,22 @@ public class QuizManager : MonoBehaviour
         isAnswered = false;
     }
 
-    // 게임패널 퀴즈 버튼 연결용
+    // 🔹 개선된 CanPlayQuiz()
     public bool CanPlayQuiz()
     {
-        LoadDailyQuizData();  // 현재 일일 카운트와 제한 체크용
+        LoadDailyQuizData();
+
+        if (isCooldownActive)
+        {
+            double secondsSinceLast = (DateTime.UtcNow - lastResetTime).TotalSeconds;
+            if (secondsSinceLast >= 30)
+            {
+                ResetDailyQuizCount();
+                return true;
+            }
+            return false; // 아직 제한 중
+        }
+
         return dailyQuizCount < dailyLimit;
     }
 
@@ -328,10 +356,6 @@ public class QuizManager : MonoBehaviour
         QuizItem quiz = filteredQuizzes[currentQuizIndex];
 
         dailyQuizCount++;
-        if (dailyQuizCount >= dailyLimit)
-        {
-            lastResetTime = DateTime.UtcNow;
-        }
         SaveDailyQuizData();
 
         if (selectedIndex == quiz.answerIndex)
@@ -342,17 +366,12 @@ public class QuizManager : MonoBehaviour
 
             quizCorrectCount++;
 
-            // 🔹 항상 최신 연도 기준으로 completeThreshold 갱신
             int year = YearQuestManager.Instance.GetCurrentYear();
             completeThreshold = yearCorrectThreshold.ContainsKey(year) ? yearCorrectThreshold[year] : 2;
 
             if (quizCorrectCount >= completeThreshold)
             {
-                if (YearQuestManager.Instance != null)
-                {
-                    // quizQuestIndex에 해당하는 퀘스트만 완료
-                    YearQuestManager.Instance.CompleteQuest(quizQuestIndex);
-                }
+                YearQuestManager.Instance?.CompleteQuest(quizQuestIndex);
             }
         }
         else
@@ -360,6 +379,14 @@ public class QuizManager : MonoBehaviour
             Debug.Log("❌ 오답입니다!");
             ShowIncorrectPanel();
             reasonText.text = quiz.wrongNote;
+        }
+
+        // 🔹 dailyLimit 도달 후에만 cooldown 시작
+        if (dailyQuizCount >= dailyLimit && !isCooldownActive)
+        {
+            isCooldownActive = true;
+            lastResetTime = DateTime.UtcNow;
+            SaveDailyQuizData();
         }
     }
 
@@ -376,14 +403,17 @@ public class QuizManager : MonoBehaviour
         Debug.Log("⏰ 시간 초과 오답 처리");
 
         dailyQuizCount++;
-        if (dailyQuizCount >= dailyLimit)
-        {
-            lastResetTime = DateTime.UtcNow;
-        }
         SaveDailyQuizData();
 
         ShowIncorrectPanel();
         reasonText.text = filteredQuizzes[currentQuizIndex].wrongNote;
+
+        if (dailyQuizCount >= dailyLimit && !isCooldownActive)
+        {
+            isCooldownActive = true;
+            lastResetTime = DateTime.UtcNow;
+            SaveDailyQuizData();
+        }
     }
 
     void ShowCorrectPanel()
