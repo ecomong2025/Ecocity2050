@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b211830ef886ce1498e5af345789718a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 141183
+  packageName: "VR Scenes \u21162"
+  packageVersion: 1.0
+  assetPath: Assets/VR/Prefabs/Plane.prefab
+  uploadId: 297752

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e4d15b78b80558f4597ce571691e7233
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 141183
+  packageName: "VR Scenes \u21162"
+  packageVersion: 1.0
+  assetPath: Assets/VR/Prefabs/Crane.prefab
+  uploadId: 297752

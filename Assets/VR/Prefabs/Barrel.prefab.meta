@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f8ae013bd4c08dc4b972180e2a5dffad
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 141183
+  packageName: "VR Scenes \u21162"
+  packageVersion: 1.0
+  assetPath: Assets/VR/Prefabs/Barrel.prefab
+  uploadId: 297752

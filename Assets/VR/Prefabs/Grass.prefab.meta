@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a2fa26b921a2f064c8a7d7855989216a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 141183
+  packageName: "VR Scenes \u21162"
+  packageVersion: 1.0
+  assetPath: Assets/VR/Prefabs/Grass.prefab
+  uploadId: 297752

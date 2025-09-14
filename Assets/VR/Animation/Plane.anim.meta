@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 816d1768c9ff493489db31c0e7f43343
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 141183
+  packageName: "VR Scenes \u21162"
+  packageVersion: 1.0
+  assetPath: Assets/VR/Animation/Plane.anim
+  uploadId: 297752

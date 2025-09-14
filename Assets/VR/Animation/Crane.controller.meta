@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5389fb15ffc41284d9eaee3ebcc7caa4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 141183
+  packageName: "VR Scenes \u21162"
+  packageVersion: 1.0
+  assetPath: Assets/VR/Animation/Crane.controller
+  uploadId: 297752

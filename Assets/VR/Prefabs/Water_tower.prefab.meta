@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 52017f46f5715bc4ab8c8a9e51fb9b46
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 141183
+  packageName: "VR Scenes \u21162"
+  packageVersion: 1.0
+  assetPath: Assets/VR/Prefabs/Water_tower.prefab
+  uploadId: 297752
