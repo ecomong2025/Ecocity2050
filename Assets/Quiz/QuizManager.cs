@@ -59,7 +59,7 @@ public class QuizManager : MonoBehaviour
 
     // 퀘스트 관련
     private int quizCorrectCount = 0;
-    private int quizQuestIndex = 2;
+    private int quizQuestIndex = 2; // 퀴즈 관련 퀘스트 인덱스
     private int completeThreshold = 2;
 
     // 하루 제한 관련
@@ -85,7 +85,7 @@ public class QuizManager : MonoBehaviour
         {2030, 3},
         {2035, 4},
         {2040, 5},
-        {2045, 6}
+        {2045, 6} // 2045년은 문제 6개를 맞춰야 함
     };
 
     void Start()
@@ -262,7 +262,8 @@ public class QuizManager : MonoBehaviour
         quizTimer.StartTimer();
         isAnswered = false;
     }
-    //게임패널 퀴즈 버튼 연결용
+
+    // 게임패널 퀴즈 버튼 연결용
     public bool CanPlayQuiz()
     {
         LoadDailyQuizData();  // 현재 일일 카운트와 제한 체크용
@@ -329,7 +330,7 @@ public class QuizManager : MonoBehaviour
         dailyQuizCount++;
         if (dailyQuizCount >= dailyLimit)
         {
-            lastResetTime = DateTime.UtcNow; // 제한 도달 시각 기록
+            lastResetTime = DateTime.UtcNow;
         }
         SaveDailyQuizData();
 
@@ -340,18 +341,17 @@ public class QuizManager : MonoBehaviour
             ShowCorrectPanel();
 
             quizCorrectCount++;
-            int year = YearQuestManager.Instance.GetCurrentYear();
 
-            // 🔹 수정 부분: 2045년만 마지막 퀘스트 인덱스로 고정
-            int targetQuestIndex = quizQuestIndex; // 기존 값 기본 사용
-            if (year == 2045)
-                targetQuestIndex = 3; // completed 배열 마지막 인덱스
+            // 🔹 항상 최신 연도 기준으로 completeThreshold 갱신
+            int year = YearQuestManager.Instance.GetCurrentYear();
+            completeThreshold = yearCorrectThreshold.ContainsKey(year) ? yearCorrectThreshold[year] : 2;
 
             if (quizCorrectCount >= completeThreshold)
             {
                 if (YearQuestManager.Instance != null)
                 {
-                    YearQuestManager.Instance.CompleteQuest(targetQuestIndex);
+                    // quizQuestIndex에 해당하는 퀘스트만 완료
+                    YearQuestManager.Instance.CompleteQuest(quizQuestIndex);
                 }
             }
         }
@@ -362,7 +362,6 @@ public class QuizManager : MonoBehaviour
             reasonText.text = quiz.wrongNote;
         }
     }
-
 
     public void ResetQuizCorrectCount()
     {
