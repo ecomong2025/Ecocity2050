@@ -302,7 +302,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7e0ebabba00852e4ab8ef9a6933c7a00, type: 3}
       propertyPath: m_Name
-      value: smart factory
+      value: SmartFactoryPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7e0ebabba00852e4ab8ef9a6933c7a00, type: 3}
       propertyPath: m_Layer
@@ -511,12 +511,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileWidth: 1
   tileHeight: 2
-  cost: 0
-  maxIncomeAmount: 0
-  incomePer5Minutes: 0
+  cost: 180
+  maxIncomeAmount: 300
+  incomePer5Minutes: 30
   instantCO2Change: 0
-  co2PerSecond: 0
-  maxCO2Change: 0
+  co2PerSecond: 10
+  maxCO2Change: 150
   preferredView: 0
   cameraDistanceFactorOverride: 0
   cameraFOVOverride: 0
