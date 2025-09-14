@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement; // ✅ 이거 추가해야 SceneManager 사용 가능
 
 [System.Serializable]
 public class YearQuests
@@ -130,30 +131,7 @@ public class YearQuestManager : MonoBehaviour
         CompleteQuest_Internal(index);
     }
 
-    private void CompleteQuest_Internal(int index)
-    {
-        if (index < 0 || index > 3) return;
-        if (completed[index]) return;
-
-        completed[index] = true;
-        questUI?.UpdateCheck(index, true);
-
-        if (completed.All(x => x))
-        {
-            var tms = FindObjectOfType<TileManagerSequential>(true);
-            tms?.UnlockTileForYear(currentYear);
-
-            int next = Mathf.Clamp(currentYear + step, minYear, maxYear);
-            if (next == currentYear) return;
-
-            if (!advancing)
-            {
-                advancing = true;
-                StartCoroutine(AdvanceAfterPopup(next));
-            }
-        }
-    }
-
+    
     private IEnumerator AdvanceAfterPopup(int nextYear)
     {
         if (questUI != null)
@@ -176,4 +154,35 @@ public class YearQuestManager : MonoBehaviour
     // ====== 유틸 ======
     public void ResetCurrent() => LoadYear(currentYear);
     public int GetCurrentYear() => currentYear;
+    private void CompleteQuest_Internal(int index)
+    {
+        if (index < 0 || index > 3) return;
+        if (completed[index]) return;
+
+        completed[index] = true;
+        questUI?.UpdateCheck(index, true);
+
+        if (completed.All(x => x))
+        {
+            var tms = FindObjectOfType<TileManagerSequential>(true);
+            tms?.UnlockTileForYear(currentYear);
+
+            // ✅ 마지막 해(2045년) 체크 완료 시 엔딩 씬으로 전환
+            if (currentYear >= maxYear)
+            {
+                Debug.Log("[YearQuestManager] 모든 퀘스트 완료! 엔딩씬으로 이동합니다.");
+                SceneManager.LoadScene("EndingScene");   // ← 엔딩씬 이름 정확히 맞춰주세요
+                return;
+            }
+
+            int next = Mathf.Clamp(currentYear + step, minYear, maxYear);
+            if (next == currentYear) return;
+
+            if (!advancing)
+            {
+                advancing = true;
+                StartCoroutine(AdvanceAfterPopup(next));
+            }
+        }
+    }
 }
