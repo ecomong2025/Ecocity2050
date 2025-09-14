@@ -8,7 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, Building, Water, UI, Tile
 - Active game object:
-  - Name: Main Camera
-  - Tag: MainCamera
+  - Name: QuestAutoCompleter
+  - Tag: Untagged
   - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

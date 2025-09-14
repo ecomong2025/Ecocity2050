@@ -27,8 +27,8 @@ public class QuestAutoCompleter : MonoBehaviour
     [SerializeField] private List<QuizRequirement> quizRequirements = new();
 
     [Header("Satisfaction Settings")]
-    [Tooltip("2045년 '좋음 이상 유지' 요구 시간(초). 기본 300초=5분")]
-    [SerializeField] private float sustainSeconds2045 = 300f;   // ★ 추가
+    [Tooltip("2045년 '좋음 이상 유지' 요구 시간(초). 기본 60초=1분")]
+    [SerializeField] private float sustainSeconds2045 = 60f;   // ★ 추가
 
     private YearQuestManager yqm;
     private GPTChatManager gpt;

@@ -2,6 +2,13 @@ using UnityEngine;
 
 public class BuildingData : MonoBehaviour
 {
+    [Header("Placement Overrides (optional)")]
+    [Tooltip("프리뷰/설치 시 추가 스케일 보정 (기본 1)")]
+    public float scaleOverride = 1f;
+
+    [Tooltip("프리뷰/설치 시 위치 보정 (로컬 좌표 기준, 단위: meter)")]
+    public Vector3 positionOffset = Vector3.zero;
+
     [Header("타일 차지 크기")]
     public int tileWidth = 1;
     public int tileHeight = 1;

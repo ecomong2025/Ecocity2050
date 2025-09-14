@@ -180,8 +180,24 @@ public class QuestUITemplate : MonoBehaviour
 
         if (nextYearPanel) nextYearPanel.SetActive(true);
         // 🔊 팝업 열림 SFX
-        if (sfxSource && popupOpenSfx) sfxSource.PlayOneShot(popupOpenSfx, sfxVolume);
-
+        // 우선 SFXPlayer 싱글턴을 사용. SFXPlayer에 popupOpenClip을 설정해두면 그걸 재생.
+        if (SFXPlayer.Instance != null)
+        {
+            if (SFXPlayer.Instance.popupOpenClip != null)
+            {
+                SFXPlayer.Instance.PlayPopupOpen(sfxVolume);
+            }
+            else if (popupOpenSfx != null)
+            {
+                SFXPlayer.Instance.PlaySFX(popupOpenSfx, sfxVolume);
+            }
+        }
+        else
+        {
+            // 폴백: 로컬 AudioSource가 있으면 재생
+            if (sfxSource != null && popupOpenSfx != null)
+                sfxSource.PlayOneShot(popupOpenSfx, sfxVolume);
+        }
 
         CanvasGroup cg = null;
         if (fadeWithCanvasGroup && nextYearPanel)

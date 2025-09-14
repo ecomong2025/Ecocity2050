@@ -3,23 +3,29 @@ using UnityEngine;
 
 public class BuildingFootprint : MonoBehaviour
 {
-    private List<Transform> tiles;
-    private string markerName;
+    [SerializeField] private List<GameObject> tiles = new List<GameObject>();
+    [SerializeField] private string markerName = "__OCCUPIED__";
 
-    public void Init(List<GameObject> tileObjs, string marker)
+    // 설치 직후 TileClickInstaller에서 호출
+    public void Init(List<GameObject> installedTiles, string occupiedMarkerName)
     {
-        tiles = new List<Transform>(tileObjs.Count);
-        foreach (var t in tileObjs) tiles.Add(t.transform);
-        markerName = marker;
+        tiles = new List<GameObject>(installedTiles);
+        markerName = occupiedMarkerName;
     }
 
-    void OnDestroy()
+    public IReadOnlyList<GameObject> Tiles => tiles;
+    public string MarkerName => markerName;
+
+    // 건물 제거(재난 등) 시: 점유 마커 제거 → 타일 해제
+    public void ReleaseAll()
     {
         if (tiles == null) return;
-        foreach (var t in tiles)
+        foreach (var tile in tiles)
         {
-            var m = t.Find(markerName);
-            if (m != null) Object.Destroy(m.gameObject);
+            if (tile == null) continue;
+            var mark = tile.transform.Find(markerName);
+            if (mark) GameObject.Destroy(mark.gameObject);
         }
+        tiles.Clear();
     }
 }

@@ -84,7 +84,7 @@ public class GPTNewsGenerator : MonoBehaviour
         // 응답을 엄격히 제한하여 항상 '완전한 문장' 두 줄(제목/본문)로 나오게 함
         string prompt =
             "다음 규칙을 반드시 지켜 출력하세요.\n" +
-            "- 출력은 '정확히 두 줄'입니다. 첫 줄은 뉴스 헤드라인(최대 20자), 둘째 줄은 본문(최대 35자)입니다.\n" +
+            "- 출력은 '정확히 두 줄'입니다. 첫 줄은 뉴스 헤드라인(최대 30자), 둘째 줄은 본문(최대 40자)입니다.\n" +
             "- 제목과 본문 모두 한국어의 자연스러운 완전 문장으로 작성하세요.\n\n" +
             $"요청 정보: 재난종류='{disasterType}'" +
             "예시(참고용, 실제 출력은 정확히 두 줄):\n" +
@@ -121,8 +121,8 @@ public class GPTNewsGenerator : MonoBehaviour
                 string title = lines.Length > 0 ? lines[0].Trim() : "";
                 string body = lines.Length > 1 ? lines[1].Trim() : "";
 
-                if (title.Length > 18) title = title.Substring(0, 18);
-                if (body.Length > 30) body = body.Substring(0, 30);
+                if (title.Length > 30) title = title.Substring(0, 30);
+                if (body.Length > 40) body = body.Substring(0, 40);
 
                 if (titleText != null) titleText.text = title;
                 if (contentText != null) contentText.text = body;
@@ -143,7 +143,7 @@ public class GPTNewsGenerator : MonoBehaviour
     {
         string prompt =
             "다음 규칙을 반드시 지켜 출력하세요.\n" +
-            "- 출력은 '정확히 두 줄'입니다. 첫 줄은 뉴스 헤드라인(최대 18자), 둘째 줄은 본문(최대 30자)입니다.\n" +
+            "- 출력은 '정확히 두 줄'입니다. 첫 줄은 뉴스 헤드라인(최대 30자), 둘째 줄은 본문(최대 40자)입니다.\n" +
             "- 제목과 본문 모두 한국어의 자연스러운 완전 문장으로 작성하세요.\n\n" +
             $"요청 정보: 시민 만족도가 '{satisfaction}'로 하락했습니다. 탄소 배출이 원인입니다.\n" +
             "예시(참고용, 실제 출력은 정확히 두 줄):\n" +
@@ -180,8 +180,8 @@ public class GPTNewsGenerator : MonoBehaviour
                 string title = lines.Length > 0 ? lines[0].Trim() : "";
                 string body = lines.Length > 1 ? lines[1].Trim() : "";
 
-                if (title.Length > 18) title = title.Substring(0, 18);
-                if (body.Length > 30) body = body.Substring(0, 30);
+                if (title.Length > 30) title = title.Substring(0, 30);
+                if (body.Length > 40) body = body.Substring(0, 40);
 
                 if (titleText != null) titleText.text = title;
                 if (contentText != null) contentText.text = body;

@@ -1253,7 +1253,7 @@ MonoBehaviour:
     requiredCorrect: 5
   - year: 2045
     requiredCorrect: 6
-  sustainSeconds2045: 600
+  sustainSeconds2045: 60
 --- !u!1 &45324763
 GameObject:
   m_ObjectHideFlags: 0
@@ -3992,6 +3992,7 @@ MonoBehaviour:
   clickClip: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
   correctClip: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
   incorrectClip: {fileID: 8300000, guid: a1b7382d1e471f9479f571cf1d2891c9, type: 3}
+  popupOpenClip: {fileID: 8300000, guid: 00f6e4a836aeec2418590c0059723eee, type: 3}
 --- !u!1 &114541224
 GameObject:
   m_ObjectHideFlags: 0
@@ -4531,7 +4532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockYear: 2045
+  unlockYear: 2040
 --- !u!114 &127190389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15065,7 +15066,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[1]'
-      value: "\uC2DC\uBBFC \uB9CC\uC871\uB3C4 \uC88B\uC74C \uC774\uC0C1 5\uBD84 \uC720\uC9C0"
+      value: "\uC2DC\uBBFC \uB9CC\uC871\uB3C4 \uC88B\uC74C \uC774\uC0C1 1\uBD84 \uC720\uC9C0"
       objectReference: {fileID: 0}
     - target: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
       propertyPath: 'yearSets.Array.data[4].questTexts.Array.data[2]'
@@ -21926,7 +21927,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &737126942
 RectTransform:
   m_ObjectHideFlags: 0
@@ -30641,7 +30642,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1049306773
 Transform:
   m_ObjectHideFlags: 0
@@ -41503,7 +41504,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 100}
+  m_AnchoredPosition: {x: 600, y: 50}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1397058144
@@ -46147,7 +46148,7 @@ MonoBehaviour:
   popupSeconds: 3
   fadeWithCanvasGroup: 1
   sfxSource: {fileID: 113856243}
-  popupOpenSfx: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
+  popupOpenSfx: {fileID: 8300000, guid: 00f6e4a836aeec2418590c0059723eee, type: 3}
   sfxVolume: 0.8
   quizPanel: {fileID: 1891359380}
   chatPanel: {fileID: 849468537}
@@ -46327,7 +46328,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockYear: 2045
+  unlockYear: 2040
 --- !u!114 &1520789309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50893,7 +50894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockYear: 2045
+  unlockYear: 2040
 --- !u!114 &1651436023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55219,7 +55220,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockYear: 2045
+  unlockYear: 2040
 --- !u!114 &1788582181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57836,7 +57837,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockYear: 2045
+  unlockYear: 2040
 --- !u!114 &1870223660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64385,8 +64386,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collapseSfx: {fileID: 8300000, guid: c01bbab8442e45146be860df82582360, type: 3}
   collapseVolume: 1
-  normalDisasterInterval: 10
+  normalDisasterInterval: 20
   severeDisasterInterval: 10
+  fxDroughtPrefab: {fileID: 1582275357731197809, guid: 5334360cd0cfad84bbf6855beaf10de4, type: 3}
+  fxFirePrefab: {fileID: 1582275357731197809, guid: 5334360cd0cfad84bbf6855beaf10de4, type: 3}
+  fxRainPrefab: {fileID: 4380918445339287248, guid: 4b38b1b3e38ed7e499c047067beb6122, type: 3}
+  fxStormPrefab: {fileID: 2263400886593003554, guid: 0cd9e54cc4fc33042988600b5948fbdb, type: 3}
+  fxOffset: {x: 0, y: 0.05, z: 0}
+  fxGraceSeconds: 0.35
 --- !u!1 &2132139039
 GameObject:
   m_ObjectHideFlags: 0
