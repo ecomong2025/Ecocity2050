@@ -12,9 +12,27 @@ public class DisasterManager : MonoBehaviour
     public float normalDisasterInterval = 10f;
     public float severeDisasterInterval = 5f;
 
+    [Header("FX (looping prefabs)")]
+    [Tooltip("가뭄 FX 프리팹 (루프)")]
+    [SerializeField] private GameObject fxDroughtPrefab;
+    [Tooltip("화재 FX 프리팹 (루프)")]
+    [SerializeField] private GameObject fxFirePrefab;
+    [Tooltip("폭우/홍수 FX 프리팹 (루프)")]
+    [SerializeField] private GameObject fxRainPrefab;
+    [Tooltip("태풍/강풍 FX 프리팹 (루프)")]
+    [SerializeField] private GameObject fxStormPrefab;
+
+    [Tooltip("타일 중심에서의 오프셋 (살짝 띄우기)")]
+    [SerializeField] private Vector3 fxOffset = new Vector3(0f, 0.05f, 0f);
+    [Tooltip("파괴 연출(깜빡임) 중 FX를 유지하는 시간(초)")]
+    [SerializeField] private float fxGraceSeconds = 0.35f;
+
     private GameManager gameManager;
     private Coroutine _disasterCoroutine;
     private float _currentInterval = -1f;
+
+    // 재난 1회 동안 생성된 FX 인스턴스들 추적
+    private readonly List<GameObject> _activeFX = new();
 
     void Awake()
     {
@@ -36,38 +54,22 @@ public class DisasterManager : MonoBehaviour
 
     void Start()
     {
-        // 시작 시 현재 상태에 따라 타이머 시작
         if (gameManager != null)
             UpdateTimerForStatus(gameManager.GetSatisfactionLevel());
     }
 
-    // 이벤트 핸들러: 만족도 변화 시 호출
-    private void OnSatisfactionChanged(string newStatus)
-    {
-        UpdateTimerForStatus(newStatus);
-    }
+    private void OnSatisfactionChanged(string newStatus) => UpdateTimerForStatus(newStatus);
 
     private void UpdateTimerForStatus(string status)
     {
-        if (status == "매우 나쁨")
-        {
-            StartDisasterTimer(severeDisasterInterval);
-        }
-        else if (status == "나쁨")
-        {
-            StartDisasterTimer(normalDisasterInterval);
-        }
-        else
-        {
-            StopDisasterTimer();
-        }
+        if (status == "매우 나쁨")      StartDisasterTimer(severeDisasterInterval);
+        else if (status == "나쁨")      StartDisasterTimer(normalDisasterInterval);
+        else                           StopDisasterTimer();
     }
 
     private void StartDisasterTimer(float interval)
     {
-        if (_disasterCoroutine != null && Mathf.Approximately(_currentInterval, interval))
-            return; // 이미 같은 간격으로 동작 중
-
+        if (_disasterCoroutine != null && Mathf.Approximately(_currentInterval, interval)) return;
         StopDisasterTimer();
         _currentInterval = interval;
         _disasterCoroutine = StartCoroutine(DisasterLoop(interval));
@@ -90,8 +92,6 @@ public class DisasterManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(interval);
-
-            // 재난 발생 시점에 최신 만족도 확인 — 여전히 나쁨 계열이면 발생
             if (gameManager == null) yield break;
             string status = gameManager.GetSatisfactionLevel();
             if (status == "나쁨" || status == "매우 나쁨")
@@ -102,15 +102,13 @@ public class DisasterManager : MonoBehaviour
     void TriggerDisaster()
     {
         GameObject[] tiles = GameObject.FindGameObjectsWithTag("Tile");
-        List<GameObject> tilesWithBuildings = new List<GameObject>();
+        List<GameObject> tilesWithBuildings = new();
 
         foreach (GameObject tile in tiles)
         {
             BuildingData buildingData = FindBuildingDataInChildren(tile.transform);
             if (buildingData != null)
-            {
                 tilesWithBuildings.Add(buildingData.gameObject);
-            }
         }
 
         if (tilesWithBuildings.Count == 0)
@@ -127,18 +125,23 @@ public class DisasterManager : MonoBehaviour
 
         Debug.Log($"🚨 {selectedDisaster} 발생! {buildingToDestroy.name} 건물이 파괴됩니다...");
 
-        // 재난 발생 시 수입 코루틴 중지 (GameManager.Instance 가 있으면 호출)
+        // 수입 정지
         if (GameManager.Instance != null)
             GameManager.Instance.StopIncomeForBuilding(buildingToDestroy.transform);
 
-        // 뉴스 출력 (있으면)
+        // 뉴스
         if (GPTNewsGenerator.Instance != null)
             GPTNewsGenerator.Instance.ShowDisasterNews(selectedDisaster);
 
         // 효과음
         PlayCollapseSfx();
 
-        // 깜박이고 파괴 — 파괴 후 그 자리는 빈 상태(다시 설치 가능)
+        // 🔸 타일들에 파티클 생성(루프 재생)
+        var targetTiles = GetTilesForBuilding(buildingToDestroy);
+        var fxPrefab = GetFXPrefab(selectedDisaster);
+        SpawnFXOnTiles(targetTiles, fxPrefab);
+
+        // 🔸 깜빡임 후 파괴 (파괴 직전에 FX 정지/정리)
         StartCoroutine(BlinkAndDestroy(buildingToDestroy, 2f, 6));
     }
 
@@ -150,28 +153,32 @@ public class DisasterManager : MonoBehaviour
 
         for (int i = 0; i < blinkCount; i++)
         {
-            foreach (Renderer r in renderers) if (r != null) r.enabled = false;
+            foreach (Renderer r in renderers) if (r) r.enabled = false;
             yield return new WaitForSeconds(duration / (blinkCount * 2));
-            foreach (Renderer r in renderers) if (r != null) r.enabled = true;
+            foreach (Renderer r in renderers) if (r) r.enabled = true;
             yield return new WaitForSeconds(duration / (blinkCount * 2));
         }
 
-        // 🔹 파괴 직전: 타일 점유 해제(마커 제거)
+        // 🔹 FX를 먼저 멈추고 약간의 그레이스 타임 후 정리
+        StopActiveFX();
+        if (fxGraceSeconds > 0f) yield return new WaitForSeconds(fxGraceSeconds);
+        CleanupActiveFX();
+
+        // 🔹 타일 점유 해제 → 같은 자리 재설치 가능
         FreeTilesForBuilding(building);
 
-        // 🔹 건물 오브젝트 제거 — 타일은 비워지므로 다시 설치 가능
+        // 🔹 실제 제거
         Destroy(building);
     }
 
     void PlayCollapseSfx()
     {
         if (collapseSfx == null) return;
-
         var sfxPlayer = GameObject.Find("SFXPlayer");
-        if (sfxPlayer != null)
+        if (sfxPlayer)
         {
             var src = sfxPlayer.GetComponent<AudioSource>();
-            if (src != null) src.PlayOneShot(collapseSfx, collapseVolume);
+            if (src) src.PlayOneShot(collapseSfx, collapseVolume);
         }
         else
         {
@@ -180,33 +187,91 @@ public class DisasterManager : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────
+    // ───────────────────────────────
+    // FX 유틸
+
+    GameObject GetFXPrefab(string disaster)
+    {
+        switch (disaster)
+        {
+            case "가뭄": return fxDroughtPrefab   ? fxDroughtPrefab : fxStormPrefab;
+            case "화재": return fxFirePrefab      ? fxFirePrefab    : fxStormPrefab;
+            case "폭우": return fxRainPrefab      ? fxRainPrefab    : fxStormPrefab;
+            case "태풍": return fxStormPrefab;
+        }
+        return fxStormPrefab;
+    }
+
+    List<Transform> GetTilesForBuilding(GameObject buildingRoot)
+    {
+        var result = new List<Transform>();
+
+        // 1) 설치 시 부착된 Footprint로 멀티타일 지원
+        var fp = buildingRoot.GetComponent<BuildingFootprint>() ??
+                 buildingRoot.GetComponentInChildren<BuildingFootprint>() ??
+                 buildingRoot.GetComponentInParent<BuildingFootprint>();
+        if (fp != null && fp.Tiles != null)
+        {
+            foreach (var t in fp.Tiles) if (t) result.Add(t.transform);
+            if (result.Count > 0) return result;
+        }
+
+        // 2) 폴백: 부모 타일 1개만
+        var tile = FindTileAncestor(buildingRoot.transform);
+        if (tile) result.Add(tile);
+        return result;
+    }
+
+    void SpawnFXOnTiles(List<Transform> tiles, GameObject fxPrefab)
+    {
+        CleanupActiveFX(); // 혹시 이전 재난 찌꺼기 제거
+        if (fxPrefab == null || tiles == null) return;
+
+        foreach (var t in tiles)
+        {
+            if (!t) continue;
+            var go = Instantiate(fxPrefab, t.position + fxOffset, Quaternion.identity, t);
+            _activeFX.Add(go);
+
+            // 자식 모든 파티클 재생(루프 전제)
+            var psArray = go.GetComponentsInChildren<ParticleSystem>(true);
+            foreach (var ps in psArray) ps.Play(true);
+        }
+    }
+
+    void StopActiveFX()
+    {
+        foreach (var fx in _activeFX)
+        {
+            if (!fx) continue;
+            var psArray = fx.GetComponentsInChildren<ParticleSystem>(true);
+            foreach (var ps in psArray) ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+    }
+
+    void CleanupActiveFX()
+    {
+        foreach (var fx in _activeFX)
+            if (fx) Destroy(fx);
+        _activeFX.Clear();
+    }
+
+    // ───────────────────────────────
     // 점유 해제 유틸
 
-    /// <summary>
-    /// 건물 루트에서 BuildingFootprint를 찾아 모든 타일의 점유 마커를 제거.
-    /// 없으면 부모 타일(태그 "Tile")을 찾아 대표 마커만 제거(폴백).
-    /// </summary>
     void FreeTilesForBuilding(GameObject buildingRoot)
     {
         if (!buildingRoot) return;
 
-        // 1) 우선 BuildingFootprint가 있으면 공식 API로 해제
         var fp = buildingRoot.GetComponent<BuildingFootprint>() ??
                  buildingRoot.GetComponentInChildren<BuildingFootprint>() ??
                  buildingRoot.GetComponentInParent<BuildingFootprint>();
 
-        if (fp != null)
-        {
-            fp.ReleaseAll();
-            return;
-        }
+        if (fp != null) { fp.ReleaseAll(); return; }
 
-        // 2) (폴백) Footprint가 없을 때: 부모 타일 기준으로 마커 제거 시도
         var tile = FindTileAncestor(buildingRoot.transform);
         if (tile != null)
         {
-            // 기본 마커명과, 설치기에서 사용하는 마커명 둘 다 시도
             TryRemoveMarker(tile, "__OCCUPIED__");
             string installerMarker = (TileClickInstaller.Instance != null)
                 ? TileClickInstaller.Instance.occupiedMarkerName
@@ -234,7 +299,7 @@ public class DisasterManager : MonoBehaviour
         if (mark) Destroy(mark.gameObject);
     }
 
-    // ─────────────────────────────────────────────
+    // ───────────────────────────────
     // 탐색 유틸
 
     BuildingData FindBuildingDataInChildren(Transform parent)
@@ -242,12 +307,10 @@ public class DisasterManager : MonoBehaviour
         foreach (Transform child in parent)
         {
             BuildingData data = child.GetComponent<BuildingData>();
-            if (data != null)
-                return data;
+            if (data != null) return data;
 
             BuildingData nested = FindBuildingDataInChildren(child);
-            if (nested != null)
-                return nested;
+            if (nested != null) return nested;
         }
         return null;
     }
