@@ -510,7 +510,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scaleOverride: 1.8
-  positionOffset: {x: 0.9, y: 0, z: 0}
+  positionOffset: {x: 0.6, y: 0, z: 0}
   tileWidth: 2
   tileHeight: 4
   cost: 180

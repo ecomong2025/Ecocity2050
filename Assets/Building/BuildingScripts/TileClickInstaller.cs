@@ -48,7 +48,7 @@ public class TileClickInstaller : MonoBehaviour
         model.name = "BuildingModel";
         model.SetActive(false);
 
-        // 스케일 맞춤 (기존 SpawnPreviewOverSelection 로직 축약)
+        // 스케일 맞춤
         if (!TryGetModelBounds(model, out Bounds modelBounds))
         {
             Destroy(root);
@@ -111,6 +111,20 @@ public class TileClickInstaller : MonoBehaviour
             model.transform.position += deltaWorld;
         }
 
+        // 🔹🔹 Placement Overrides 적용 (정렬 후, 표시 전) 🔹🔹
+        // 1) Scale Override (float): 0/1이 아니면 곱
+        if (bd.scaleOverride > 0f && Mathf.Abs(bd.scaleOverride - 1f) > 0.0001f)
+        {
+            model.transform.localScale *= bd.scaleOverride;
+        }
+        // 2) Position Offset (Vector3): 프리뷰 루트 로컬축 기준으로 이동
+        if (bd.positionOffset != Vector3.zero)
+        {
+            Vector3 worldOffset = root.transform.TransformVector(bd.positionOffset);
+            model.transform.position += worldOffset;
+        }
+        // ─────────────────────────────────────────────────────────────
+
         model.SetActive(true);
 
         return new PreviewBatchItem
@@ -121,6 +135,7 @@ public class TileClickInstaller : MonoBehaviour
             rotation = desiredRot
         };
     }
+
 
     // ─────────────────────────────────────────────────────────────
     // Hotkey / 외부 UI 입력 격리(선택)
@@ -944,7 +959,8 @@ public class TileClickInstaller : MonoBehaviour
 
         // 8) 중심/바닥 정렬
         AlignPreviewToSelection(selB2);
-
+        // 🔹 Placement Overrides 적용 (정렬 후, 표시 전)
+        ApplyPlacementOverrides(modelInstance.transform, previewInstance.transform, bd);
         // 9) 표시
         modelInstance.SetActive(true);
         buildingInstallPanel?.SetActive(true);
@@ -1373,6 +1389,28 @@ public class TileClickInstaller : MonoBehaviour
                 return true;
 
         return false;
+    }
+    // TileClickInstaller 안 아무 곳(Utilities 근처) 추가
+    void ApplyPlacementOverrides(Transform model, Transform previewRoot, BuildingData bd)
+    {
+        if (!bd || !model) return;
+
+        // 1) 스케일 오버라이드(배율): 0 또는 1이 아니면 곱
+        //    (Scale Override를 단일 배율 float로 본 가정)
+        if (bd.scaleOverride > 0f && Mathf.Abs(bd.scaleOverride - 1f) > 0.0001f)
+        {
+            model.localScale *= bd.scaleOverride;
+        }
+
+        // 2) 포지션 오프셋: 프리뷰 루트의 로컬축 기준으로 이동하고 싶을 때
+        //    (inspector의 X/Y/Z를 '건물의 로컬 기준'으로 해석)
+        if (bd.positionOffset != Vector3.zero)
+        {
+            // 로컬 오프셋을 월드 벡터로 변환해서 더함
+            Vector3 worldOffset = previewRoot ? previewRoot.TransformVector(bd.positionOffset)
+                                              : model.TransformVector(bd.positionOffset);
+            model.position += worldOffset;
+        }
     }
 
 }
