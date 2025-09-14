@@ -45636,6 +45636,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1498998915}
   m_CullTransparentMesh: 1
+--- !u!1 &1504115280
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1504115281}
+  - component: {fileID: 1504115282}
+  m_Layer: 0
+  m_Name: SandstormManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1504115281
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504115280}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1218.8793, y: 639.5484, z: 3.4186401}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1504115282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504115280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cb059a08dc4d33458bcac969200ce16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sandstormPrefab: {fileID: 1403849239388012, guid: be6ce7e7e48421b49b47db89df3c0851, type: 3}
+  yearQuestManager: {fileID: 1640541952}
+  interval: 60
+  duration: 10
 --- !u!1001 &1505259003
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50453,6 +50501,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7788278118185516103, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
   m_PrefabInstance: {fileID: 478664805}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1640541952 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5366190578404757789, guid: 4ae8d468318354ec4a138e7847f89dc1, type: 3}
+  m_PrefabInstance: {fileID: 478664805}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 859039410124c4c4e85f80bdbfed714f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1642344496
 GameObject:
   m_ObjectHideFlags: 0
@@ -65474,3 +65533,4 @@ SceneRoots:
   - {fileID: 1242852573}
   - {fileID: 423433580}
   - {fileID: 1473802287}
+  - {fileID: 1504115281}
