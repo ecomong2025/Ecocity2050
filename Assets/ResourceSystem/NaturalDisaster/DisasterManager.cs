@@ -9,8 +9,8 @@ public class DisasterManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float collapseVolume = 1f;
 
     // 요구사항: '나쁨' 10초, '매우 나쁨' 5초
-    public float normalDisasterInterval = 10f;
-    public float severeDisasterInterval = 5f;
+    public float normalDisasterInterval = 20f;
+    public float severeDisasterInterval = 10f;
 
     [Header("FX (looping prefabs)")]
     [Tooltip("가뭄 FX 프리팹 (루프)")]
