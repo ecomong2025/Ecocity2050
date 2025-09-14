@@ -85,8 +85,7 @@ public class QuizManager : MonoBehaviour
         {2030, 3},
         {2035, 4},
         {2040, 5},
-        {2045, 6},
-        {2050, 7}
+        {2045, 6}
     };
 
     void Start()
@@ -342,11 +341,17 @@ public class QuizManager : MonoBehaviour
 
             quizCorrectCount++;
             int year = YearQuestManager.Instance.GetCurrentYear();
+
+            // 🔹 수정 부분: 2045년만 마지막 퀘스트 인덱스로 고정
+            int targetQuestIndex = quizQuestIndex; // 기존 값 기본 사용
+            if (year == 2045)
+                targetQuestIndex = 3; // completed 배열 마지막 인덱스
+
             if (quizCorrectCount >= completeThreshold)
             {
                 if (YearQuestManager.Instance != null)
                 {
-                    YearQuestManager.Instance.CompleteQuest(quizQuestIndex);
+                    YearQuestManager.Instance.CompleteQuest(targetQuestIndex);
                 }
             }
         }
@@ -357,6 +362,7 @@ public class QuizManager : MonoBehaviour
             reasonText.text = quiz.wrongNote;
         }
     }
+
 
     public void ResetQuizCorrectCount()
     {
