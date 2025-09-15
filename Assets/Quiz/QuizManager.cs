@@ -64,7 +64,7 @@ public class QuizManager : MonoBehaviour
 
     // 하루 제한 관련
     private int dailyQuizCount = 0;
-    private int dailyLimit = 5;
+    private int dailyLimit = 100;
     private DateTime lastResetTime;
     private bool isCooldownActive = false; // 🔹 30초 제한 상태
 
