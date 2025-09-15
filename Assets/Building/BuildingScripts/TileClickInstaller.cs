@@ -48,7 +48,7 @@ public class TileClickInstaller : MonoBehaviour
         model.name = "BuildingModel";
         model.SetActive(false);
 
-        // 스케일 맞춤 (기존 SpawnPreviewOverSelection 로직 축약)
+        // 스케일 맞춤
         if (!TryGetModelBounds(model, out Bounds modelBounds))
         {
             Destroy(root);
@@ -111,6 +111,20 @@ public class TileClickInstaller : MonoBehaviour
             model.transform.position += deltaWorld;
         }
 
+        // 🔹🔹 Placement Overrides 적용 (정렬 후, 표시 전) 🔹🔹
+        // 1) Scale Override (float): 0/1이 아니면 곱
+        if (bd.scaleOverride > 0f && Mathf.Abs(bd.scaleOverride - 1f) > 0.0001f)
+        {
+            model.transform.localScale *= bd.scaleOverride;
+        }
+        // 2) Position Offset (Vector3): 프리뷰 루트 로컬축 기준으로 이동
+        if (bd.positionOffset != Vector3.zero)
+        {
+            Vector3 worldOffset = root.transform.TransformVector(bd.positionOffset);
+            model.transform.position += worldOffset;
+        }
+        // ─────────────────────────────────────────────────────────────
+
         model.SetActive(true);
 
         return new PreviewBatchItem
@@ -121,6 +135,7 @@ public class TileClickInstaller : MonoBehaviour
             rotation = desiredRot
         };
     }
+
 
     // ─────────────────────────────────────────────────────────────
     // Hotkey / 외부 UI 입력 격리(선택)
@@ -444,6 +459,70 @@ public class TileClickInstaller : MonoBehaviour
 
         if (!placing) return;
         if (selectedBuildingPrefab == null) return;
+        // ✅ 실제 인터랙티브 UI 위라면 타일 입력 차단.
+        //    패널 빈 배경/투명 영역 위에서는 그대로 타일 입력 허용됨.
+        if (PointerOverInteractiveUI())
+        {
+            // 드래그 중 UI 위에서 놓았을 때 잔상 방지
+            if (isDragging && Input.GetMouseButtonUp(0))
+            {
+                isDragging = false;
+                ClearHighlight();
+            }
+            return; // 이 프레임의 타일 처리 스킵
+        }
+
+        bool PointerOverInteractiveUI()
+        {
+            var es = EventSystem.current;
+            if (!es) return false;
+
+            var data = new PointerEventData(es) { position = Input.mousePosition };
+            var hits = new List<RaycastResult>();
+            es.RaycastAll(data, hits);
+
+            // BuildingInstallPanel 범위 안의 UI만 검사(원하면 이 if를 지워 전역 UI로 확장 가능)
+            Transform uiRoot = buildingInstallPanel ? buildingInstallPanel.transform : null;
+
+            foreach (var h in hits)
+            {
+                var go = h.gameObject;
+                if (!go.activeInHierarchy) continue;
+                if (uiRoot && !go.transform.IsChildOf(uiRoot)) continue;
+
+                // (1) RaycastTarget이 꺼진 Graphic은 무시
+                var g = go.GetComponent<Graphic>();
+                if (g != null && !g.raycastTarget) continue;
+
+                // (2) 상호작용 가능한 컨트롤이면 차단
+                var btn = go.GetComponentInParent<Button>();
+                if (btn && btn.interactable) return true;
+
+                var tog = go.GetComponentInParent<Toggle>();
+                if (tog && tog.interactable) return true;
+
+                var sld = go.GetComponentInParent<Slider>();
+                if (sld && sld.interactable) return true;
+
+                var sbar = go.GetComponentInParent<Scrollbar>();
+                if (sbar && sbar.interactable) return true;
+
+                var dd = go.GetComponentInParent<Dropdown>();
+                if (dd && dd.interactable) return true;
+
+                var ifu = go.GetComponentInParent<InputField>();
+                if (ifu && ifu.interactable) return true;
+
+                var scr = go.GetComponentInParent<ScrollRect>();
+                if (scr) return true; // 스크롤 영역도 차단
+
+                // 이벤트 핸들러가 직접 붙어있는 커스텀 UI도 차단
+                if (go.GetComponentInParent<IPointerClickHandler>() != null) return true;
+                if (go.GetComponentInParent<IDragHandler>() != null) return true;
+                if (go.GetComponentInParent<IScrollHandler>() != null) return true;
+            }
+            return false;
+        }
 
         // ⬇⬇⬇ 여기서 한 번만 선언 (스코프 고정) ⬇⬇⬇
         GameObject hoverTile = null;                 // 마우스 아래 타일(= tileB)
@@ -880,7 +959,8 @@ public class TileClickInstaller : MonoBehaviour
 
         // 8) 중심/바닥 정렬
         AlignPreviewToSelection(selB2);
-
+        // 🔹 Placement Overrides 적용 (정렬 후, 표시 전)
+        ApplyPlacementOverrides(modelInstance.transform, previewInstance.transform, bd);
         // 9) 표시
         modelInstance.SetActive(true);
         buildingInstallPanel?.SetActive(true);
@@ -1295,5 +1375,42 @@ public class TileClickInstaller : MonoBehaviour
     public Transform CurrentPreviewRoot => previewInstance ? previewInstance.transform : null;
     public BuildingData CurrentBuildingData
         => modelInstance ? (modelInstance.GetComponent<BuildingData>() ?? modelInstance.GetComponentInChildren<BuildingData>()) : null;
+    bool PointerOverUI()
+    {
+        var es = EventSystem.current;
+        if (!es) return false;
+
+        // 마우스(PC)
+        if (es.IsPointerOverGameObject()) return true;
+
+        // 터치(모바일)
+        for (int i = 0; i < Input.touchCount; i++)
+            if (es.IsPointerOverGameObject(Input.GetTouch(i).fingerId))
+                return true;
+
+        return false;
+    }
+    // TileClickInstaller 안 아무 곳(Utilities 근처) 추가
+    void ApplyPlacementOverrides(Transform model, Transform previewRoot, BuildingData bd)
+    {
+        if (!bd || !model) return;
+
+        // 1) 스케일 오버라이드(배율): 0 또는 1이 아니면 곱
+        //    (Scale Override를 단일 배율 float로 본 가정)
+        if (bd.scaleOverride > 0f && Mathf.Abs(bd.scaleOverride - 1f) > 0.0001f)
+        {
+            model.localScale *= bd.scaleOverride;
+        }
+
+        // 2) 포지션 오프셋: 프리뷰 루트의 로컬축 기준으로 이동하고 싶을 때
+        //    (inspector의 X/Y/Z를 '건물의 로컬 기준'으로 해석)
+        if (bd.positionOffset != Vector3.zero)
+        {
+            // 로컬 오프셋을 월드 벡터로 변환해서 더함
+            Vector3 worldOffset = previewRoot ? previewRoot.TransformVector(bd.positionOffset)
+                                              : model.TransformVector(bd.positionOffset);
+            model.position += worldOffset;
+        }
+    }
 
 }
