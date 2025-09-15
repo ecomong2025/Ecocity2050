@@ -12153,7 +12153,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &370156118
 RectTransform:
   m_ObjectHideFlags: 0
@@ -32921,7 +32921,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e09aad8b3f0f4b05b0301f82313488e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  budget: 600
+  budget: 1200
   co2: 0
   budgetText: {fileID: 305414313}
   co2Text: {fileID: 273048955}
@@ -66661,8 +66661,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collapseSfx: {fileID: 8300000, guid: c01bbab8442e45146be860df82582360, type: 3}
   collapseVolume: 1
-  normalDisasterInterval: 20
-  severeDisasterInterval: 10
+  normalDisasterInterval: 30
+  severeDisasterInterval: 30
   fxDroughtPrefab: {fileID: 1582275357731197809, guid: 5334360cd0cfad84bbf6855beaf10de4, type: 3}
   fxFirePrefab: {fileID: 1582275357731197809, guid: 5334360cd0cfad84bbf6855beaf10de4, type: 3}
   fxRainPrefab: {fileID: 4380918445339287248, guid: 4b38b1b3e38ed7e499c047067beb6122, type: 3}
