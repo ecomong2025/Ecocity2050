@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
-namespace GameSceneTutorial
+namespace TutorialScene
 {
     [System.Serializable]
     public class TutorialPage
@@ -13,14 +14,7 @@ namespace GameSceneTutorial
         public bool skipButtonActive;  // 활성화 여부
     }
 
-    [System.Serializable]
-    public class PanelControl
-    {
-        public GameObject panel;       // 제어할 패널
-        public bool activeOnFinish;    // 마지막에 활성화할지 여부
-    }
-
-    public class ClickToCycleImage : MonoBehaviour
+    public class ClickTo : MonoBehaviour
     {
         [Header("Target (둘 중 하나만 지정)")]
         [SerializeField] private Image uiImage;
@@ -30,18 +24,17 @@ namespace GameSceneTutorial
         [SerializeField] private TutorialPage[] pages;
 
         [Header("Options")]
-        [SerializeField] private bool loop = false;
+        [SerializeField] private bool loop = true;
         [SerializeField, Range(0f, 2f)] private float fadeDuration = 0f;
         [SerializeField] private bool clickAnywhere = true;
 
         [Header("Finish Action")]
         [SerializeField] private UnityEvent onFinished;
+        [SerializeField] private string nextSceneName = "";
+        [SerializeField, Range(0f, 3f)] private float sceneDelay = 0f;
 
         [Header("UI References")]
         [SerializeField] private RectTransform skipButton;
-
-        [Header("Panel Controls")]
-        [SerializeField] private PanelControl[] panelControls;
 
         private int index = 0;
         private bool isFading = false;
@@ -53,11 +46,11 @@ namespace GameSceneTutorial
         void Awake()
         {
             if ((uiImage == null && spriteRenderer == null) || (uiImage != null && spriteRenderer != null))
-                Debug.LogWarning("[ClickToCycleImage] uiImage 또는 spriteRenderer 중 하나만 지정하세요.");
+                Debug.LogWarning("[ClickTo] uiImage 또는 spriteRenderer 중 하나만 지정하세요.");
 
             if (pages == null || pages.Length == 0)
             {
-                Debug.LogWarning("[ClickToCycleImage] pages가 비어있습니다.");
+                Debug.LogWarning("[ClickTo] pages가 비어있습니다.");
                 return;
             }
 
@@ -66,12 +59,6 @@ namespace GameSceneTutorial
             mainCam = Camera.main;
             if (uiImage) uiBaseColor = uiImage.color;
             if (spriteRenderer) spriteBaseColor = spriteRenderer.color;
-        }
-
-        void OnEnable()
-        {
-            index = 0;
-            if (pages != null && pages.Length > 0) ApplyPage(0);
         }
 
         void Update()
@@ -105,14 +92,15 @@ namespace GameSceneTutorial
         public void Next()
         {
             if (isFading || pages == null || pages.Length == 0) return;
+
             int next = index + 1;
             if (next >= pages.Length)
             {
                 if (!loop)
                 {
-                    ControlPanelsOnFinish();
                     onFinished?.Invoke();
-                    gameObject.SetActive(false);
+                    if (!string.IsNullOrEmpty(nextSceneName))
+                        StartCoroutine(LoadSceneAfterDelay(nextSceneName, sceneDelay));
                     return;
                 }
                 next = 0;
@@ -123,17 +111,6 @@ namespace GameSceneTutorial
                 StartCoroutine(FadeTo(pages[index].sprite, fadeDuration));
             else
                 ApplyPage(index);
-        }
-
-        private void ControlPanelsOnFinish()
-        {
-            if (panelControls == null || panelControls.Length == 0) return;
-
-            foreach (var panelControl in panelControls)
-            {
-                if (panelControl.panel != null)
-                    panelControl.panel.SetActive(panelControl.activeOnFinish);
-            }
         }
 
         private void ApplyPage(int idx)
@@ -183,9 +160,36 @@ namespace GameSceneTutorial
                     yield return null;
                 }
             }
+            else if (spriteRenderer != null)
+            {
+                float t = 0f;
+                while (t < half)
+                {
+                    t += Time.deltaTime;
+                    float a = Mathf.Lerp(1f, 0f, t / half);
+                    spriteRenderer.color = new Color(spriteBaseColor.r, spriteBaseColor.g, spriteBaseColor.b, a);
+                    yield return null;
+                }
+
+                spriteRenderer.sprite = target;
+                t = 0f;
+                while (t < half)
+                {
+                    t += Time.deltaTime;
+                    float a = Mathf.Lerp(0f, 1f, t / half);
+                    spriteRenderer.color = new Color(spriteBaseColor.r, spriteBaseColor.g, spriteBaseColor.b, a);
+                    yield return null;
+                }
+            }
 
             isFading = false;
             ApplyPage(index);
+        }
+
+        private IEnumerator LoadSceneAfterDelay(string GameScene, float delay)
+        {
+            if (delay > 0f) yield return new WaitForSeconds(delay);
+            SceneManager.LoadScene(GameScene);
         }
     }
 }
