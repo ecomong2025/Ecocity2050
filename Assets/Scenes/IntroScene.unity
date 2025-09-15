@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &143665974
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2719,6 +2719,7 @@ MonoBehaviour:
   clickClip: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
   correctClip: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
   incorrectClip: {fileID: 8300000, guid: a1b7382d1e471f9479f571cf1d2891c9, type: 3}
+  popupOpenClip: {fileID: 0}
 --- !u!82 &1296187529
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4666,6 +4667,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settingPanel: {fileID: 1162053213}
+  tutorialPanel: {fileID: 0}
   animDuration: 0.25
   scaleClosed: {x: 0, y: 0, z: 1}
   scaleOpened: {x: 1, y: 1, z: 1}
