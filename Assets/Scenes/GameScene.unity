@@ -4609,7 +4609,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockYear: 2040
+  unlockYear: 2045
 --- !u!114 &127190389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47925,7 +47925,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockYear: 2040
+  unlockYear: 2045
 --- !u!114 &1520789309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47940,7 +47940,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   root: {fileID: 0}
   overlayName: BuildingLockOverlay
-  defaultUnlockYear: 2025
+  defaultUnlockYear: 2040
 --- !u!114 &1523409964 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3567514780440101006, guid: 428e85cc71f534a2cafa4a7f4b63d083, type: 3}
@@ -52730,7 +52730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockYear: 2040
+  unlockYear: 2045
 --- !u!114 &1651436023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52745,7 +52745,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   root: {fileID: 0}
   overlayName: BuildingLockOverlay
-  defaultUnlockYear: 2025
+  defaultUnlockYear: 2040
 --- !u!1 &1653144639
 GameObject:
   m_ObjectHideFlags: 0
@@ -57088,7 +57088,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockYear: 2040
+  unlockYear: 2045
 --- !u!114 &1788582181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59707,7 +59707,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcb85004ac9ffc4f84eb786d9c76ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockYear: 2040
+  unlockYear: 2045
 --- !u!114 &1870223660
 MonoBehaviour:
   m_ObjectHideFlags: 0
