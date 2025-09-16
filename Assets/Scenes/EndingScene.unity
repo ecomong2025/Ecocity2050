@@ -5492,9 +5492,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentForGroups: {fileID: 1918485608}
-  interval: 3.5
+  interval: 1.6
   loop: 0
-  fadeDuration: 1
+  fadeDuration: 0.8
 --- !u!1 &2059275389
 GameObject:
   m_ObjectHideFlags: 0
