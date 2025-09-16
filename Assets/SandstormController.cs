@@ -24,7 +24,7 @@ public class SandstormController : MonoBehaviour
         while (true)
         {
             // 현재 연도 확인
-            if (yearQuestManager != null && yearQuestManager.GetCurrentYear() <= 2030)
+            if (yearQuestManager != null && yearQuestManager.GetCurrentYear() <= 2040)
             {
                 // 프리팹을 중앙(Vector3.zero)에 생성
                 GameObject instance = Instantiate(sandstormPrefab, Vector3.zero, Quaternion.identity);
