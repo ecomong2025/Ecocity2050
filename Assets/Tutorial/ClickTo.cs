@@ -93,6 +93,7 @@ namespace TutorialScene
         {
             if (isFading || pages == null || pages.Length == 0) return;
 
+
             int next = index + 1;
             if (next >= pages.Length)
             {
@@ -107,6 +108,9 @@ namespace TutorialScene
             }
 
             index = next;
+
+            if (SFXPlayer.Instance != null)
+                SFXPlayer.Instance.PlayClick();
             if (fadeDuration > 0f && (uiImage != null || spriteRenderer != null))
                 StartCoroutine(FadeTo(pages[index].sprite, fadeDuration));
             else
