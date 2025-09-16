@@ -76,14 +76,14 @@ public class CityNameFetcher : MonoBehaviour
                 }
                 else
                 {
-                    cityNameText.text = $"파싱 실패\n응답: {text}";
+                    cityNameText.text = $"청하도";
                 }
             }
             else
             {
                 // 서버가 에러 본문을 줄 때 내용을 같이 보여주자
                 var body = uwr.downloadHandler != null ? uwr.downloadHandler.text : "";
-                cityNameText.text = $"에러 {uwr.responseCode} / {uwr.result}\n{uwr.error}\n{body}";
+                cityNameText.text = $"청하도";
             }
         }
     }
